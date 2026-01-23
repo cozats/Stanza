@@ -3,6 +3,11 @@
 A simple, elegant, and lightning-fast website template for poets who want to share their work without the need for complex systems or databases.
 
 ![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-en-light.png)
+![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/poem-en-light.png)
+![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-en-dark.png)
+![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/poem-en-dark.png)
+![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/controls.png)
+![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-gr-light.png)
 
 
 ## 🌟 Features
