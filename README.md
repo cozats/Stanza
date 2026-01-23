@@ -2,6 +2,9 @@
 
 A simple, elegant, and lightning-fast website template for poets who want to share their work without the need for complex systems or databases.
 
+![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-en-light.png)
+
+
 ## 🌟 Features
 - **Minimalist Design:** Focus on the text with beautiful typography (EB Garamond).
 - **Light & Dark Mode:** Automatic theme switching for comfortable reading.
