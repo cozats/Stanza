@@ -763,7 +763,7 @@ if ($view === 'list') {
         <footer>
             &copy; <?= date('Y') ?> Κωνσταντίνος Παπακωνσταντίνου. All rights reserved.
             &bull;
-            <a href="https://github.com/cozats/Poetry-Site-Template" target="_blank" class="admin-link" style="text-decoration: none;">GitHub</a>
+            <a href="https://github.com/cozats/Stanza" target="_blank" class="admin-link" style="text-decoration: none;">GitHub</a>
             <br>
             <a href="index.php?admin" class="admin-link">Διαχείριση</a>
         </footer>

@@ -1,10 +1,10 @@
-# Poetry Site Template
+# Stanza
 
 A simple, elegant, and lightning-fast website template for poets who want to share their work without the need for complex systems or databases.
 
-![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-en-light.png) ![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-en-dark.png)
-![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/poem-en-light.png) ![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/poem-en-dark.png)
-![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/controls.png) ![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-gr-light.png)
+![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-light.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-dark.png)
+![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-light.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-dark.png)
+![alt text](https://github.com/cozats/Stanza/blob/main/screens/controls.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-gr-light.png)
 
 ## 🌟 Features
 - **Minimalist Design:** Focus on the text with beautiful typography (EB Garamond).
@@ -62,7 +62,7 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 
 ---
 
-# Poetry Site Template (Ελληνικά)
+# Stanza (Ελληνικά)
 
 Ένα απλό, κομψό και εξαιρετικά γρήγορο πρότυπο ιστοσελίδας για ποιητές που θέλουν να μοιραστούν το έργο τους χωρίς την ανάγκη περίπλοκων συστημάτων ή βάσεων δεδομένων.
 

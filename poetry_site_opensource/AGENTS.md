@@ -1,4 +1,4 @@
-# OPENSOURCE TEMPLATE KNOWLEDGE BASE
+# STANZA TEMPLATE KNOWLEDGE BASE
 
 ## OVERVIEW
 Bilingual (Greek/English) template designed for distribution and easy setup.

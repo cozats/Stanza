@@ -1,6 +1,6 @@
 # Formatting Your Poems with Markdown
 
-This guide explains how to format your poetry files (`.md` or `.txt`) to take full advantage of the Poetry Site platform's minimalist design and features.
+This guide explains how to format your poetry files (`.md` or `.txt`) to take full advantage of the Stanza platform's minimalist design and features.
 
 ## 1. The Poem Title
 To ensure your poem's title is displayed correctly in the archive and at the top of the page, use a single `#` followed by a space.

@@ -4,7 +4,7 @@
 **Branch:** main
 
 ## OVERVIEW
-Minimalist, lightning-fast poetry site template and production instance. PHP-based, zero-database architecture using Markdown for content.
+Minimalist, lightning-fast Stanza template and production instance. PHP-based, zero-database architecture using Markdown for content.
 
 ## STRUCTURE
 \`\`\`
