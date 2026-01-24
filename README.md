@@ -6,7 +6,6 @@ A simple, elegant, and lightning-fast website template for poets who want to sha
 ![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/poem-en-light.png) ![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/poem-en-dark.png)
 ![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/controls.png) ![alt text](https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-gr-light.png)
 
-
 ## 🌟 Features
 - **Minimalist Design:** Focus on the text with beautiful typography (EB Garamond).
 - **Light & Dark Mode:** Automatic theme switching for comfortable reading.
@@ -41,7 +40,7 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
    - A **Floating Toolbar** will appear in the bottom right corner.
    
 2. **Language Selection:**
-   - Use the 🌐 icon in the toolbar to switch the entire site (UI and content) between English and Greek.
+   - Use the language icon in the toolbar to switch the entire site (UI and content) between English and Greek.
 
 3. **Adding a Poem:**
    - Click **"+ Add Poem"** in the toolbar.
@@ -98,7 +97,7 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
    - Θα εμφανιστεί μια **πλωτή εργαλειοθήκη (Toolbar)** στην κάτω δεξιά γωνία.
    
 2. **Εναλλαγή Γλώσσας:**
-   - Χρησιμοποιήστε το εικονίδιο 🌐 στο toolbar για να αλλάξετε τη γλώσσα της ιστοσελίδας και του περιεχομένου.
+   - Χρησιμοποιήστε το εικονίδιο της γλώσσας στο toolbar για να αλλάξετε τη γλώσσα της ιστοσελίδας και του περιεχομένου.
 
 3. **Προσθήκη Ποιήματος:**
    - Πατήστε **"+ Προσθήκη Ποιήματος"** στο toolbar.
@@ -116,4 +115,4 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 - Πατήστε το **"✕ Έξοδος"** στο toolbar για να απενεργοποιήσετε τη διαχείριση και να επιστρέψετε στην προβολή επισκέπτη.
 
 ---
-*This project was created with the aim of promoting poetry and simplicity on the web. You can use, share, and change it freely.*
+*This project was created with the aim of promoting poetry and simplicity on the web. You can use, share, and change it freely.* 
