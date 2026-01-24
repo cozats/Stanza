@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 /*
  |--------------------------------------------------------------------------
  | USER CONFIGURATION / ΡΥΘΜΙΣΕΙΣ ΧΡΗΣΤΗ
@@ -20,6 +24,20 @@ define('UI_LANGUAGE', 'en');
 
 // Upload password (Hash). Default: 'password' / Ο κωδικός για μεταφορτώσεις
 define('UPLOAD_PASSWORD_HASH', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+// Handle Admin Login Submission
+if (isset($_POST['admin_login'])) {
+    $password = $_POST['password'] ?? '';
+    if (password_verify($password, UPLOAD_PASSWORD_HASH)) {
+        $_SESSION['is_admin'] = true;
+        header('Location: ' . getCurrentBaseUrl() . '?admin');
+        exit;
+    } else {
+        $_SESSION['message'] = 'Incorrect password / Λάθος κωδικός.';
+        $_SESSION['msg_type'] = 'error';
+    }
+}
+
+
 
 /*
  |--------------------------------------------------------------------------
@@ -52,6 +70,7 @@ $locales = [
         'pwd_label' => 'Κωδικός',
         'pwd_ph' => 'Κωδικός ασφαλείας',
         'btn_upload' => 'Ανέβασμα',
+        'btn_login' => 'Είσοδος',
         'btn_cancel' => 'Ακύρωση',
         'lang_toggle' => 'English',
         'poems_label' => 'Ποιήματα',
@@ -85,6 +104,7 @@ $locales = [
         'pwd_label' => 'Password',
         'pwd_ph' => 'Security code',
         'btn_upload' => 'Upload',
+        'btn_login' => 'Login',
         'btn_cancel' => 'Cancel',
         'lang_toggle' => 'Ελληνικά',
         'poems_label' => 'Poems',
@@ -101,9 +121,7 @@ $locales = [
 ];
 
 // Initialize Session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+
 
 // Ensure poems directory exists
 if (!is_dir(POEMS_DIR)) {
@@ -135,8 +153,6 @@ if (isset($_GET['logout'])) {
     $queryString = http_build_query($params);
     header('Location: ' . getCurrentBaseUrl() . ($queryString ? '?' . $queryString : ''));
     exit;
-} elseif (isset($_GET['admin'])) {
-    $_SESSION['is_admin'] = true;
 }
 $isAdmin = !empty($_SESSION['is_admin']);
 
@@ -211,7 +227,7 @@ function handleUpload(array $lang): void {
     if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || empty($_FILES)) return;
     $password = $_POST['password'] ?? '';
     if (!password_verify($password, UPLOAD_PASSWORD_HASH)) {
-        $_SESSION['message'] = $lang['msg_pwd_err'];
+        $_SESSION['message'] = 'Incorrect password / Λάθος κωδικός.';
         $_SESSION['msg_type'] = 'error';
         return;
     }
@@ -272,6 +288,7 @@ handleUpload($lang);
 handleDelete($isAdmin, $lang);
 
 $view = $_GET['view'] ?? 'home';
+if (isset($_GET['admin']) && !$isAdmin) $view = 'admin_login';
 $poemHtml = '';
 $poems = [];
 
@@ -669,7 +686,19 @@ if ($view === 'list') {
         <?php endif; ?>
 
         <main>
-            <?php if ($view === 'list'): ?>
+            <?php if ($view === 'admin_login'): ?>
+                <div class="poem-content">
+                    <h1 class="poem-title"><?= $lang['management'] ?></h1>
+                    <form action="" method="post" style="max-width: 300px; margin: 0 auto; text-align: center;">
+                        <input type="password" name="password" placeholder="<?= $lang['pwd_ph'] ?>" required 
+                               style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit;">
+                        <button type="submit" name="admin_login" 
+                                style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem;">
+                            <?= $lang['btn_login'] ?>
+                        </button>
+                    </form>
+                </div>
+            <?php elseif ($view === 'list'): ?>
                 <ul class="poem-list">
                     <?php if (empty($poems)): ?>
                         <li><span style="color: #999; font-style: italic;"><?= $lang['no_poems'] ?></span></li>
@@ -712,7 +741,10 @@ if ($view === 'list') {
 
         <?php if ($isAdmin): ?>
             <div class="admin-toolbar">
-                <a href="?lang=<?= $currentLang === 'el' ? 'en' : 'el' ?>">🌐 <?= $lang['lang_toggle'] ?></a>
+                <a href="?lang=<?= $currentLang === 'el' ? 'en' : 'el' ?>">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    <?= $lang['lang_toggle'] ?>
+                </a>
                 <a href="#" onclick="toggleUpload(); return false;"><?= $lang['add_poem'] ?></a>
                 <a href="index.php?view=list">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
