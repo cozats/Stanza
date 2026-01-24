@@ -2,13 +2,9 @@
 
 A simple, elegant, and lightning-fast website template for poets who want to share their work without the need for complex systems or databases.
 
-👉 [**Download Latest Version]**(https://github.com/cozats/Stanza/archive/refs/heads/main.zip)
+## [👉 Download Latest Version](https://github.com/cozats/Stanza/archive/refs/heads/main.zip)
 
-![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-light.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-dark.png)
-![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-light.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-dark.png)
-![alt text](https://github.com/cozats/Stanza/blob/main/screens/controls.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-gr-light.png)
-
-
+![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-light.png)  
 ## 🌟 Features
 - **Minimalist Design:** Focus on the text with beautiful typography (EB Garamond).
 - **Light & Dark Mode:** Automatic theme switching for comfortable reading.
@@ -63,11 +59,17 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 ## ✕ Exit
 - Click **"✕ Exit"** in the toolbar to deactivate management mode and return to the visitor view.
 
+![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-dark.png)
+![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-light.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-dark.png)
+
+
 ---
 
 # Stanza (Ελληνικά)
 
 Ένα απλό, κομψό και εξαιρετικά γρήγορο πρότυπο ιστοσελίδας για ποιητές που θέλουν να μοιραστούν το έργο τους χωρίς την ανάγκη περίπλοκων συστημάτων ή βάσεων δεδομένων.
+## [👉 Κατεβάστε την νεότερη έκδοση](https://github.com/cozats/Stanza/archive/refs/heads/main.zip)
+
 
 ## 🌟 Χαρακτηριστικά
 - **Μινιμαλιστική Σχεδίαση:** Εστίαση στο κείμενο με όμορφη τυπογραφία (EB Garamond).
@@ -123,5 +125,6 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 ## ✕ Έξοδος
 - Πατήστε το **"✕ Έξοδος"** στο toolbar για να απενεργοποιήσετε τη διαχείριση και να επιστρέψετε στην προβολή επισκέπτη.
 
+![alt text](https://github.com/cozats/Stanza/blob/main/screens/controls.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-gr-light.png)
 ---
 *This project was created with the aim of promoting poetry and simplicity on the web. You can use, share, and change it freely.* 
