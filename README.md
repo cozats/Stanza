@@ -33,6 +33,9 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 3. **Done!** 
    Your poetry site is now live.
 
+> [!TIP]
+> **Poem Formatting:** See [MARKDOWN_INSTRUCTIONS.md](MARKDOWN_INSTRUCTIONS.md) for detailed instructions on how to format your poems and translations.
+
 ## ✍️ Management & Adding Poems
 
 1. **Enter Management:**
@@ -45,7 +48,7 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 3. **Adding a Poem:**
    - Click **"+ Add Poem"** in the toolbar.
    - Select your file (.md or .txt) and enter your password.
-   - **Formatting:** Use the `#` symbol before your title (e.g., `# My Poem Title`) for automatic styling.
+    - **Formatting:** Use the `#` symbol before your title (e.g., `# My Poem Title`) for automatic styling. See [MARKDOWN_INSTRUCTIONS.md](MARKDOWN_INSTRUCTIONS.md) for more details.
 
 4. **Bilingual Content:**
    - If you have a translation for a poem, simply upload it with the same name followed by `_en` or `_el` (e.g., `autumn.md` and `autumn_en.md`). The site will automatically show the correct version based on the visitor's language.
@@ -90,6 +93,9 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 3. **Έτοιμο!** 
    Η σελίδα σας είναι πλέον ζωντανή.
 
+> [!TIP]
+> **Μορφοποίηση Ποιημάτων:** Δείτε το αρχείο [MARKDOWN_INSTRUCTIONS.md](MARKDOWN_INSTRUCTIONS.md) για αναλυτικές οδηγίες σχετικά με τη μορφοποίηση των κειμένων και των μεταφράσεών σας.
+
 ## ✍️ Διαχείριση & Προσθήκη Ποιημάτων
 
 1. **Είσοδος στη Διαχείριση:**
@@ -102,7 +108,7 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 3. **Προσθήκη Ποιήματος:**
    - Πατήστε **"+ Προσθήκη Ποιήματος"** στο toolbar.
    - Επιλέξτε το αρχείο σας (.md ή .txt) και πληκτρολογήστε τον κωδικό σας.
-   - **Σύνταξη:** Χρησιμοποιήστε το σύμβολο `#` πριν από τον τίτλο (π.χ. `# Ο Τίτλος μου`).
+    - **Σύνταξη:** Χρησιμοποιήστε το σύμβολο `#` πριν από τον τίτλο (π.χ. `# Ο Τίτλος μου`). Δείτε το αρχείο [MARKDOWN_INSTRUCTIONS.md](MARKDOWN_INSTRUCTIONS.md) για περισσότερες λεπτομέρειες.
 
 4. **Δίγλωσσο Περιεχόμενο:**
    - Αν έχετε μετάφραση για ένα ποίημα, απλά ανεβάστε το με το ίδιο όνομα προσθέτοντας `_en` ή `_el` στο τέλος (π.χ. `fthinoporo.md` και `fthinoporo_en.md`). Το site θα δείχνει αυτόματα τη σωστή έκδοση.
