@@ -2,7 +2,7 @@
 
 A simple, elegant, and lightning-fast website template for poets who want to share their work without the need for complex systems or databases.
 
-👉 **[Download latest ZIP]**(https://github.com/cozats/Stanza/archive/refs/heads/main.zip)
+👉 [**Download Latest Version]**(https://github.com/cozats/Stanza/archive/refs/heads/main.zip)
 
 ![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-light.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-dark.png)
 ![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-light.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-dark.png)
