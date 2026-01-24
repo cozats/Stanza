@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poetry Site Template | Elegant & Minimalist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #e4e2d7;
+            --text-color: #2c2c2c;
+            --accent-color: #8c3b3b;
+            --border-color: rgba(140, 59, 59, 0.3);
+            --font-main: 'EB Garamond', serif;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --border-color: rgba(224, 224, 224, 0.2);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            line-height: 1.7;
+            font-size: 20px;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 6rem;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: -2rem;
+            right: 0;
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        h1 {
+            font-weight: 400;
+            font-style: italic;
+            font-size: 4rem;
+            margin: 0;
+            letter-spacing: -0.02em;
+            color: var(--accent-color);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.8;
+            margin-top: 1rem;
+        }
+
+        .hero-visual {
+            margin: 4rem 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .hero-visual img {
+            width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.5s ease;
+        }
+
+        .hero-visual img:hover {
+            transform: translateY(-5px);
+        }
+
+        section {
+            margin-bottom: 5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+
+        section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-weight: 400;
+            font-size: 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-item h3 {
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-container {
+            text-align: center;
+            margin-top: 8rem;
+            padding: 4rem;
+            border: 1px solid var(--border-color);
+            background: rgba(140, 59, 59, 0.03);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 1rem 2.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
+            gap: 12px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(140, 59, 59, 0.3);
+        }
+
+        .btn svg { width: 20px; height: 20px; }
+
+        footer {
+            text-align: center;
+            margin-top: 6rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        code {
+            background: rgba(0,0,0,0.05);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .container { padding: 2rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="theme-toggle" id="theme-toggle">Dark Mode</button>
+            <h1 class="reveal">Poetry Site Template</h1>
+            <p class="subtitle reveal">A simple, elegant, and lightning-fast home for your words.</p>
+        </header>
+
+        <section id="preview" class="reveal">
+            <div class="hero-visual">
+                <img src="https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-en-light.png?raw=true" alt="Light Mode Preview">
+                <img src="https://github.com/cozats/Poetry-Site-Template/blob/main/screens/home-en-dark.png?raw=true" alt="Dark Mode Preview">
+            </div>
+        </section>
+
+        <section id="features" class="reveal">
+            <h2>Core Experience</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h3>Minimalist Design</h3>
+                    <p>Zero distractions. Beautiful EB Garamond typography that puts your poetry center stage.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Dual Soul</h3>
+                    <p>Automatic Light and Dark themes to provide the perfect atmosphere for reading at any hour.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Zero Database</h3>
+                    <p>Powered by flat-file Markdown. No SQL setup, no complexity. Just upload and publish.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Bilingual</h3>
+                    <p>Native support for English and Greek, both in the interface and the content logic.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="instructions" class="reveal">
+            <h2>Quick Start</h2>
+            <ol>
+                <li><strong>Deploy:</strong> Upload the <code>index.php</code> and <code>poems/</code> folder to any PHP host.</li>
+                <li><strong>Configure:</strong> Edit the top section of <code>index.php</code> with your name and password.</li>
+                <li><strong>Write:</strong> Create <code>.md</code> files using simple Markdown syntax.</li>
+            </ol>
+        </section>
+
+        <div class="cta-container reveal">
+            <h2>Ready to share your work?</h2>
+            <p>Download the template and launch your own collection in minutes.</p>
+            <br>
+            <a href="https://github.com/cozats/Poetry-Site-Template" class="btn">
+                View on GitHub
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            </a>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Poetry Site Template. Created for poets, by poets.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeToggle.textContent = isDark ? 'Dark Mode' : 'Light Mode';
+        });
+
+        // Reveal on Scroll
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
