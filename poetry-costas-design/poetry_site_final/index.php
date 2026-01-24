@@ -5,177 +5,64 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/*
- |--------------------------------------------------------------------------
- | USER CONFIGURATION / ΡΥΘΜΙΣΕΙΣ ΧΡΗΣΤΗ
- |--------------------------------------------------------------------------
+/**
+ * Configuration & Constants
  */
-
-// Poet's full name (Displayed in Footer & Home) / Το ονοματεπώνυμο του ποιητή
-// Leave empty to use localized placeholders / Αφήστε κενό για χρήση αυτόματων placeholders
-define('POET_NAME', '');
-
-// The title of your collection / Ο τίτλος της συλλογής σας
-// Leave empty to use localized placeholders / Αφήστε κενό για χρήση αυτόματων placeholders
-define('SITE_TITLE', '');
-
-// Default UI Language (Options: 'el', 'en') / Προεπιλεγμένη γλώσσα (Επιλογές: 'el', 'en')
-define('UI_LANGUAGE', 'en');
-
-// Upload password (Hash). Default: 'password' / Ο κωδικός για μεταφορτώσεις
-define('UPLOAD_PASSWORD_HASH', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+define('SITE_TITLE', 'Χάρτινες Μέρες');
+define('POEMS_DIR', __DIR__ . '/poems/');
+define('UPLOAD_PASSWORD_HASH', '$2y$12$t0T0C6Cyn/B2.bl7amhi5.D3lx4Dkg/3lQGE80UMq.sLLuQjwQQRW');
 // Handle Admin Login Submission
 if (isset($_POST['admin_login'])) {
     $password = $_POST['password'] ?? '';
     if (password_verify($password, UPLOAD_PASSWORD_HASH)) {
         $_SESSION['is_admin'] = true;
-        header('Location: ' . getCurrentBaseUrl() . '?admin');
+        header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?') . '?admin');
         exit;
     } else {
-        $_SESSION['message'] = 'Incorrect password / Λάθος κωδικός.';
+        $_SESSION['message'] = 'Incorrect password.';
         $_SESSION['msg_type'] = 'error';
     }
 }
 
-
-
-/*
- |--------------------------------------------------------------------------
- | SYSTEM CONFIGURATION / ΡΥΘΜΙΣΕΙΣ ΣΥΣΤΗΜΑΤΟΣ
- |--------------------------------------------------------------------------
- */
-
-define('POEMS_DIR', __DIR__ . '/poems/');
-define('MAX_FILE_SIZE', 2 * 1024 * 1024);
-
-// Translation Dictionary
-$locales = [
-    'el' => [
-        'poet_name' => 'Όνομα Ποιητή',
-        'site_title' => 'Τίτλος Συλλογής',
-        'archive' => 'Αρχείο',
-        'theme_dark' => 'Σκοτάδι',
-        'theme_light' => 'Φως',
-        'no_poems' => 'Δεν υπάρχουν ποιήματα ακόμα.',
-        'delete_inline' => '(διαγραφή)',
-        'confirm_delete' => 'Είστε σίγουροι για τη διαγραφή;',
-        'back_to_archive' => 'Επιστροφή στο Αρχείο',
-        'view_poems' => 'Δείτε τα ποιήματα',
-        'management' => 'Διαχείριση',
-        'add_poem' => '+ Προσθήκη Ποιήματος',
-        'delete_poems' => 'Διαγραφή Ποιημάτων',
-        'exit' => '✕ Έξοδος',
-        'upload_title' => 'Ανεβάστε νέο ποίημα',
-        'file_label' => 'Αρχείο (.md/.txt)',
-        'pwd_label' => 'Κωδικός',
-        'pwd_ph' => 'Κωδικός ασφαλείας',
-        'btn_upload' => 'Ανέβασμα',
-        'btn_login' => 'Είσοδος',
-        'btn_cancel' => 'Ακύρωση',
-        'lang_toggle' => 'English',
-        'poems_label' => 'Ποιήματα',
-        'msg_pwd_err' => 'Λάθος κωδικός.',
-        'msg_upload_err' => 'Σφάλμα μεταφόρτωσης.',
-        'msg_ext_err' => 'Επιτρέπονται μόνο αρχεία .md ή .txt.',
-        'msg_size_err' => 'Το αρχείο είναι πολύ μεγάλο.',
-        'msg_success' => 'Το ποίημα ανέβηκε επιτυχώς.',
-        'msg_move_err' => 'Αποτυχία αποθήκευσης αρχείου.',
-        'msg_del_success' => 'Το ποίημα διαγράφηκε.',
-        'msg_del_err' => 'Αποτυχία διαγραφής.',
-        'welcome_msg' => 'Καλωσήρθατε. Παρακαλώ ανεβάστε περιεχόμενο για την αρχική σελίδα.',
-    ],
-    'en' => [
-        'poet_name' => 'Poet Name',
-        'site_title' => 'Collection Title',
-        'archive' => 'Archive',
-        'theme_dark' => 'Dark',
-        'theme_light' => 'Light',
-        'no_poems' => 'No poems yet.',
-        'delete_inline' => '(delete)',
-        'confirm_delete' => 'Are you sure you want to delete this poem?',
-        'back_to_archive' => 'Back to Archive',
-        'view_poems' => 'View Poems',
-        'management' => 'Management',
-        'add_poem' => '+ Add Poem',
-        'delete_poems' => 'Delete Poems',
-        'exit' => '✕ Exit',
-        'upload_title' => 'Upload new poem',
-        'file_label' => 'File (.md/.txt)',
-        'pwd_label' => 'Password',
-        'pwd_ph' => 'Security code',
-        'btn_upload' => 'Upload',
-        'btn_login' => 'Login',
-        'btn_cancel' => 'Cancel',
-        'lang_toggle' => 'Ελληνικά',
-        'poems_label' => 'Poems',
-        'msg_pwd_err' => 'Incorrect password.',
-        'msg_upload_err' => 'File upload error.',
-        'msg_ext_err' => 'Only .md or .txt files are allowed.',
-        'msg_size_err' => 'File too large.',
-        'msg_success' => 'Poem uploaded successfully.',
-        'msg_move_err' => 'Failed to move uploaded file.',
-        'msg_del_success' => 'Poem deleted.',
-        'msg_del_err' => 'Failed to delete poem.',
-        'welcome_msg' => 'Welcome. Please upload the landing page content.',
-    ]
-];
-
-// Initialize Session
-
+ // Hash for 'papako'
+define('MAX_FILE_SIZE', 2 * 1024 * 1024); // 2MB
+define('LANDING_FILE', 'Κωνσταντινος_Παπακωνσταντινου.md');
 
 // Ensure poems directory exists
 if (!is_dir(POEMS_DIR)) {
     mkdir(POEMS_DIR, 0755, true);
 }
 
-// Helper: Safely get current script URL without query params
-function getCurrentBaseUrl(): string {
-    return explode('?', $_SERVER['REQUEST_URI'] ?? '/')[0];
-}
+// Session for flash messages and admin state
 
-// Handle Language Switch
-if (isset($_GET['lang'])) {
-    $_SESSION['lang'] = in_array($_GET['lang'], ['el', 'en']) ? $_GET['lang'] : UI_LANGUAGE;
-    $params = $_GET;
-    unset($params['lang']);
-    $queryString = http_build_query($params);
-    header('Location: ' . getCurrentBaseUrl() . ($queryString ? '?' . $queryString : ''));
-    exit;
-}
-$currentLang = $_SESSION['lang'] ?? UI_LANGUAGE;
-$lang = $locales[$currentLang] ?? $locales['en'];
 
-// Handle Admin Mode
+// Handle Admin Mode toggle
 if (isset($_GET['logout'])) {
     unset($_SESSION['is_admin']);
     $params = $_GET;
-    unset($params['logout'], $params['admin']);
+    unset($params['logout'], $params['admin']); // Clear both logout and admin flags
     $queryString = http_build_query($params);
-    header('Location: ' . getCurrentBaseUrl() . ($queryString ? '?' . $queryString : ''));
+    $url = strtok($_SERVER['REQUEST_URI'], '?');
+    header('Location: ' . $url . ($queryString ? '?' . $queryString : ''));
     exit;
 }
 $isAdmin = !empty($_SESSION['is_admin']);
-
-// Resolve displayed poet name and site title
-$displayPoetName = POET_NAME ?: $lang['poet_name'];
-$displaySiteTitle = SITE_TITLE ?: $lang['site_title'];
 
 /**
  * --- Helper Functions ---
  */
 
-function getLocalizedFilename(string $filename, string $lang): string {
-    $info = pathinfo($filename);
-    $ext = $info['extension'] ?? 'md';
-    $base = $info['filename'];
-    $cleanBase = preg_replace('/_(en|el)$/', '', $base);
-    $localized = $cleanBase . '_' . $lang . '.' . $ext;
-    return file_exists(POEMS_DIR . $localized) ? $localized : $filename;
-}
-
-function getPoemTitle(string $filepath): string {
+/**
+ * Extracts the first H1 title from a markdown file without loading the whole file.
+ * Performance: Uses stream reading to avoid memory overhead.
+ */
+function getPoemTitle(string $filepath): string
+{
     $handle = @fopen($filepath, 'r');
-    if (!$handle) return '';
+    if (!$handle) {
+        return '';
+    }
+
     $title = '';
     while (($line = fgets($handle)) !== false) {
         $line = trim($line);
@@ -183,14 +70,25 @@ function getPoemTitle(string $filepath): string {
             $title = trim(substr($line, 2));
             break;
         }
+        // Optimization: Stop searching after first few lines if no title found
         if (ftell($handle) > 1024) break; 
     }
     fclose($handle);
     return $title;
 }
 
-function parsePoetryMarkdown(string $text): string {
+/**
+ * Simple "Poetry Markdown" parser.
+ * - Converts # Header to <h1>
+ * - Preserves line breaks
+ * - Handles basic formatting
+ */
+function parsePoetryMarkdown(string $text): string
+{
+    // Escape HTML to prevent XSS (except for tags we generate)
     $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+
+    // Optimization: Streamline regex replacements
     $patterns = [
         '/^#\s+(.+)$/m'      => '<h1 class="poem-title reveal-on-scroll">$1</h1>',
         '/^##\s+(.+)$/m'     => '<h2 class="reveal-on-scroll">$1</h2>',
@@ -199,7 +97,10 @@ function parsePoetryMarkdown(string $text): string {
         '/(\*|_)(.*?)\1/'    => '<em>$2</em>',
     ];
     $text = preg_replace(array_keys($patterns), array_values($patterns), $text);
+
+    // Split by H1 to separate title from body
     $parts = preg_split('/(<h1.*?>.*?<\/h1>)/s', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
     $html = '';
     foreach ($parts as $part) {
         if (strpos($part, '<h1') === 0) {
@@ -207,6 +108,7 @@ function parsePoetryMarkdown(string $text): string {
         } else {
             $body = trim($part);
             if (!empty($body)) {
+                // Convert double newlines to stanzas
                 $stanzas = preg_split('/\n\s*\n/', $body);
                 foreach ($stanzas as $stanza) {
                     $html .= '<div class="stanza reveal-on-scroll">' . nl2br(trim($stanza)) . '</div>';
@@ -214,68 +116,96 @@ function parsePoetryMarkdown(string $text): string {
             }
         }
     }
+
     if (empty($html) && !empty($text)) {
         $stanzas = preg_split('/\n\s*\n/', $text);
         foreach ($stanzas as $stanza) {
             $html .= '<div class="stanza reveal-on-scroll">' . nl2br(trim($stanza)) . '</div>';
         }
     }
+
     return $html;
 }
 
-function handleUpload(array $lang): void {
-    if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || empty($_FILES)) return;
+/**
+ * Handle File Upload
+ */
+function handleUpload(): void
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_FILES)) {
+        return;
+    }
+
     $password = $_POST['password'] ?? '';
     if (!password_verify($password, UPLOAD_PASSWORD_HASH)) {
-        $_SESSION['message'] = 'Incorrect password / Λάθος κωδικός.';
+        $_SESSION['message'] = 'Incorrect password.';
         $_SESSION['msg_type'] = 'error';
         return;
     }
+
     $file = $_FILES['poem'] ?? null;
     if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
-        $_SESSION['message'] = $lang['msg_upload_err'];
+        $_SESSION['message'] = 'File upload error.';
         $_SESSION['msg_type'] = 'error';
         return;
     }
+
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     if (!in_array($ext, ['md', 'txt'], true)) {
-        $_SESSION['message'] = $lang['msg_ext_err'];
+        $_SESSION['message'] = 'Only .md or .txt files are allowed.';
         $_SESSION['msg_type'] = 'error';
         return;
     }
+
     if ($file['size'] > MAX_FILE_SIZE) {
-        $_SESSION['message'] = $lang['msg_size_err'];
+        $_SESSION['message'] = 'File too large.';
         $_SESSION['msg_type'] = 'error';
         return;
     }
-    $filename = preg_replace('/[^\p{L}\p{N}\.\-_]/u', '_', $file['name']);
+
+    // Improved Sanitization: Keep Greek characters but remove dangerous ones
+    $filename = $file['name'];
+    // Replace spaces/dots/dashes with underscore for safer FS usage but keep Greek
+    $filename = preg_replace('/[^\p{L}\p{N}\.\-_]/u', '_', $filename);
     $filename = preg_replace('/_+/', '_', $filename);
     $filename = trim($filename, '_');
+    
     $destination = POEMS_DIR . $filename;
+
     if (move_uploaded_file($file['tmp_name'], $destination)) {
-        $_SESSION['message'] = $lang['msg_success'];
+        $_SESSION['message'] = 'Poem uploaded successfully.';
         $_SESSION['msg_type'] = 'success';
     } else {
-        $_SESSION['message'] = $lang['msg_move_err'];
+        $_SESSION['message'] = 'Failed to move uploaded file.';
         $_SESSION['msg_type'] = 'error';
     }
+
     header('Location: ' . $_SERVER['PHP_SELF'] . '?view=list');
     exit;
 }
 
-function handleDelete(bool $isAdmin, array $lang): void {
-    if (!$isAdmin || !isset($_GET['delete'])) return;
+/**
+ * Handle File Deletion
+ */
+function handleDelete(bool $isAdmin): void
+{
+    if (!$isAdmin || !isset($_GET['delete'])) {
+        return;
+    }
+
     $file = basename($_GET['delete']);
     $filepath = POEMS_DIR . $file;
-    if (file_exists($filepath)) {
+
+    if ($file !== LANDING_FILE && file_exists($filepath)) {
         if (unlink($filepath)) {
-            $_SESSION['message'] = $lang['msg_del_success'];
+            $_SESSION['message'] = 'Το ποίημα διαγράφηκε.';
             $_SESSION['msg_type'] = 'success';
         } else {
-            $_SESSION['message'] = $lang['msg_del_err'];
+            $_SESSION['message'] = 'Αποτυχία διαγραφής.';
             $_SESSION['msg_type'] = 'error';
         }
     }
+
     header('Location: ' . $_SERVER['PHP_SELF'] . '?view=list');
     exit;
 }
@@ -284,73 +214,56 @@ function handleDelete(bool $isAdmin, array $lang): void {
  * --- Main Logic ---
  */
 
-handleUpload($lang);
-handleDelete($isAdmin, $lang);
+handleUpload();
+handleDelete($isAdmin);
 
 $view = $_GET['view'] ?? 'home';
 if (isset($_GET['admin']) && !$isAdmin) $view = 'admin_login';
 $poemHtml = '';
 $poems = [];
 
-// Content Loading Logic
+// Routing & Content Loading
 if (isset($_GET['poem'])) {
     $view = 'poem';
     $file = basename($_GET['poem']);
-    $file = getLocalizedFilename($file, $currentLang);
     $filepath = POEMS_DIR . $file;
     if (file_exists($filepath)) {
         $poemHtml = parsePoetryMarkdown(file_get_contents($filepath));
     }
 } elseif ($view === 'home') {
-    // Generate landing page dynamically using localized placeholders
-    $poemHtml = '<h1 class="poem-title reveal-on-scroll">' . htmlspecialchars($displayPoetName) . '</h1>';
-    $poemHtml .= '<div class="stanza reveal-on-scroll"><h2 class="reveal-on-scroll"><em>' . htmlspecialchars($displaySiteTitle) . '</em></h2></div>';
-    $poemHtml .= '<div class="stanza reveal-on-scroll"><h3 class="reveal-on-scroll">' . htmlspecialchars($lang['poems_label']) . '</h3></div>';
+    $filepath = POEMS_DIR . LANDING_FILE;
+    if (file_exists($filepath)) {
+        $poemHtml = parsePoetryMarkdown(file_get_contents($filepath));
+    } else {
+        $poemHtml = '<div class="stanza">Welcome. Please upload the landing page content.</div>';
+    }
 }
 
-// List fetching logic
+// Listing Logic (Optimized: only run when needed)
 if ($view === 'list') {
     $files = scandir(POEMS_DIR);
-    $groups = [];
     foreach ($files as $f) {
-        if ($f === '.' || $f === '..' || is_dir(POEMS_DIR . $f)) continue;
-
-        $info = pathinfo($f);
-        $base = $info['filename'];
-        $cleanBase = preg_replace('/_(en|el)$/', '', $base);
-
-        $priority = 0;
-        if (preg_match('/_' . $currentLang . '$/', $base)) {
-            $priority = 2;
-        } elseif (!preg_match('/_(en|el)$/', $base)) {
-            $priority = 1;
-        }
-
-        if (!isset($groups[$cleanBase]) || $priority > $groups[$cleanBase]['priority']) {
-            $groups[$cleanBase] = ['filename' => $f, 'priority' => $priority];
+        if ($f !== '.' && $f !== '..' && $f !== LANDING_FILE && !is_dir(POEMS_DIR . $f)) {
+            $poems[] = $f;
         }
     }
-    
-    $poems = array_column($groups, 'filename');
 
+    // Sort alphabetically (Greek-aware)
     if (class_exists('Collator')) {
-        $collator = new Collator($currentLang === 'el' ? 'el_GR' : 'en_US');
-        usort($poems, function($a, $b) use ($collator) {
-            $titleA = getPoemTitle(POEMS_DIR . $a) ?: $a;
-            $titleB = getPoemTitle(POEMS_DIR . $b) ?: $b;
-            return $collator->compare($titleA, $titleB);
-        });
+        $collator = new Collator('el_GR');
+        usort($poems, fn($a, $b) => $collator->compare($a, $b));
     } else {
         usort($poems, 'strcmp');
     }
 }
+
 ?>
 <!DOCTYPE html>
-<html lang="<?= $currentLang ?>">
+<html lang="el">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $displaySiteTitle ?></title>
+    <title><?= SITE_TITLE ?></title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -363,11 +276,14 @@ if ($view === 'list') {
             --border-color: #8c3b3b;
             --font-main: 'EB Garamond', serif;
         }
+
         [data-theme="dark"] {
             --bg-color: #1a1a1a;
             --text-color: #e0e0e0;
         }
+
         * { box-sizing: border-box; }
+
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -378,6 +294,7 @@ if ($view === 'list') {
             -webkit-font-smoothing: antialiased;
             transition: background-color 0.3s, color 0.3s;
         }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -386,12 +303,14 @@ if ($view === 'list') {
             display: flex;
             flex-direction: column;
         }
+
         header {
             text-align: center;
             margin-bottom: 4rem;
             padding-bottom: 2rem;
             border-bottom: 1px solid var(--border-color);
         }
+
         h1.site-title {
             font-weight: 400;
             font-style: italic;
@@ -399,10 +318,12 @@ if ($view === 'list') {
             margin: 0;
             font-size: 3rem;
         }
+
         h1.site-title a {
             text-decoration: none;
             color: var(--accent-color);
         }
+
         nav {
             margin-top: 1.5rem;
             display: flex;
@@ -410,6 +331,7 @@ if ($view === 'list') {
             align-items: center;
             gap: 30px;
         }
+
         nav a, .theme-toggle, .std-link {
             color: #666;
             text-decoration: none;
@@ -421,18 +343,23 @@ if ($view === 'list') {
             padding: 0;
             font-family: inherit;
         }
+
         [data-theme="dark"] nav a, [data-theme="dark"] .theme-toggle, [data-theme="dark"] .std-link {
             color: #aaa;
         }
+
         nav a:hover, .theme-toggle:hover, .std-link:hover {
             color: var(--accent-color);
         }
+
         .poem-list {
             list-style: none;
             padding: 0;
             text-align: center;
         }
+
         .poem-list li { margin: 1.8rem 0; }
+
         .poem-list a {
             text-decoration: none;
             color: var(--text-color);
@@ -440,20 +367,24 @@ if ($view === 'list') {
             border-bottom: 1px solid transparent;
             transition: all 0.3s ease;
         }
+
         .poem-list a:hover {
             border-bottom-color: var(--accent-color);
             color: var(--accent-color);
         }
+
         .poem-content {
             margin: 3rem auto;
             max-width: 700px;
         }
+
         .poem-title {
             text-align: center;
             font-weight: 400;
             margin-bottom: 3.5rem;
             font-size: 2.5rem;
         }
+
         .poem-content h2 {
             text-align: center;
             font-weight: 400;
@@ -461,12 +392,14 @@ if ($view === 'list') {
             margin: 3rem 0 2rem;
             color: var(--accent-color);
         }
+
         .poem-content h3 {
             text-align: center;
             font-weight: 400;
             font-size: 1.5rem;
             margin: 2rem 0;
         }
+
         .stanza {
             margin-bottom: 2rem;
             white-space: pre-wrap;
@@ -474,6 +407,59 @@ if ($view === 'list') {
             padding: 0 1rem;
             line-height: 1.2;
         }
+
+        .upload-section {
+            margin-top: auto;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        #upload-form {
+            display: none;
+            margin-top: 1rem;
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        #upload-form input {
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-family: inherit;
+        }
+
+        #upload-form button {
+            background: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .message {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .message.error { background: #ffe6e6; color: #d63031; }
+        .message.success { background: #e6fffa; color: #00b894; }
+        [data-theme="dark"] .message.error { background: #4a0000; color: #ff6b6b; }
+        [data-theme="dark"] .message.success { background: #004d40; color: #69f0ae; }
+
         footer {
             text-align: center;
             margin-top: auto;
@@ -491,6 +477,7 @@ if ($view === 'list') {
         .admin-link:hover {
             color: var(--accent-color);
         }
+
         .action-button {
             display: inline-flex;
             align-items: center;
@@ -503,44 +490,54 @@ if ($view === 'list') {
             font-size: 1.5rem;
             transition: all 0.3s;
         }
+
         .action-button svg {
             width: 24px;
             height: 24px;
             transition: transform 0.3s;
         }
+
         .action-button:hover { color: var(--accent-color); }
         .action-button:hover svg {
             transform: translateX(5px);
             color: var(--accent-color);
         }
+
         .reveal-on-scroll {
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
+
         .reveal-on-scroll.is-visible {
             opacity: 1;
             transform: translateY(0);
         }
+
         .view-home .container {
             padding-top: 1rem;
             padding-bottom: 1rem;
         }
+
         .view-home main {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
+
         .view-home header {
             margin-bottom: 2rem;
         }
+
         .view-home .poem-content {
             margin-top: 0;
         }
+
         .view-home footer {
             margin-top: 2rem;
         }
+
         .admin-toolbar {
             position: fixed;
             bottom: 20px;
@@ -555,6 +552,7 @@ if ($view === 'list') {
             z-index: 1000;
             backdrop-filter: blur(5px);
         }
+
         .admin-toolbar a {
             color: #fff;
             text-decoration: none;
@@ -564,7 +562,11 @@ if ($view === 'list') {
             gap: 5px;
             transition: opacity 0.3s;
         }
-        .admin-toolbar a:hover { opacity: 0.8; }
+
+        .admin-toolbar a:hover {
+            opacity: 0.8;
+        }
+
         #upload-form {
             display: none;
             position: fixed;
@@ -578,14 +580,17 @@ if ($view === 'list') {
             z-index: 1001;
             width: 300px;
         }
+
         #upload-form.active {
             display: block;
             animation: slideUp 0.3s ease-out;
         }
+
         @keyframes slideUp {
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+
         @media (max-width: 600px) {
             .container { padding: 1rem; }
             h1.site-title { font-size: 2rem; }
@@ -613,27 +618,13 @@ if ($view === 'list') {
             display: block;
             margin: 0 auto;
         }
-        .message {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .message.error { background: #ffe6e6; color: #d63031; }
-        .message.success { background: #e6fffa; color: #00b894; }
-        [data-theme="dark"] .message.error { background: #4a0000; color: #ff6b6b; }
-        [data-theme="dark"] .message.success { background: #004d40; color: #69f0ae; }
     </style>
     <script>
+        // Apply saved theme immediately to prevent flash
         (function() {
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
-
-        const i18n = {
-            dark: "<?= $lang['theme_dark'] ?>",
-            light: "<?= $lang['theme_light'] ?>"
-        };
 
         function toggleUpload() {
             const form = document.getElementById('upload-form');
@@ -650,11 +641,13 @@ if ($view === 'list') {
 
         function updateThemeButton(theme) {
             const btn = document.getElementById('theme-btn');
-            if (btn) btn.textContent = theme === 'dark' ? i18n.light : i18n.dark;
+            if (btn) btn.textContent = theme === 'dark' ? 'Φως' : 'Σκοτάδι';
         }
 
         document.addEventListener("DOMContentLoaded", function() {
             updateThemeButton(document.documentElement.getAttribute('data-theme'));
+
+            // Optimized Intersection Observer
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -663,18 +656,20 @@ if ($view === 'list') {
                     }
                 });
             }, { threshold: 0.1 });
+
             document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
         });
     </script>
 </head>
 <body class="view-<?= $view ?><?= $isAdmin ? ' admin-mode' : '' ?>">
+
     <div class="container">
         <?php if ($view !== 'home' || $isAdmin): ?>
             <header class="reveal-on-scroll">
-                <h1 class="site-title"><a href="index.php"><?= $displaySiteTitle ?></a></h1>
+                <h1 class="site-title"><a href="index.php"><?= SITE_TITLE ?></a></h1>
                 <nav>
-                    <a href="index.php?view=list"><?= $lang['archive'] ?></a>
-                    <button id="theme-btn" class="theme-toggle" onclick="toggleTheme()"><?= $lang['theme_dark'] ?></button>
+                    <a href="index.php?view=list">Αρχείο</a>
+                    <button id="theme-btn" class="theme-toggle" onclick="toggleTheme()">Σκοτάδι</button>
                 </nav>
             </header>
         <?php endif; ?>
@@ -689,32 +684,31 @@ if ($view === 'list') {
         <main>
             <?php if ($view === 'admin_login'): ?>
                 <div class="poem-content">
-                    <h1 class="poem-title"><?= $lang['management'] ?></h1>
+                    <h1 class="poem-title">Διαχείριση</h1>
                     <form action="" method="post" style="max-width: 300px; margin: 0 auto; text-align: center;">
-                        <input type="password" name="password" placeholder="<?= $lang['pwd_ph'] ?>" required 
+                        <input type="password" name="password" placeholder="Κωδικός ασφαλείας" required 
                                style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit;">
                         <button type="submit" name="admin_login" 
                                 style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem;">
-                            <?= $lang['btn_login'] ?>
+                            Είσοδος
                         </button>
                     </form>
                 </div>
             <?php elseif ($view === 'list'): ?>
                 <ul class="poem-list">
                     <?php if (empty($poems)): ?>
-                        <li><span style="color: #999; font-style: italic;"><?= $lang['no_poems'] ?></span></li>
+                        <li><span style="color: #999; font-style: italic;">Δεν υπάρχουν ποιήματα ακόμα.</span></li>
                     <?php else: ?>
                         <?php foreach ($poems as $poem): 
                             $title = getPoemTitle(POEMS_DIR . $poem);
-                            $cleanDisplay = preg_replace('/_(en|el)$/', '', pathinfo($poem, PATHINFO_FILENAME));
-                            $displayName = $title ?: str_replace(['_', '-'], [' ', ' '], $cleanDisplay);
+                            $displayName = $title ?: str_replace(['.md', '_', '-'], ['', ' ', ' '], $poem);
                         ?>
                             <li class="reveal-on-scroll">
                                 <a href="?view=poem&poem=<?= urlencode($poem) ?>"><?= htmlspecialchars($displayName) ?></a>
                                 <?php if ($isAdmin): ?>
                                     <a href="?delete=<?= urlencode($poem) ?>" 
-                                       onclick="return confirm('<?= $lang['confirm_delete'] ?>');" 
-                                       style="color: #999; font-size: 0.8rem; margin-left: 15px; text-decoration: none;"><?= $lang['delete_inline'] ?></a>
+                                       onclick="return confirm('Είστε σίγουροι για τη διαγραφή;');" 
+                                       style="color: #999; font-size: 0.8rem; margin-left: 15px; text-decoration: none;">(διαγραφή)</a>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
@@ -726,10 +720,10 @@ if ($view === 'list') {
                 </div>
                 <div style="text-align: center; margin-top: 3rem;">
                     <?php if ($view === 'poem'): ?>
-                        <a href="index.php?view=list" class="std-link">&larr; <?= $lang['back_to_archive'] ?></a>
+                        <a href="index.php?view=list" class="std-link">&larr; Επιστροφή στο Αρχείο</a>
                     <?php else: ?>
                         <a href="index.php?view=list" class="action-button">
-                            <?= $lang['view_poems'] ?>
+                            Δείτε τα ποιήματα
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
@@ -742,39 +736,37 @@ if ($view === 'list') {
 
         <?php if ($isAdmin): ?>
             <div class="admin-toolbar">
-                <a href="?lang=<?= $currentLang === 'el' ? 'en' : 'el' ?>">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                    <?= $lang['lang_toggle'] ?>
-                </a>
-                <a href="#" onclick="toggleUpload(); return false;"><?= $lang['add_poem'] ?></a>
+                <a href="#" onclick="toggleUpload(); return false;">+ Προσθήκη Ποιήματος</a>
                 <a href="index.php?view=list">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    <?= $lang['delete_poems'] ?>
+                    Διαγραφή Ποιημάτων
                 </a>
                 <?php 
                     $logoutParams = $_GET;
                     $logoutParams['logout'] = '1';
                 ?>
-                <a href="?<?= http_build_query($logoutParams) ?>"><?= $lang['exit'] ?></a>
+                <a href="?<?= http_build_query($logoutParams) ?>">✕ Έξοδος</a>
             </div>
+
             <div id="upload-form">
-                <h3><?= $lang['upload_title'] ?></h3>
+                <h3>Ανεβάστε νέο ποίημα</h3>
                 <form action="" method="post" enctype="multipart/form-data">
-                    <label for="poem_file"><?= $lang['file_label'] ?></label>
+                    <label for="poem_file">Αρχείο (.md/.txt)</label>
                     <input type="file" name="poem" id="poem_file" required>
-                    <label for="pwd"><?= $lang['pwd_label'] ?></label>
-                    <input type="password" name="password" id="pwd" required placeholder="<?= $lang['pwd_ph'] ?>">
-                    <button type="submit"><?= $lang['btn_upload'] ?></button>
-                    <button type="button" onclick="toggleUpload()" style="background: none; color: #888; border: none; margin-top: 10px; width: 100%; cursor: pointer;"><?= $lang['btn_cancel'] ?></button>
+                    <label for="pwd">Κωδικός</label>
+                    <input type="password" name="password" id="pwd" required placeholder="Κωδικός ασφαλείας">
+                    <button type="submit">Ανέβασμα</button>
+                    <button type="button" onclick="toggleUpload()" style="background: none; color: #888; border: none; margin-top: 10px; width: 100%; cursor: pointer;">Ακύρωση</button>
                 </form>
             </div>
         <?php endif; ?>
+
         <footer>
-            &copy; <?= date('Y') ?> <?= $displayPoetName ?>. All rights reserved.
+            &copy; <?= date('Y') ?> Κωνσταντίνος Παπακωνσταντίνου. All rights reserved.
             &bull;
-            <a href="https://github.com/cozats/Poetry-Site-Template" target="_blank" class="admin-link" style="text-decoration: none;">GitHub</a>
+            <a href="https://github.com/cozats/Stanza" target="_blank" class="admin-link" style="text-decoration: none;">GitHub</a>
             <br>
-            <a href="index.php?admin" class="admin-link"><?= $lang['management'] ?></a>
+            <a href="index.php?admin" class="admin-link">Διαχείριση</a>
         </footer>
     </div>
 </body>
