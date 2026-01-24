@@ -770,6 +770,8 @@ if ($view === 'list') {
         <?php endif; ?>
         <footer>
             &copy; <?= date('Y') ?> <?= $displayPoetName ?>. All rights reserved.
+            &bull;
+            <a href="https://github.com/cozats/Poetry-Site-Template" target="_blank" class="admin-link" style="text-decoration: none;">GitHub</a>
             <br>
             <a href="index.php?admin" class="admin-link"><?= $lang['management'] ?></a>
         </footer>
