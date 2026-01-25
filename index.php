@@ -847,7 +847,11 @@ if ($view === 'list') {
         }
 
         .file-label {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
             padding: 12px;
             border: 1px dashed var(--border-color);
             background: rgba(140, 59, 59, 0.05);
@@ -856,7 +860,7 @@ if ($view === 'list') {
             text-align: center;
             transition: all 0.3s;
             font-size: 0.9rem;
-            border-radius: 4px;
+            border-radius: 50px;
         }
 
         .file-label:hover {
@@ -883,7 +887,7 @@ if ($view === 'list') {
             display: block;
             margin: 0 auto;
             transition: opacity 0.3s;
-            border-radius: 4px;
+            border-radius: 50px;
         }
 
         #upload-form button[type="submit"]:hover {
@@ -1074,9 +1078,9 @@ if ($view === 'list') {
                     <h1 class="poem-title"><?= $lang['management'] ?></h1>
                     <form action="" method="post" style="max-width: 300px; margin: 0 auto; text-align: center;">
                         <input type="password" name="password" placeholder="<?= $lang['pwd_ph'] ?>" required autofocus
-                            style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit;">
+                            style="width: 100%; padding: 12px 24px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit; border-radius: 50px;">
                         <button type="submit" name="admin_login"
-                            style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem;">
+                            style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem; border-radius: 50px;">
                             <?= $lang['btn_login'] ?>
                         </button>
                     </form>
