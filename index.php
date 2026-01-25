@@ -796,7 +796,7 @@ if ($view === 'list') {
             cursor: pointer;
             font-family: inherit;
             font-size: 1rem;
-            display: inline-block;
+            display: block;
             margin: 1.5rem auto 0;
             transition: all 0.3s;
             border-radius: 50px;
@@ -1310,7 +1310,7 @@ if ($view === 'list') {
                             </div>
                             <button type="submit"><?= $lang['btn_upload'] ?></button>
                             <button type="button" onclick="toggleUpload(event)"
-                                style="background: none; color: white; border: none; margin-top: 5px; width: auto; cursor: pointer; font-size: 0.9rem; font-family: inherit; display: inline-block; text-decoration: underline; opacity: 0.8;"><?= $lang['btn_cancel'] ?></button>
+                                style="background: none; color: white; border: none; margin-top: 5px; width: auto; cursor: pointer; font-size: 0.9rem; font-family: inherit; display: block; margin: 5px auto 0; text-decoration: underline; opacity: 0.8;"><?= $lang['btn_cancel'] ?></button>
                         </form>
                     </div>
                 </div>
