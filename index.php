@@ -829,30 +829,70 @@ if ($view === 'list') {
                 left: 10px;
                 right: 10px;
                 bottom: 10px;
-                justify-content: space-around;
-                gap: 5px;
-                padding: 10px 5px;
-                border-radius: 50px;
+                height: 60px;
+                padding: 0;
+                border-radius: 30px;
+                display: flex;
+                align-items: center;
+                gap: 0; /* Reset desktop gap */
+            }
+
+            .admin-toolbar > a,
+            .admin-toolbar > .dropdown {
+                flex: 1;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: static;
             }
 
             .admin-toolbar a {
-                flex-direction: column;
-                gap: 4px;
-                font-size: 0.65rem;
-                text-align: center;
-                flex: 1;
+                gap: 0;
+                font-size: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .admin-toolbar a span:not(.icon-wrapper) {
+                display: none;
+            }
+
+            .admin-toolbar .icon-wrapper {
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .admin-toolbar a svg {
-                width: 18px;
-                height: 18px;
+                width: 26px !important;
+                height: 26px !important;
+                stroke-width: 1.5 !important;
             }
 
-            #upload-form {
-                left: 20px;
-                right: 20px;
-                width: auto;
-                bottom: 80px;
+            .dropdown-content {
+                position: fixed;
+                bottom: 80px; /* Positioned above the 60px toolbar + 10px gap + 10px padding */
+                left: 50%;
+                top: auto;
+                transform: translateX(-50%) !important;
+                width: 90%;
+                max-width: 320px;
+                margin: 0;
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+                z-index: 1005;
+            }
+
+            .dropdown-content::after {
+                display: none;
+            }
+
+            @keyframes slideUpFade {
+                from { opacity: 0; transform: translate(-50%, 10px); }
+                to { opacity: 1; transform: translate(-50%, 0); }
             }
         }
 
