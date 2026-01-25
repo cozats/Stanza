@@ -62,7 +62,7 @@ $locales = [
         'back_to_archive' => 'Επιστροφή στο Αρχείο',
         'view_poems' => 'Δείτε τα ποιήματα',
         'management' => 'Διαχείριση',
-        'add_poem' => '+ Προσθήκη Ποιήματος',
+        'add_poem' => 'Προσθήκη Ποιήματος',
         'delete_poems' => 'Διαγραφή Ποιημάτων',
         'exit' => '✕ Έξοδος',
         'upload_title' => 'Ανεβάστε νέο ποίημα',
@@ -96,7 +96,7 @@ $locales = [
         'back_to_archive' => 'Back to Archive',
         'view_poems' => 'View Poems',
         'management' => 'Management',
-        'add_poem' => '+ Add Poem',
+        'add_poem' => 'Add Poem',
         'delete_poems' => 'Delete Poems',
         'exit' => '✕ Exit',
         'upload_title' => 'Upload new poem',
@@ -934,23 +934,43 @@ if ($view === 'list') {
         <?php if ($isAdmin): ?>
             <div class="admin-toolbar">
                 <a href="?lang=<?= $currentLang === 'el' ? 'en' : 'el' ?>">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                        </path>
+                    </svg>
                     <span><?= $lang['lang_toggle'] ?></span>
                 </a>
                 <a href="#" onclick="toggleUpload(); return false;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
                     <span><?= $lang['add_poem'] ?></span>
                 </a>
                 <a href="index.php?view=list">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
                     <span><?= $lang['delete_poems'] ?></span>
                 </a>
-                <?php 
-                    $logoutParams = $_GET;
-                    $logoutParams['logout'] = '1';
+                <?php
+                $logoutParams = $_GET;
+                $logoutParams['logout'] = '1';
                 ?>
                 <a href="?<?= http_build_query($logoutParams) ?>">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
                     <span><?= $lang['exit'] ?></span>
                 </a>
             </div>
