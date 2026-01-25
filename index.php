@@ -509,24 +509,24 @@ if ($view === 'list') {
             max-width: 744px;
         }
 
-        .align-left .stanza,
-        .align-left .poem-title,
-        .align-left .poem-content h2,
-        .align-left .poem-content h3 {
+        .view-poem.align-left .stanza,
+        .view-poem.align-left .poem-title,
+        .view-poem.align-left .poem-content h2,
+        .view-poem.align-left .poem-content h3 {
             text-align: left;
         }
 
-        .align-center .stanza,
-        .align-center .poem-title,
-        .align-center .poem-content h2,
-        .align-center .poem-content h3 {
+        .view-poem.align-center .stanza,
+        .view-poem.align-center .poem-title,
+        .view-poem.align-center .poem-content h2,
+        .view-poem.align-center .poem-content h3 {
             text-align: center;
         }
 
-        .align-right .stanza,
-        .align-right .poem-title,
-        .align-right .poem-content h2,
-        .align-right .poem-content h3 {
+        .view-poem.align-right .stanza,
+        .view-poem.align-right .poem-title,
+        .view-poem.align-right .poem-content h2,
+        .view-poem.align-right .poem-content h3 {
             text-align: right;
         }
 
@@ -716,7 +716,7 @@ if ($view === 'list') {
             }
         }
 
-        .dropdown:hover .dropdown-content {
+        .dropdown.active .dropdown-content {
             display: block;
         }
 
@@ -969,6 +969,17 @@ if ($view === 'list') {
             document.querySelectorAll('.dropdown-content button').forEach(btn => {
                 btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${align}'`));
             });
+
+            // Close dropdown after selection
+            const dropdown = document.getElementById('align-dropdown');
+            if (dropdown) dropdown.classList.remove('active');
+        }
+
+        function toggleDropdown(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropdown = document.getElementById('align-dropdown');
+            if (dropdown) dropdown.classList.toggle('active');
         }
 
         function toggleSort(e) {
@@ -1020,6 +1031,14 @@ if ($view === 'list') {
             setAlignment(savedAlign);
 
             updateThemeButton(document.documentElement.getAttribute('data-theme'));
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (e) {
+                const dropdown = document.getElementById('align-dropdown');
+                if (dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -1126,8 +1145,8 @@ if ($view === 'list') {
                     <span class="icon-wrapper"></span>
                     <span class="sort-label"></span>
                 </a>
-                <div class="dropdown">
-                    <a href="#" onclick="return false;">
+                <div class="dropdown" id="align-dropdown">
+                    <a href="#" onclick="toggleDropdown(event)">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round">
                             <line x1="17" y1="10" x2="3" y2="10"></line>
