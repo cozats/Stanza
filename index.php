@@ -85,6 +85,10 @@ $locales = [
         'welcome_msg' => 'Καλωσήρθατε. Παρακαλώ ανεβάστε περιεχομενo για την αρχική σελίδα.',
         'sort_alpha' => 'Α-Ω',
         'sort_latest' => 'Νεότερα',
+        'align' => 'Στοίχιση',
+        'align_left' => 'Αριστερά',
+        'align_center' => 'Κέντρο',
+        'align_right' => 'Δεξιά',
     ],
     'en' => [
         'poet_name' => 'Poet Name',
@@ -121,6 +125,10 @@ $locales = [
         'welcome_msg' => 'Welcome. Please upload the landing page content.',
         'sort_alpha' => 'A-Z',
         'sort_latest' => 'Latest',
+        'align' => 'Alignment',
+        'align_left' => 'Left',
+        'align_center' => 'Center',
+        'align_right' => 'Right',
     ]
 ];
 
@@ -498,7 +506,28 @@ if ($view === 'list') {
 
         .poem-content {
             margin: 3rem auto;
-            max-width: 700px;
+            max-width: 744px;
+        }
+
+        .align-left .stanza,
+        .align-left .poem-title,
+        .align-left .poem-content h2,
+        .align-left .poem-content h3 {
+            text-align: left;
+        }
+
+        .align-center .stanza,
+        .align-center .poem-title,
+        .align-center .poem-content h2,
+        .align-center .poem-content h3 {
+            text-align: center;
+        }
+
+        .align-right .stanza,
+        .align-right .poem-title,
+        .align-right .poem-content h2,
+        .align-right .poem-content h3 {
+            text-align: right;
         }
 
         .poem-title {
@@ -641,6 +670,80 @@ if ($view === 'list') {
 
         .admin-toolbar a:hover {
             opacity: 0.8;
+        }
+
+        .dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-color);
+            min-width: 140px;
+            box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            z-index: 1002;
+            margin-bottom: 20px;
+            padding: 8px;
+            animation: slideUpFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dropdown-content::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: var(--accent-color);
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-family: inherit;
+            font-size: 0.9rem;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .dropdown-content button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-content button.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
         }
 
         #upload-form {
@@ -854,6 +957,20 @@ if ($view === 'list') {
             if (btn) btn.textContent = theme === 'dark' ? i18n.light : i18n.dark;
         }
 
+        function setAlignment(align) {
+            const container = document.querySelector('.poem-content');
+            if (!container) return;
+
+            ['align-left', 'align-center', 'align-right'].forEach(cls => container.classList.remove(cls));
+            container.classList.add(`align-${align}`);
+            localStorage.setItem('poem_alignment', align);
+
+            // Update UI buttons
+            document.querySelectorAll('.dropdown-content button').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${align}'`));
+            });
+        }
+
         function toggleSort(e) {
             e.preventDefault();
             const currentSort = localStorage.getItem('sort_order') === 'latest' ? 'alpha' : 'latest';
@@ -884,7 +1001,7 @@ if ($view === 'list') {
             if (!btn) return;
             const label = btn.querySelector('.sort-label');
             const iconContainer = btn.querySelector('.icon-wrapper');
-            
+
             if (order === 'latest') {
                 label.textContent = "<?= $lang['sort_alpha'] ?>";
                 iconContainer.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
@@ -898,6 +1015,9 @@ if ($view === 'list') {
             const savedSort = localStorage.getItem('sort_order') || 'alpha';
             applySort(savedSort);
             updateSortButton(savedSort);
+
+            const savedAlign = localStorage.getItem('poem_alignment') || 'center';
+            setAlignment(savedAlign);
 
             updateThemeButton(document.documentElement.getAttribute('data-theme'));
             const observer = new IntersectionObserver((entries) => {
@@ -969,7 +1089,7 @@ if ($view === 'list') {
                     <?php endif; ?>
                 </ul>
             <?php elseif ($view === 'poem' || $view === 'home'): ?>
-                <div class="poem-content">
+                <div class="poem-content align-center">
                     <?= $poemHtml ?>
                 </div>
                 <div style="text-align: center; margin-top: 3rem;">
@@ -1006,6 +1126,50 @@ if ($view === 'list') {
                     <span class="icon-wrapper"></span>
                     <span class="sort-label"></span>
                 </a>
+                <div class="dropdown">
+                    <a href="#" onclick="return false;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="17" y1="10" x2="3" y2="10"></line>
+                            <line x1="21" y1="6" x2="3" y2="6"></line>
+                            <line x1="21" y1="14" x2="3" y2="14"></line>
+                            <line x1="17" y1="18" x2="3" y2="18"></line>
+                        </svg>
+                        <span><?= $lang['align'] ?></span>
+                    </a>
+                    <div class="dropdown-content">
+                        <button onclick="setAlignment('left')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="17" y1="10" x2="3" y2="10"></line>
+                                <line x1="21" y1="6" x2="3" y2="6"></line>
+                                <line x1="21" y1="14" x2="3" y2="14"></line>
+                                <line x1="17" y1="18" x2="3" y2="18"></line>
+                            </svg>
+                            <?= $lang['align_left'] ?>
+                        </button>
+                        <button onclick="setAlignment('center')" class="active">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="10" x2="6" y2="10"></line>
+                                <line x1="21" y1="6" x2="3" y2="6"></line>
+                                <line x1="21" y1="14" x2="3" y2="14"></line>
+                                <line x1="18" y1="18" x2="6" y2="18"></line>
+                            </svg>
+                            <?= $lang['align_center'] ?>
+                        </button>
+                        <button onclick="setAlignment('right')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="21" y1="10" x2="7" y2="10"></line>
+                                <line x1="21" y1="6" x2="3" y2="6"></line>
+                                <line x1="21" y1="14" x2="3" y2="14"></line>
+                                <line x1="21" y1="18" x2="7" y2="18"></line>
+                            </svg>
+                            <?= $lang['align_right'] ?>
+                        </button>
+                    </div>
+                </div>
                 <a href="#" onclick="toggleUpload(); return false;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
