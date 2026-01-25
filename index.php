@@ -689,7 +689,7 @@ if ($view === 'list') {
             box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.2);
             border-radius: 12px;
             z-index: 1002;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
             padding: 8px;
             animation: slideUpFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -1060,7 +1060,7 @@ if ($view === 'list') {
         function updateSortButton(order) {
             const dropdown = document.getElementById('sort-dropdown');
             if (!dropdown) return;
-            
+
             const btn = dropdown.querySelector('a');
             const labelValue = btn.querySelector('.sort-value');
             const iconContainer = btn.querySelector('.icon-wrapper');
