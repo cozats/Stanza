@@ -1005,7 +1005,10 @@ if ($view === 'list') {
 
             // Update UI buttons
             document.querySelectorAll('.dropdown-content button').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${align}'`));
+                const clickAttr = btn.getAttribute('onclick');
+                if (clickAttr) {
+                    btn.classList.toggle('active', clickAttr.includes(`'${align}'`));
+                }
             });
 
             // Close dropdown after selection
