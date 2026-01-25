@@ -29,7 +29,7 @@ if (isset($_POST['admin_login'])) {
     $password = $_POST['password'] ?? '';
     if (password_verify($password, UPLOAD_PASSWORD_HASH)) {
         $_SESSION['is_admin'] = true;
-        header('Location: ' . getCurrentBaseUrl() . '?admin');
+        header('Location: ' . $_SERVER['REQUEST_URI']);
         exit;
     } else {
         $_SESSION['message'] = 'Incorrect password / Λάθος κωδικός.';
@@ -1234,7 +1234,11 @@ if ($view === 'list') {
             <a href="https://github.com/cozats/Poetry-Site-Template" target="_blank" class="admin-link"
                 style="text-decoration: none;">GitHub</a>
             <br>
-            <a href="index.php?admin" class="admin-link"><?= $lang['management'] ?></a>
+            <?php
+            $adminParams = $_GET;
+            $adminParams['admin'] = '1';
+            ?>
+            <a href="?<?= http_build_query($adminParams) ?>" class="admin-link"><?= $lang['management'] ?></a>
         </footer>
     </div>
 </body>
