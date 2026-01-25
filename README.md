@@ -59,7 +59,7 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 ## ✕ Exit
 - Click **"✕ Exit"** in the toolbar to deactivate management mode and return to the visitor view.
 
-![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-dark.png)
+![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-dark2.png)
 ![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-light.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/poem-en-dark.png)
 
 
