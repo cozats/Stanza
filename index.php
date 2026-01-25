@@ -692,14 +692,8 @@ if ($view === 'list') {
             animation: slideUpFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dropdown-content::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 8px solid transparent;
-            border-top-color: var(--accent-color);
+        .dropdown.active .dropdown-content {
+            display: block !important;
         }
 
         @keyframes slideUpFade {
@@ -714,8 +708,14 @@ if ($view === 'list') {
             }
         }
 
-        .dropdown.active .dropdown-content {
-            display: block;
+        .dropdown-content::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: var(--accent-color);
         }
 
         .dropdown-content button {
@@ -745,7 +745,7 @@ if ($view === 'list') {
         }
 
         #upload-form {
-            display: none;
+            /* Handled by .dropdown-content */
         }
 
         .dropdown.active .dropdown-content {
@@ -1093,7 +1093,7 @@ if ($view === 'list') {
 <body class="view-<?= $view ?><?= $isAdmin ? ' admin-mode' : '' ?>">
     <div class="container">
         <?php if ($view !== 'home' || $isAdmin): ?>
-            <header class="reveal-on-scroll">
+            <header>
                 <h1 class="site-title"><a href="index.php"><?= $displaySiteTitle ?></a></h1>
                 <nav>
                     <a href="index.php?view=list"><?= $lang['archive'] ?></a>
