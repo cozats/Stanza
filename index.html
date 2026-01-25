@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,8 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-color: #e4e2d7;
@@ -23,7 +25,9 @@
             --border-color: rgba(224, 224, 224, 0.2);
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             background-color: var(--bg-color);
@@ -100,7 +104,7 @@
         .hero-visual img {
             width: 100%;
             border-radius: 4px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: transform 0.5s ease;
         }
 
@@ -165,7 +169,17 @@
             box-shadow: 0 5px 20px rgba(140, 59, 59, 0.3);
         }
 
-        .btn svg { width: 20px; height: 20px; }
+        .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .btn-action {
+            margin-top: 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            padding: 0.8rem 2rem;
+        }
 
         footer {
             text-align: center;
@@ -177,7 +191,7 @@
         }
 
         code {
-            background: rgba(0,0,0,0.05);
+            background: rgba(0, 0, 0, 0.05);
             padding: 0.2rem 0.4rem;
             border-radius: 3px;
             font-family: monospace;
@@ -185,12 +199,24 @@
         }
 
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .container { padding: 2rem 1rem; }
-            .controls { position: relative; top: 0; justify-content: center; margin-bottom: 2rem; }
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            .controls {
+                position: relative;
+                top: 0;
+                justify-content: center;
+                margin-bottom: 2rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -199,13 +225,26 @@
                 <button class="control-btn" id="theme-toggle">Dark Mode</button>
             </div>
             <h1 class="reveal">Stanza</h1>
-            <p class="subtitle reveal" id="hero-subtitle">A simple, elegant, and lightning-fast home for your poetry.</p>
+            <p class="subtitle reveal" id="hero-subtitle">A simple, elegant, and lightning-fast home for your poetry.
+            </p>
+            <div class="reveal">
+                <a href="https://costas.design/poetry" target="_blank" class="btn btn-action" id="action-btn">
+                    <span id="action-btn-text">See it in action</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </div>
         </header>
 
         <section id="preview" class="reveal">
             <div class="hero-visual">
-                <img src="https://github.com/cozats/Stanza/blob/main/screens/home-en-light.png?raw=true" alt="Light Mode Preview">
-                <img src="https://github.com/cozats/Stanza/blob/main/screens/home-en-dark.png?raw=true" alt="Dark Mode Preview">
+                <img src="https://github.com/cozats/Stanza/blob/main/screens/home-en-light.png?raw=true"
+                    alt="Light Mode Preview">
+                <img src="https://github.com/cozats/Stanza/blob/main/screens/home-en-dark.png?raw=true"
+                    alt="Dark Mode Preview">
             </div>
         </section>
 
@@ -229,7 +268,12 @@
             <br>
             <a href="https://github.com/cozats/Stanza" class="btn">
                 <span id="cta-btn-text">View on GitHub</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path
+                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                    </path>
+                </svg>
             </a>
         </div>
 
@@ -261,6 +305,7 @@
                 ctaTitle: "Ready to share your work?",
                 ctaSubtitle: "Download the template and launch your own collection in minutes.",
                 ctaBtn: "View on GitHub",
+                actionBtn: "See it in action",
                 footer: "&copy; 2026 Stanza. Created for poets, by poets."
             },
             el: {
@@ -284,6 +329,7 @@
                 ctaTitle: "Έτοιμοι να μοιραστείτε το έργο σας;",
                 ctaSubtitle: "Κατεβάστε το template και ξεκινήστε τη δική σας συλλογή σε λίγα λεπτά.",
                 ctaBtn: "Δείτε το στο GitHub",
+                actionBtn: "Δείτε το στην πράξη",
                 footer: "&copy; 2026 Stanza. Δημιουργήθηκε για ποιητές, από ποιητές."
             }
         };
@@ -300,6 +346,7 @@
             document.getElementById('cta-title').textContent = t.ctaTitle;
             document.getElementById('cta-subtitle').textContent = t.ctaSubtitle;
             document.getElementById('cta-btn-text').textContent = t.ctaBtn;
+            document.getElementById('action-btn-text').textContent = t.actionBtn;
             document.getElementById('footer-text').innerHTML = t.footer;
 
             // Features
@@ -345,4 +392,5 @@
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     </script>
 </body>
+
 </html>
