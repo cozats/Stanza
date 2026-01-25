@@ -784,15 +784,15 @@ if ($view === 'list') {
         }
 
         .upload-popup button[type="submit"] {
-            background: white;
-            color: var(--accent-color);
+            background: white !important;
+            color: var(--accent-color) !important;
             border: none;
             padding: 0.7rem 2rem;
             cursor: pointer;
             font-family: inherit;
             font-size: 1rem;
             display: block;
-            margin: 0 auto;
+            margin: 1.5rem auto 0;
             transition: opacity 0.3s;
             border-radius: 50px;
         }
@@ -1240,7 +1240,7 @@ if ($view === 'list') {
                     </a>
                     <div id="upload-form" class="dropdown-content upload-popup">
                         <h3><?= $lang['upload_title'] ?></h3>
-                        <form action="" method="post" enctype="multipart/form-data">
+                        <form action="" method="post" enctype="multipart/form-data" style="text-align: center;">
                             <div class="file-upload-wrapper">
                                 <input type="file" name="poem" id="poem_file" class="file-input" required
                                     onchange="updateFileName(this)">
@@ -1251,7 +1251,7 @@ if ($view === 'list') {
                             </div>
                             <button type="submit"><?= $lang['btn_upload'] ?></button>
                             <button type="button" onclick="toggleUpload(event)"
-                                style="background: none; color: rgba(255,255,255,0.6); border: none; margin-top: 10px; width: 100%; cursor: pointer; font-size: 0.9rem; font-family: inherit;"><?= $lang['btn_cancel'] ?></button>
+                                style="background: none; color: rgba(255,255,255,0.6); border: none; margin-top: 15px; width: auto; cursor: pointer; font-size: 0.9rem; font-family: inherit; display: inline-block;"><?= $lang['btn_cancel'] ?></button>
                         </form>
                     </div>
                 </div>
