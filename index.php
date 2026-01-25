@@ -761,11 +761,14 @@ if ($view === 'list') {
 
         .upload-popup h3 {
             color: white;
-            font-weight: 600;
+            font-weight: 400;
+            font-variant: small-caps;
+            text-transform: uppercase;
             margin-top: 0;
             margin-bottom: 1.5rem;
             text-align: center;
             font-size: 1.2rem;
+            letter-spacing: 0.1em;
         }
 
         .upload-popup .file-label {
