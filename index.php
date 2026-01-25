@@ -509,24 +509,15 @@ if ($view === 'list') {
             max-width: 744px;
         }
 
-        .view-poem.align-left .stanza,
-        .view-poem.align-left .poem-title,
-        .view-poem.align-left .poem-content h2,
-        .view-poem.align-left .poem-content h3 {
+        :is(.view-poem, .view-list).align-left :is(.stanza, .poem-title, .poem-content h2, .poem-content h3, .poem-list) {
             text-align: left;
         }
 
-        .view-poem.align-center .stanza,
-        .view-poem.align-center .poem-title,
-        .view-poem.align-center .poem-content h2,
-        .view-poem.align-center .poem-content h3 {
+        :is(.view-poem, .view-list).align-center :is(.stanza, .poem-title, .poem-content h2, .poem-content h3, .poem-list) {
             text-align: center;
         }
 
-        .view-poem.align-right .stanza,
-        .view-poem.align-right .poem-title,
-        .view-poem.align-right .poem-content h2,
-        .view-poem.align-right .poem-content h3 {
+        :is(.view-poem, .view-list).align-right :is(.stanza, .poem-title, .poem-content h2, .poem-content h3, .poem-list) {
             text-align: right;
         }
 
@@ -1144,50 +1135,52 @@ if ($view === 'list') {
                     <span class="icon-wrapper"></span>
                     <span class="sort-label"></span>
                 </a>
-                <div class="dropdown" id="align-dropdown">
-                    <a href="#" onclick="toggleDropdown(event)">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="17" y1="10" x2="3" y2="10"></line>
-                            <line x1="21" y1="6" x2="3" y2="6"></line>
-                            <line x1="21" y1="14" x2="3" y2="14"></line>
-                            <line x1="17" y1="18" x2="3" y2="18"></line>
-                        </svg>
-                        <span><?= $lang['align'] ?></span>
-                    </a>
-                    <div class="dropdown-content">
-                        <button onclick="setAlignment('left')">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <?php if ($view === 'list' || $view === 'poem'): ?>
+                    <div class="dropdown" id="align-dropdown">
+                        <a href="#" onclick="toggleDropdown(event)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="17" y1="10" x2="3" y2="10"></line>
                                 <line x1="21" y1="6" x2="3" y2="6"></line>
                                 <line x1="21" y1="14" x2="3" y2="14"></line>
                                 <line x1="17" y1="18" x2="3" y2="18"></line>
                             </svg>
-                            <?= $lang['align_left'] ?>
-                        </button>
-                        <button onclick="setAlignment('center')" class="active">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="10" x2="6" y2="10"></line>
-                                <line x1="21" y1="6" x2="3" y2="6"></line>
-                                <line x1="21" y1="14" x2="3" y2="14"></line>
-                                <line x1="18" y1="18" x2="6" y2="18"></line>
-                            </svg>
-                            <?= $lang['align_center'] ?>
-                        </button>
-                        <button onclick="setAlignment('right')">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="21" y1="10" x2="7" y2="10"></line>
-                                <line x1="21" y1="6" x2="3" y2="6"></line>
-                                <line x1="21" y1="14" x2="3" y2="14"></line>
-                                <line x1="21" y1="18" x2="7" y2="18"></line>
-                            </svg>
-                            <?= $lang['align_right'] ?>
-                        </button>
+                            <span><?= $lang['align'] ?></span>
+                        </a>
+                        <div class="dropdown-content">
+                            <button onclick="setAlignment('left')">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="17" y1="10" x2="3" y2="10"></line>
+                                    <line x1="21" y1="6" x2="3" y2="6"></line>
+                                    <line x1="21" y1="14" x2="3" y2="14"></line>
+                                    <line x1="17" y1="18" x2="3" y2="18"></line>
+                                </svg>
+                                <?= $lang['align_left'] ?>
+                            </button>
+                            <button onclick="setAlignment('center')" class="active">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="10" x2="6" y2="10"></line>
+                                    <line x1="21" y1="6" x2="3" y2="6"></line>
+                                    <line x1="21" y1="14" x2="3" y2="14"></line>
+                                    <line x1="18" y1="18" x2="6" y2="18"></line>
+                                </svg>
+                                <?= $lang['align_center'] ?>
+                            </button>
+                            <button onclick="setAlignment('right')">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="21" y1="10" x2="7" y2="10"></line>
+                                    <line x1="21" y1="6" x2="3" y2="6"></line>
+                                    <line x1="21" y1="14" x2="3" y2="14"></line>
+                                    <line x1="21" y1="18" x2="7" y2="18"></line>
+                                </svg>
+                                <?= $lang['align_right'] ?>
+                            </button>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
                 <a href="#" onclick="toggleUpload(); return false;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
