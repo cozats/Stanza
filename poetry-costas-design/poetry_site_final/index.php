@@ -24,7 +24,7 @@ if (isset($_POST['admin_login'])) {
     }
 }
 
- // Hash for 'papako'
+// Hash for 'papako'
 define('MAX_FILE_SIZE', 2 * 1024 * 1024); // 2MB
 define('LANDING_FILE', 'Κωνσταντινος_Παπακωνσταντινου.md');
 
@@ -71,7 +71,8 @@ function getPoemTitle(string $filepath): string
             break;
         }
         // Optimization: Stop searching after first few lines if no title found
-        if (ftell($handle) > 1024) break; 
+        if (ftell($handle) > 1024)
+            break;
     }
     fclose($handle);
     return $title;
@@ -90,11 +91,11 @@ function parsePoetryMarkdown(string $text): string
 
     // Optimization: Streamline regex replacements
     $patterns = [
-        '/^#\s+(.+)$/m'      => '<h1 class="poem-title reveal-on-scroll">$1</h1>',
-        '/^##\s+(.+)$/m'     => '<h2 class="reveal-on-scroll">$1</h2>',
-        '/^###\s+(.+)$/m'    => '<h3 class="reveal-on-scroll">$1</h3>',
+        '/^#\s+(.+)$/m' => '<h1 class="poem-title reveal-on-scroll">$1</h1>',
+        '/^##\s+(.+)$/m' => '<h2 class="reveal-on-scroll">$1</h2>',
+        '/^###\s+(.+)$/m' => '<h3 class="reveal-on-scroll">$1</h3>',
         '/(\*\*|__)(.*?)\1/' => '<strong>$2</strong>',
-        '/(\*|_)(.*?)\1/'    => '<em>$2</em>',
+        '/(\*|_)(.*?)\1/' => '<em>$2</em>',
     ];
     $text = preg_replace(array_keys($patterns), array_values($patterns), $text);
 
@@ -130,15 +131,14 @@ function parsePoetryMarkdown(string $text): string
 /**
  * Handle File Upload
  */
-function handleUpload(): void
+function handleUpload(bool $isAdmin): void
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_FILES)) {
         return;
     }
 
-    $password = $_POST['password'] ?? '';
-    if (!password_verify($password, UPLOAD_PASSWORD_HASH)) {
-        $_SESSION['message'] = 'Incorrect password.';
+    if (!$isAdmin) {
+        $_SESSION['message'] = 'Unauthorized access.';
         $_SESSION['msg_type'] = 'error';
         return;
     }
@@ -169,7 +169,7 @@ function handleUpload(): void
     $filename = preg_replace('/[^\p{L}\p{N}\.\-_]/u', '_', $filename);
     $filename = preg_replace('/_+/', '_', $filename);
     $filename = trim($filename, '_');
-    
+
     $destination = POEMS_DIR . $filename;
 
     if (move_uploaded_file($file['tmp_name'], $destination)) {
@@ -214,11 +214,12 @@ function handleDelete(bool $isAdmin): void
  * --- Main Logic ---
  */
 
-handleUpload();
+handleUpload($isAdmin);
 handleDelete($isAdmin);
 
 $view = $_GET['view'] ?? 'home';
-if (isset($_GET['admin']) && !$isAdmin) $view = 'admin_login';
+if (isset($_GET['admin']) && !$isAdmin)
+    $view = 'admin_login';
 $poemHtml = '';
 $poems = [];
 
@@ -260,6 +261,7 @@ if ($view === 'list') {
 ?>
 <!DOCTYPE html>
 <html lang="el">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -267,7 +269,9 @@ if ($view === 'list') {
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&subset=greek&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&subset=greek&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-color: #e4e2d7;
@@ -282,7 +286,9 @@ if ($view === 'list') {
             --text-color: #e0e0e0;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             background-color: var(--bg-color);
@@ -332,7 +338,9 @@ if ($view === 'list') {
             gap: 30px;
         }
 
-        nav a, .theme-toggle, .std-link {
+        nav a,
+        .theme-toggle,
+        .std-link {
             color: #666;
             text-decoration: none;
             font-size: 1.2rem;
@@ -344,11 +352,15 @@ if ($view === 'list') {
             font-family: inherit;
         }
 
-        [data-theme="dark"] nav a, [data-theme="dark"] .theme-toggle, [data-theme="dark"] .std-link {
+        [data-theme="dark"] nav a,
+        [data-theme="dark"] .theme-toggle,
+        [data-theme="dark"] .std-link {
             color: #aaa;
         }
 
-        nav a:hover, .theme-toggle:hover, .std-link:hover {
+        nav a:hover,
+        .theme-toggle:hover,
+        .std-link:hover {
             color: var(--accent-color);
         }
 
@@ -358,7 +370,9 @@ if ($view === 'list') {
             text-align: center;
         }
 
-        .poem-list li { margin: 1.8rem 0; }
+        .poem-list li {
+            margin: 1.8rem 0;
+        }
 
         .poem-list a {
             text-decoration: none;
@@ -455,10 +469,25 @@ if ($view === 'list') {
             text-align: center;
         }
 
-        .message.error { background: #ffe6e6; color: #d63031; }
-        .message.success { background: #e6fffa; color: #00b894; }
-        [data-theme="dark"] .message.error { background: #4a0000; color: #ff6b6b; }
-        [data-theme="dark"] .message.success { background: #004d40; color: #69f0ae; }
+        .message.error {
+            background: #ffe6e6;
+            color: #d63031;
+        }
+
+        .message.success {
+            background: #e6fffa;
+            color: #00b894;
+        }
+
+        [data-theme="dark"] .message.error {
+            background: #4a0000;
+            color: #ff6b6b;
+        }
+
+        [data-theme="dark"] .message.success {
+            background: #004d40;
+            color: #69f0ae;
+        }
 
         footer {
             text-align: center;
@@ -467,6 +496,7 @@ if ($view === 'list') {
             font-size: 0.8rem;
             padding-bottom: 1rem;
         }
+
         .admin-link {
             color: #888;
             text-decoration: underline;
@@ -474,6 +504,7 @@ if ($view === 'list') {
             margin-top: 5px;
             display: inline-block;
         }
+
         .admin-link:hover {
             color: var(--accent-color);
         }
@@ -497,7 +528,10 @@ if ($view === 'list') {
             transition: transform 0.3s;
         }
 
-        .action-button:hover { color: var(--accent-color); }
+        .action-button:hover {
+            color: var(--accent-color);
+        }
+
         .action-button:hover svg {
             transform: translateX(5px);
             color: var(--accent-color);
@@ -548,7 +582,7 @@ if ($view === 'list') {
             border-radius: 50px;
             display: flex;
             gap: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             z-index: 1000;
             backdrop-filter: blur(5px);
         }
@@ -576,7 +610,7 @@ if ($view === 'list') {
             padding: 1.5rem;
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             z-index: 1001;
             width: 300px;
         }
@@ -587,41 +621,105 @@ if ($view === 'list') {
         }
 
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 600px) {
-            .container { padding: 1rem; }
-            h1.site-title { font-size: 2rem; }
-            .poem-list a { font-size: 1.5rem; }
-            .poem-title { line-height: 1.2; }
+            .container {
+                padding: 1rem;
+            }
+
+            h1.site-title {
+                font-size: 2rem;
+            }
+
+            .poem-list a {
+                font-size: 1.5rem;
+            }
+
+            .poem-title {
+                line-height: 1.2;
+            }
         }
-        #upload-form input {
+
+        #upload-form h3 {
+            font-weight: 400;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .file-label {
             display: block;
-            width: 100%;
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            background: var(--bg-color);
+            padding: 12px;
+            border: 1px dashed var(--border-color);
+            background: rgba(140, 59, 59, 0.05);
             color: var(--text-color);
-            font-family: inherit;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            border-radius: 4px;
         }
-        #upload-form button {
+
+        .file-label:hover {
+            background: rgba(140, 59, 59, 0.1);
+            border-style: solid;
+        }
+
+        .file-name-display {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        #upload-form button[type="submit"] {
             background: var(--accent-color);
             color: #fff;
             border: none;
-            padding: 0.5rem 1.5rem;
+            padding: 0.7rem 2rem;
             cursor: pointer;
             font-family: inherit;
             font-size: 1rem;
             display: block;
             margin: 0 auto;
+            transition: opacity 0.3s;
+            border-radius: 4px;
+        }
+
+        #upload-form button[type="submit"]:hover {
+            opacity: 0.9;
         }
     </style>
     <script>
         // Apply saved theme immediately to prevent flash
-        (function() {
+        (function () {
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
@@ -629,6 +727,15 @@ if ($view === 'list') {
         function toggleUpload() {
             const form = document.getElementById('upload-form');
             form.classList.toggle('active');
+        }
+
+        function updateFileName(input) {
+            const display = document.getElementById('file-name-display');
+            if (input.files && input.files[0]) {
+                display.textContent = input.files[0].name;
+            } else {
+                display.textContent = '';
+            }
         }
 
         function toggleTheme() {
@@ -644,7 +751,7 @@ if ($view === 'list') {
             if (btn) btn.textContent = theme === 'dark' ? 'Φως' : 'Σκοτάδι';
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             updateThemeButton(document.documentElement.getAttribute('data-theme'));
 
             // Optimized Intersection Observer
@@ -661,6 +768,7 @@ if ($view === 'list') {
         });
     </script>
 </head>
+
 <body class="view-<?= $view ?><?= $isAdmin ? ' admin-mode' : '' ?>">
 
     <div class="container">
@@ -686,10 +794,10 @@ if ($view === 'list') {
                 <div class="poem-content">
                     <h1 class="poem-title">Διαχείριση</h1>
                     <form action="" method="post" style="max-width: 300px; margin: 0 auto; text-align: center;">
-                        <input type="password" name="password" placeholder="Κωδικός ασφαλείας" required 
-                               style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit;">
-                        <button type="submit" name="admin_login" 
-                                style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem;">
+                        <input type="password" name="password" placeholder="Κωδικός ασφαλείας" required
+                            style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit;">
+                        <button type="submit" name="admin_login"
+                            style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem;">
                             Είσοδος
                         </button>
                     </form>
@@ -699,16 +807,16 @@ if ($view === 'list') {
                     <?php if (empty($poems)): ?>
                         <li><span style="color: #999; font-style: italic;">Δεν υπάρχουν ποιήματα ακόμα.</span></li>
                     <?php else: ?>
-                        <?php foreach ($poems as $poem): 
+                        <?php foreach ($poems as $poem):
                             $title = getPoemTitle(POEMS_DIR . $poem);
                             $displayName = $title ?: str_replace(['.md', '_', '-'], ['', ' ', ' '], $poem);
-                        ?>
+                            ?>
                             <li class="reveal-on-scroll">
                                 <a href="?view=poem&poem=<?= urlencode($poem) ?>"><?= htmlspecialchars($displayName) ?></a>
                                 <?php if ($isAdmin): ?>
-                                    <a href="?delete=<?= urlencode($poem) ?>" 
-                                       onclick="return confirm('Είστε σίγουροι για τη διαγραφή;');" 
-                                       style="color: #999; font-size: 0.8rem; margin-left: 15px; text-decoration: none;">(διαγραφή)</a>
+                                    <a href="?delete=<?= urlencode($poem) ?>"
+                                        onclick="return confirm('Είστε σίγουροι για τη διαγραφή;');"
+                                        style="color: #999; font-size: 0.8rem; margin-left: 15px; text-decoration: none;">(διαγραφή)</a>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
@@ -724,7 +832,8 @@ if ($view === 'list') {
                     <?php else: ?>
                         <a href="index.php?view=list" class="action-button">
                             Δείτε τα ποιήματα
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
@@ -738,12 +847,16 @@ if ($view === 'list') {
             <div class="admin-toolbar">
                 <a href="#" onclick="toggleUpload(); return false;">+ Προσθήκη Ποιήματος</a>
                 <a href="index.php?view=list">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
                     Διαγραφή Ποιημάτων
                 </a>
-                <?php 
-                    $logoutParams = $_GET;
-                    $logoutParams['logout'] = '1';
+                <?php
+                $logoutParams = $_GET;
+                $logoutParams['logout'] = '1';
                 ?>
                 <a href="?<?= http_build_query($logoutParams) ?>">✕ Έξοδος</a>
             </div>
@@ -751,12 +864,17 @@ if ($view === 'list') {
             <div id="upload-form">
                 <h3>Ανεβάστε νέο ποίημα</h3>
                 <form action="" method="post" enctype="multipart/form-data">
-                    <label for="poem_file">Αρχείο (.md/.txt)</label>
-                    <input type="file" name="poem" id="poem_file" required>
-                    <label for="pwd">Κωδικός</label>
-                    <input type="password" name="password" id="pwd" required placeholder="Κωδικός ασφαλείας">
+                    <div class="file-upload-wrapper">
+                        <input type="file" name="poem" id="poem_file" class="file-input" required
+                            onchange="updateFileName(this)">
+                        <label for="poem_file" class="file-label">
+                            <span>Επιλογή αρχείου (.md/.txt)</span>
+                            <span id="file-name-display" class="file-name-display"></span>
+                        </label>
+                    </div>
                     <button type="submit">Ανέβασμα</button>
-                    <button type="button" onclick="toggleUpload()" style="background: none; color: #888; border: none; margin-top: 10px; width: 100%; cursor: pointer;">Ακύρωση</button>
+                    <button type="button" onclick="toggleUpload()"
+                        style="background: none; color: #888; border: none; margin-top: 10px; width: 100%; cursor: pointer; font-size: 0.9rem;">Ακύρωση</button>
                 </form>
             </div>
         <?php endif; ?>
@@ -764,10 +882,12 @@ if ($view === 'list') {
         <footer>
             &copy; <?= date('Y') ?> Κωνσταντίνος Παπακωνσταντίνου. All rights reserved.
             &bull;
-            <a href="https://github.com/cozats/Stanza" target="_blank" class="admin-link" style="text-decoration: none;">GitHub</a>
+            <a href="https://github.com/cozats/Stanza" target="_blank" class="admin-link"
+                style="text-decoration: none;">GitHub</a>
             <br>
             <a href="index.php?admin" class="admin-link">Διαχείριση</a>
         </footer>
     </div>
 </body>
+
 </html>

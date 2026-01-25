@@ -66,7 +66,7 @@ $locales = [
         'delete_poems' => 'Διαγραφή Ποιημάτων',
         'exit' => '✕ Έξοδος',
         'upload_title' => 'Ανεβάστε νέο ποίημα',
-        'file_label' => 'Αρχείο (.md/.txt)',
+        'file_label' => 'Επιλογή αρχείου (.md/.txt)',
         'pwd_label' => 'Κωδικός',
         'pwd_ph' => 'Κωδικός ασφαλείας',
         'btn_upload' => 'Ανέβασμα',
@@ -100,7 +100,7 @@ $locales = [
         'delete_poems' => 'Delete Poems',
         'exit' => '✕ Exit',
         'upload_title' => 'Upload new poem',
-        'file_label' => 'File (.md/.txt)',
+        'file_label' => 'Choose file (.md/.txt)',
         'pwd_label' => 'Password',
         'pwd_ph' => 'Security code',
         'btn_upload' => 'Upload',
@@ -129,7 +129,8 @@ if (!is_dir(POEMS_DIR)) {
 }
 
 // Helper: Safely get current script URL without query params
-function getCurrentBaseUrl(): string {
+function getCurrentBaseUrl(): string
+{
     return explode('?', $_SERVER['REQUEST_URI'] ?? '/')[0];
 }
 
@@ -164,7 +165,8 @@ $displaySiteTitle = SITE_TITLE ?: $lang['site_title'];
  * --- Helper Functions ---
  */
 
-function getLocalizedFilename(string $filename, string $lang): string {
+function getLocalizedFilename(string $filename, string $lang): string
+{
     $info = pathinfo($filename);
     $ext = $info['extension'] ?? 'md';
     $base = $info['filename'];
@@ -173,9 +175,11 @@ function getLocalizedFilename(string $filename, string $lang): string {
     return file_exists(POEMS_DIR . $localized) ? $localized : $filename;
 }
 
-function getPoemTitle(string $filepath): string {
+function getPoemTitle(string $filepath): string
+{
     $handle = @fopen($filepath, 'r');
-    if (!$handle) return '';
+    if (!$handle)
+        return '';
     $title = '';
     while (($line = fgets($handle)) !== false) {
         $line = trim($line);
@@ -183,20 +187,22 @@ function getPoemTitle(string $filepath): string {
             $title = trim(substr($line, 2));
             break;
         }
-        if (ftell($handle) > 1024) break; 
+        if (ftell($handle) > 1024)
+            break;
     }
     fclose($handle);
     return $title;
 }
 
-function parsePoetryMarkdown(string $text): string {
+function parsePoetryMarkdown(string $text): string
+{
     $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
     $patterns = [
-        '/^#\s+(.+)$/m'      => '<h1 class="poem-title reveal-on-scroll">$1</h1>',
-        '/^##\s+(.+)$/m'     => '<h2 class="reveal-on-scroll">$1</h2>',
-        '/^###\s+(.+)$/m'    => '<h3 class="reveal-on-scroll">$1</h3>',
+        '/^#\s+(.+)$/m' => '<h1 class="poem-title reveal-on-scroll">$1</h1>',
+        '/^##\s+(.+)$/m' => '<h2 class="reveal-on-scroll">$1</h2>',
+        '/^###\s+(.+)$/m' => '<h3 class="reveal-on-scroll">$1</h3>',
         '/(\*\*|__)(.*?)\1/' => '<strong>$2</strong>',
-        '/(\*|_)(.*?)\1/'    => '<em>$2</em>',
+        '/(\*|_)(.*?)\1/' => '<em>$2</em>',
     ];
     $text = preg_replace(array_keys($patterns), array_values($patterns), $text);
     $parts = preg_split('/(<h1.*?>.*?<\/h1>)/s', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -223,11 +229,12 @@ function parsePoetryMarkdown(string $text): string {
     return $html;
 }
 
-function handleUpload(array $lang): void {
-    if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || empty($_FILES)) return;
-    $password = $_POST['password'] ?? '';
-    if (!password_verify($password, UPLOAD_PASSWORD_HASH)) {
-        $_SESSION['message'] = 'Incorrect password / Λάθος κωδικός.';
+function handleUpload(bool $isAdmin, array $lang): void
+{
+    if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || empty($_FILES))
+        return;
+    if (!$isAdmin) {
+        $_SESSION['message'] = 'Unauthorized access.';
         $_SESSION['msg_type'] = 'error';
         return;
     }
@@ -263,8 +270,10 @@ function handleUpload(array $lang): void {
     exit;
 }
 
-function handleDelete(bool $isAdmin, array $lang): void {
-    if (!$isAdmin || !isset($_GET['delete'])) return;
+function handleDelete(bool $isAdmin, array $lang): void
+{
+    if (!$isAdmin || !isset($_GET['delete']))
+        return;
     $file = basename($_GET['delete']);
     $filepath = POEMS_DIR . $file;
     if (file_exists($filepath)) {
@@ -284,11 +293,12 @@ function handleDelete(bool $isAdmin, array $lang): void {
  * --- Main Logic ---
  */
 
-handleUpload($lang);
+handleUpload($isAdmin, $lang);
 handleDelete($isAdmin, $lang);
 
 $view = $_GET['view'] ?? 'home';
-if (isset($_GET['admin']) && !$isAdmin) $view = 'admin_login';
+if (isset($_GET['admin']) && !$isAdmin)
+    $view = 'admin_login';
 $poemHtml = '';
 $poems = [];
 
@@ -313,7 +323,8 @@ if ($view === 'list') {
     $files = scandir(POEMS_DIR);
     $groups = [];
     foreach ($files as $f) {
-        if ($f === '.' || $f === '..' || is_dir(POEMS_DIR . $f)) continue;
+        if ($f === '.' || $f === '..' || is_dir(POEMS_DIR . $f))
+            continue;
 
         $info = pathinfo($f);
         $base = $info['filename'];
@@ -330,12 +341,12 @@ if ($view === 'list') {
             $groups[$cleanBase] = ['filename' => $f, 'priority' => $priority];
         }
     }
-    
+
     $poems = array_column($groups, 'filename');
 
     if (class_exists('Collator')) {
         $collator = new Collator($currentLang === 'el' ? 'el_GR' : 'en_US');
-        usort($poems, function($a, $b) use ($collator) {
+        usort($poems, function ($a, $b) use ($collator) {
             $titleA = getPoemTitle(POEMS_DIR . $a) ?: $a;
             $titleB = getPoemTitle(POEMS_DIR . $b) ?: $b;
             return $collator->compare($titleA, $titleB);
@@ -347,6 +358,7 @@ if ($view === 'list') {
 ?>
 <!DOCTYPE html>
 <html lang="<?= $currentLang ?>">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -354,7 +366,9 @@ if ($view === 'list') {
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&subset=greek&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&subset=greek&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-color: #e4e2d7;
@@ -363,11 +377,16 @@ if ($view === 'list') {
             --border-color: #8c3b3b;
             --font-main: 'EB Garamond', serif;
         }
+
         [data-theme="dark"] {
             --bg-color: #1a1a1a;
             --text-color: #e0e0e0;
         }
-        * { box-sizing: border-box; }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -378,6 +397,7 @@ if ($view === 'list') {
             -webkit-font-smoothing: antialiased;
             transition: background-color 0.3s, color 0.3s;
         }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -386,12 +406,14 @@ if ($view === 'list') {
             display: flex;
             flex-direction: column;
         }
+
         header {
             text-align: center;
             margin-bottom: 4rem;
             padding-bottom: 2rem;
             border-bottom: 1px solid var(--border-color);
         }
+
         h1.site-title {
             font-weight: 400;
             font-style: italic;
@@ -399,10 +421,12 @@ if ($view === 'list') {
             margin: 0;
             font-size: 3rem;
         }
+
         h1.site-title a {
             text-decoration: none;
             color: var(--accent-color);
         }
+
         nav {
             margin-top: 1.5rem;
             display: flex;
@@ -410,7 +434,10 @@ if ($view === 'list') {
             align-items: center;
             gap: 30px;
         }
-        nav a, .theme-toggle, .std-link {
+
+        nav a,
+        .theme-toggle,
+        .std-link {
             color: #666;
             text-decoration: none;
             font-size: 1.2rem;
@@ -421,18 +448,29 @@ if ($view === 'list') {
             padding: 0;
             font-family: inherit;
         }
-        [data-theme="dark"] nav a, [data-theme="dark"] .theme-toggle, [data-theme="dark"] .std-link {
+
+        [data-theme="dark"] nav a,
+        [data-theme="dark"] .theme-toggle,
+        [data-theme="dark"] .std-link {
             color: #aaa;
         }
-        nav a:hover, .theme-toggle:hover, .std-link:hover {
+
+        nav a:hover,
+        .theme-toggle:hover,
+        .std-link:hover {
             color: var(--accent-color);
         }
+
         .poem-list {
             list-style: none;
             padding: 0;
             text-align: center;
         }
-        .poem-list li { margin: 1.8rem 0; }
+
+        .poem-list li {
+            margin: 1.8rem 0;
+        }
+
         .poem-list a {
             text-decoration: none;
             color: var(--text-color);
@@ -440,20 +478,24 @@ if ($view === 'list') {
             border-bottom: 1px solid transparent;
             transition: all 0.3s ease;
         }
+
         .poem-list a:hover {
             border-bottom-color: var(--accent-color);
             color: var(--accent-color);
         }
+
         .poem-content {
             margin: 3rem auto;
             max-width: 700px;
         }
+
         .poem-title {
             text-align: center;
             font-weight: 400;
             margin-bottom: 3.5rem;
             font-size: 2.5rem;
         }
+
         .poem-content h2 {
             text-align: center;
             font-weight: 400;
@@ -461,12 +503,14 @@ if ($view === 'list') {
             margin: 3rem 0 2rem;
             color: var(--accent-color);
         }
+
         .poem-content h3 {
             text-align: center;
             font-weight: 400;
             font-size: 1.5rem;
             margin: 2rem 0;
         }
+
         .stanza {
             margin-bottom: 2rem;
             white-space: pre-wrap;
@@ -474,6 +518,7 @@ if ($view === 'list') {
             padding: 0 1rem;
             line-height: 1.2;
         }
+
         footer {
             text-align: center;
             margin-top: auto;
@@ -481,6 +526,7 @@ if ($view === 'list') {
             font-size: 0.8rem;
             padding-bottom: 1rem;
         }
+
         .admin-link {
             color: #888;
             text-decoration: underline;
@@ -488,9 +534,11 @@ if ($view === 'list') {
             margin-top: 5px;
             display: inline-block;
         }
+
         .admin-link:hover {
             color: var(--accent-color);
         }
+
         .action-button {
             display: inline-flex;
             align-items: center;
@@ -503,44 +551,57 @@ if ($view === 'list') {
             font-size: 1.5rem;
             transition: all 0.3s;
         }
+
         .action-button svg {
             width: 24px;
             height: 24px;
             transition: transform 0.3s;
         }
-        .action-button:hover { color: var(--accent-color); }
+
+        .action-button:hover {
+            color: var(--accent-color);
+        }
+
         .action-button:hover svg {
             transform: translateX(5px);
             color: var(--accent-color);
         }
+
         .reveal-on-scroll {
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
+
         .reveal-on-scroll.is-visible {
             opacity: 1;
             transform: translateY(0);
         }
+
         .view-home .container {
             padding-top: 1rem;
             padding-bottom: 1rem;
         }
+
         .view-home main {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
+
         .view-home header {
             margin-bottom: 2rem;
         }
+
         .view-home .poem-content {
             margin-top: 0;
         }
+
         .view-home footer {
             margin-top: 2rem;
         }
+
         .admin-toolbar {
             position: fixed;
             bottom: 20px;
@@ -551,10 +612,11 @@ if ($view === 'list') {
             border-radius: 50px;
             display: flex;
             gap: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             z-index: 1000;
             backdrop-filter: blur(5px);
         }
+
         .admin-toolbar a {
             color: #fff;
             text-decoration: none;
@@ -564,7 +626,11 @@ if ($view === 'list') {
             gap: 5px;
             transition: opacity 0.3s;
         }
-        .admin-toolbar a:hover { opacity: 0.8; }
+
+        .admin-toolbar a:hover {
+            opacity: 0.8;
+        }
+
         #upload-form {
             display: none;
             position: fixed;
@@ -574,58 +640,142 @@ if ($view === 'list') {
             padding: 1.5rem;
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             z-index: 1001;
             width: 300px;
         }
+
         #upload-form.active {
             display: block;
             animation: slideUp 0.3s ease-out;
         }
+
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
+
         @media (max-width: 600px) {
-            .container { padding: 1rem; }
-            h1.site-title { font-size: 2rem; }
-            .poem-list a { font-size: 1.5rem; }
-            .poem-title { line-height: 1.2; }
+            .container {
+                padding: 1rem;
+            }
+
+            h1.site-title {
+                font-size: 2rem;
+            }
+
+            .poem-list a {
+                font-size: 1.5rem;
+            }
+
+            .poem-title {
+                line-height: 1.2;
+            }
         }
-        #upload-form input {
+
+        #upload-form h3 {
+            font-weight: 400;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .file-label {
             display: block;
-            width: 100%;
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            background: var(--bg-color);
+            padding: 12px;
+            border: 1px dashed var(--border-color);
+            background: rgba(140, 59, 59, 0.05);
             color: var(--text-color);
-            font-family: inherit;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            border-radius: 4px;
         }
-        #upload-form button {
+
+        .file-label:hover {
+            background: rgba(140, 59, 59, 0.1);
+            border-style: solid;
+        }
+
+        .file-name-display {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        #upload-form button[type="submit"] {
             background: var(--accent-color);
             color: #fff;
             border: none;
-            padding: 0.5rem 1.5rem;
+            padding: 0.7rem 2rem;
             cursor: pointer;
             font-family: inherit;
             font-size: 1rem;
             display: block;
             margin: 0 auto;
+            transition: opacity 0.3s;
+            border-radius: 4px;
         }
+
+        #upload-form button[type="submit"]:hover {
+            opacity: 0.9;
+        }
+
         .message {
             padding: 1rem;
             margin-bottom: 1rem;
             border-radius: 4px;
             text-align: center;
         }
-        .message.error { background: #ffe6e6; color: #d63031; }
-        .message.success { background: #e6fffa; color: #00b894; }
-        [data-theme="dark"] .message.error { background: #4a0000; color: #ff6b6b; }
-        [data-theme="dark"] .message.success { background: #004d40; color: #69f0ae; }
+
+        .message.error {
+            background: #ffe6e6;
+            color: #d63031;
+        }
+
+        .message.success {
+            background: #e6fffa;
+            color: #00b894;
+        }
+
+        [data-theme="dark"] .message.error {
+            background: #4a0000;
+            color: #ff6b6b;
+        }
+
+        [data-theme="dark"] .message.success {
+            background: #004d40;
+            color: #69f0ae;
+        }
     </style>
     <script>
-        (function() {
+        (function () {
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
@@ -638,6 +788,15 @@ if ($view === 'list') {
         function toggleUpload() {
             const form = document.getElementById('upload-form');
             form.classList.toggle('active');
+        }
+
+        function updateFileName(input) {
+            const display = document.getElementById('file-name-display');
+            if (input.files && input.files[0]) {
+                display.textContent = input.files[0].name;
+            } else {
+                display.textContent = '';
+            }
         }
 
         function toggleTheme() {
@@ -653,7 +812,7 @@ if ($view === 'list') {
             if (btn) btn.textContent = theme === 'dark' ? i18n.light : i18n.dark;
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             updateThemeButton(document.documentElement.getAttribute('data-theme'));
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -667,6 +826,7 @@ if ($view === 'list') {
         });
     </script>
 </head>
+
 <body class="view-<?= $view ?><?= $isAdmin ? ' admin-mode' : '' ?>">
     <div class="container">
         <?php if ($view !== 'home' || $isAdmin): ?>
@@ -691,10 +851,10 @@ if ($view === 'list') {
                 <div class="poem-content">
                     <h1 class="poem-title"><?= $lang['management'] ?></h1>
                     <form action="" method="post" style="max-width: 300px; margin: 0 auto; text-align: center;">
-                        <input type="password" name="password" placeholder="<?= $lang['pwd_ph'] ?>" required 
-                               style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit;">
-                        <button type="submit" name="admin_login" 
-                                style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem;">
+                        <input type="password" name="password" placeholder="<?= $lang['pwd_ph'] ?>" required
+                            style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit;">
+                        <button type="submit" name="admin_login"
+                            style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem;">
                             <?= $lang['btn_login'] ?>
                         </button>
                     </form>
@@ -704,17 +864,17 @@ if ($view === 'list') {
                     <?php if (empty($poems)): ?>
                         <li><span style="color: #999; font-style: italic;"><?= $lang['no_poems'] ?></span></li>
                     <?php else: ?>
-                        <?php foreach ($poems as $poem): 
-                            $title = getPoemTitle(POEMS_DIR . $poem);
-                            $cleanDisplay = preg_replace('/_(en|el)$/', '', pathinfo($poem, PATHINFO_FILENAME));
-                            $displayName = $title ?: str_replace(['_', '-'], [' ', ' '], $cleanDisplay);
-                        ?>
-                            <li class="reveal-on-scroll">
+                                <?php foreach ($poems as $poem):
+                                    $title = getPoemTitle(POEMS_DIR . $poem);
+                                    $cleanDisplay = preg_replace('/_(en|el)$/', '', pathinfo($poem, PATHINFO_FILENAME));
+                                    $displayName = $title ?: str_replace(['_', '-'], [' ', ' '], $cleanDisplay);
+                                    ?>
+                                        <li class="reveal-on-scroll">
                                 <a href="?view=poem&poem=<?= urlencode($poem) ?>"><?= htmlspecialchars($displayName) ?></a>
                                 <?php if ($isAdmin): ?>
-                                    <a href="?delete=<?= urlencode($poem) ?>" 
-                                       onclick="return confirm('<?= $lang['confirm_delete'] ?>');" 
-                                       style="color: #999; font-size: 0.8rem; margin-left: 15px; text-decoration: none;"><?= $lang['delete_inline'] ?></a>
+                                    <a href="?delete=<?= urlencode($poem) ?>"
+                                        onclick="return confirm('<?= $lang['confirm_delete'] ?>');"
+                                        style="color: #999; font-size: 0.8rem; margin-left: 15px; text-decoration: none;"><?= $lang['delete_inline'] ?></a>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
@@ -730,7 +890,8 @@ if ($view === 'list') {
                     <?php else: ?>
                         <a href="index.php?view=list" class="action-button">
                             <?= $lang['view_poems'] ?>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
@@ -743,39 +904,57 @@ if ($view === 'list') {
         <?php if ($isAdmin): ?>
             <div class="admin-toolbar">
                 <a href="?lang=<?= $currentLang === 'el' ? 'en' : 'el' ?>">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                        </path>
+                    </svg>
                     <?= $lang['lang_toggle'] ?>
                 </a>
                 <a href="#" onclick="toggleUpload(); return false;"><?= $lang['add_poem'] ?></a>
                 <a href="index.php?view=list">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
                     <?= $lang['delete_poems'] ?>
                 </a>
-                <?php 
-                    $logoutParams = $_GET;
-                    $logoutParams['logout'] = '1';
+                <?php
+                $logoutParams = $_GET;
+                $logoutParams['logout'] = '1';
                 ?>
                 <a href="?<?= http_build_query($logoutParams) ?>"><?= $lang['exit'] ?></a>
             </div>
             <div id="upload-form">
                 <h3><?= $lang['upload_title'] ?></h3>
                 <form action="" method="post" enctype="multipart/form-data">
-                    <label for="poem_file"><?= $lang['file_label'] ?></label>
-                    <input type="file" name="poem" id="poem_file" required>
-                    <label for="pwd"><?= $lang['pwd_label'] ?></label>
-                    <input type="password" name="password" id="pwd" required placeholder="<?= $lang['pwd_ph'] ?>">
+                    <div class="file-upload-wrapper">
+                        <input type="file" name="poem" id="poem_file" class="file-input" required
+                            onchange="updateFileName(this)">
+                        <label for="poem_file" class="file-label">
+                            <span><?= $lang['file_label'] ?></span>
+                            <span id="file-name-display" class="file-name-display"></span>
+                        </label>
+                    </div>
                     <button type="submit"><?= $lang['btn_upload'] ?></button>
-                    <button type="button" onclick="toggleUpload()" style="background: none; color: #888; border: none; margin-top: 10px; width: 100%; cursor: pointer;"><?= $lang['btn_cancel'] ?></button>
+                    <button type="button" onclick="toggleUpload()"
+                        style="background: none; color: #888; border: none; margin-top: 10px; width: 100%; cursor: pointer; font-size: 0.9rem;"><?= $lang['btn_cancel'] ?></button>
                 </form>
             </div>
         <?php endif; ?>
         <footer>
             &copy; <?= date('Y') ?> <?= $displayPoetName ?>. All rights reserved.
             &bull;
-            <a href="https://github.com/cozats/Poetry-Site-Template" target="_blank" class="admin-link" style="text-decoration: none;">GitHub</a>
+            <a href="https://github.com/cozats/Poetry-Site-Template" target="_blank" class="admin-link"
+                style="text-decoration: none;">GitHub</a>
             <br>
             <a href="index.php?admin" class="admin-link"><?= $lang['management'] ?></a>
         </footer>
     </div>
 </body>
+
 </html>
