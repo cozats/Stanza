@@ -83,6 +83,7 @@ $locales = [
         'msg_del_success' => 'Το ποίημα διαγράφηκε.',
         'msg_del_err' => 'Αποτυχία διαγραφής.',
         'welcome_msg' => 'Καλωσήρθατε. Παρακαλώ ανεβάστε περιεχομενo για την αρχική σελίδα.',
+        'sort' => 'Ταξινόμηση',
         'sort_alpha' => 'Α-Ω',
         'sort_latest' => 'Νεότερα',
         'align' => 'Στοίχιση',
@@ -123,6 +124,7 @@ $locales = [
         'msg_del_success' => 'Poem deleted.',
         'msg_del_err' => 'Failed to delete poem.',
         'welcome_msg' => 'Welcome. Please upload the landing page content.',
+        'sort' => 'Sort',
         'sort_alpha' => 'A-Z',
         'sort_latest' => 'Latest',
         'align' => 'Alignment',
@@ -1058,17 +1060,17 @@ if ($view === 'list') {
         function updateSortButton(order) {
             const dropdown = document.getElementById('sort-dropdown');
             if (!dropdown) return;
-
+            
             const btn = dropdown.querySelector('a');
-            const label = btn.querySelector('span');
+            const labelValue = btn.querySelector('.sort-value');
             const iconContainer = btn.querySelector('.icon-wrapper');
 
             if (order === 'latest') {
-                label.textContent = "<?= $lang['sort_latest'] ?>";
+                labelValue.textContent = ": <?= $lang['sort_latest'] ?>";
                 // Keep the "Latest" icon for the main button
                 iconContainer.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5h10"></path><path d="M11 9h7"></path><path d="M11 13h4"></path><path d="m3 17 3 3 3-3"></path><path d="M6 18V4"></path></svg>`;
             } else {
-                label.textContent = "<?= $lang['sort_alpha'] ?>";
+                labelValue.textContent = ": <?= $lang['sort_alpha'] ?>";
                 // Keep the "A-Z" icon for the main button
                 iconContainer.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
             }
@@ -1212,7 +1214,7 @@ if ($view === 'list') {
                     <div class="dropdown" id="sort-dropdown">
                         <a href="#" onclick="toggleDropdown(event, 'sort-dropdown')">
                             <span class="icon-wrapper"></span>
-                            <span></span>
+                            <span><?= $lang['sort'] ?></span><span class="sort-value"></span>
                         </a>
                         <div class="dropdown-content">
                             <button onclick="setSort('alpha')">
