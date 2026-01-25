@@ -318,7 +318,9 @@ $poems = [];
 
 // Content Loading Logic
 if (isset($_GET['poem'])) {
-    $view = 'poem';
+    if ($view !== 'admin_login') {
+        $view = 'poem';
+    }
     $file = basename($_GET['poem']);
     $file = getLocalizedFilename($file, $currentLang);
     $filepath = POEMS_DIR . $file;
