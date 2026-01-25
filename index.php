@@ -686,7 +686,7 @@ if ($view === 'list') {
                 justify-content: space-around;
                 gap: 5px;
                 padding: 10px 5px;
-                border-radius: 15px;
+                border-radius: 50px;
             }
 
             .admin-toolbar a {
