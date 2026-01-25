@@ -1016,23 +1016,26 @@ if ($view === 'list') {
             if (dropdown) dropdown.classList.remove('active');
         }
 
-        function toggleDropdown(e) {
+        function toggleDropdown(e, id) {
             e.preventDefault();
             e.stopPropagation();
-            const dropdown = document.getElementById('align-dropdown');
-            if (dropdown) dropdown.classList.toggle('active');
 
-            // Close other dropdowns
-            const uploadDropdown = document.getElementById('upload-dropdown');
-            if (uploadDropdown) uploadDropdown.classList.remove('active');
+            // Close all other dropdowns first
+            document.querySelectorAll('.dropdown').forEach(d => {
+                if (d.id !== id) d.classList.remove('active');
+            });
+
+            const dropdown = document.getElementById(id);
+            if (dropdown) dropdown.classList.toggle('active');
         }
 
-        function toggleSort(e) {
-            e.preventDefault();
-            const currentSort = localStorage.getItem('sort_order') === 'latest' ? 'alpha' : 'latest';
-            localStorage.setItem('sort_order', currentSort);
-            applySort(currentSort);
-            updateSortButton(currentSort);
+        function setSort(order) {
+            localStorage.setItem('sort_order', order);
+            applySort(order);
+            updateSortButton(order);
+
+            const dropdown = document.getElementById('sort-dropdown');
+            if (dropdown) dropdown.classList.remove('active');
         }
 
         function applySort(order) {
@@ -1053,18 +1056,27 @@ if ($view === 'list') {
         }
 
         function updateSortButton(order) {
-            const btn = document.getElementById('sort-btn');
-            if (!btn) return;
-            const label = btn.querySelector('.sort-label');
+            const dropdown = document.getElementById('sort-dropdown');
+            if (!dropdown) return;
+
+            const btn = dropdown.querySelector('a');
+            const label = btn.querySelector('span');
             const iconContainer = btn.querySelector('.icon-wrapper');
 
             if (order === 'latest') {
-                label.textContent = "<?= $lang['sort_alpha'] ?>";
-                iconContainer.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
-            } else {
                 label.textContent = "<?= $lang['sort_latest'] ?>";
+                // Keep the "Latest" icon for the main button
                 iconContainer.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5h10"></path><path d="M11 9h7"></path><path d="M11 13h4"></path><path d="m3 17 3 3 3-3"></path><path d="M6 18V4"></path></svg>`;
+            } else {
+                label.textContent = "<?= $lang['sort_alpha'] ?>";
+                // Keep the "A-Z" icon for the main button
+                iconContainer.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
             }
+
+            // Update active state in dropdown
+            dropdown.querySelectorAll('.dropdown-content button').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('onclick').includes(`'${order}'`));
+            });
         }
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -1176,26 +1188,61 @@ if ($view === 'list') {
 
         <?php if ($isAdmin): ?>
             <div class="admin-toolbar">
-                <a href="?lang=<?= $currentLang === 'el' ? 'en' : 'el' ?>">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path
-                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                        </path>
-                    </svg>
-                    <span><?= $lang['lang_toggle'] ?></span>
-                </a>
-                <?php if ($view === 'list'): ?>
-                    <a href="#" id="sort-btn" onclick="toggleSort(event)">
-                        <span class="icon-wrapper"></span>
-                        <span class="sort-label"></span>
+                <div class="dropdown" id="lang-dropdown">
+                    <a href="#" onclick="toggleDropdown(event, 'lang-dropdown')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                            </path>
+                        </svg>
+                        <span><?= $currentLang === 'el' ? 'Ελληνικά' : 'English' ?></span>
                     </a>
+                    <div class="dropdown-content">
+                        <button onclick="window.location.href='?lang=el'"
+                            class="<?= $currentLang === 'el' ? 'active' : '' ?>">Ελληνικά</button>
+                        <button onclick="window.location.href='?lang=en'"
+                            class="<?= $currentLang === 'en' ? 'active' : '' ?>">English</button>
+                    </div>
+                </div>
+
+                <?php if ($view === 'list'): ?>
+                    <div class="dropdown" id="sort-dropdown">
+                        <a href="#" onclick="toggleDropdown(event, 'sort-dropdown')">
+                            <span class="icon-wrapper"></span>
+                            <span></span>
+                        </a>
+                        <div class="dropdown-content">
+                            <button onclick="setSort('alpha')">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <?= $lang['sort_alpha'] ?>
+                            </button>
+                            <button onclick="setSort('latest')">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 5h10"></path>
+                                    <path d="M11 9h7"></path>
+                                    <path d="M11 13h4"></path>
+                                    <path d="m3 17 3 3 3-3"></path>
+                                    <path d="M6 18V4"></path>
+                                </svg>
+                                <?= $lang['sort_latest'] ?>
+                            </button>
+                        </div>
+                    </div>
                 <?php endif; ?>
+
                 <?php if ($view === 'list' || $view === 'poem'): ?>
                     <div class="dropdown" id="align-dropdown">
-                        <a href="#" onclick="toggleDropdown(event)">
+                        <a href="#" onclick="toggleDropdown(event, 'align-dropdown')">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="17" y1="10" x2="3" y2="10"></line>
@@ -1216,7 +1263,7 @@ if ($view === 'list') {
                                 </svg>
                                 <?= $lang['align_left'] ?>
                             </button>
-                            <button onclick="setAlignment('center')" class="active">
+                            <button onclick="setAlignment('center')">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <line x1="18" y1="10" x2="6" y2="10"></line>
