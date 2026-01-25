@@ -636,6 +636,11 @@ if ($view === 'list') {
             margin-top: 2rem;
         }
 
+        input:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: -2px;
+        }
+
         .admin-toolbar {
             position: fixed;
             bottom: 20px;
@@ -1068,7 +1073,7 @@ if ($view === 'list') {
                 <div class="poem-content">
                     <h1 class="poem-title"><?= $lang['management'] ?></h1>
                     <form action="" method="post" style="max-width: 300px; margin: 0 auto; text-align: center;">
-                        <input type="password" name="password" placeholder="<?= $lang['pwd_ph'] ?>" required
+                        <input type="password" name="password" placeholder="<?= $lang['pwd_ph'] ?>" required autofocus
                             style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit;">
                         <button type="submit" name="admin_login"
                             style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem;">
