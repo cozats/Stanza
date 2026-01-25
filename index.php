@@ -680,12 +680,26 @@ if ($view === 'list') {
             }
 
             .admin-toolbar {
-                left: 20px;
-                right: 20px;
-                bottom: 20px;
-                justify-content: center;
-                gap: 15px;
-                padding: 10px 20px;
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                justify-content: space-around;
+                gap: 5px;
+                padding: 10px 5px;
+                border-radius: 15px;
+            }
+
+            .admin-toolbar a {
+                flex-direction: column;
+                gap: 4px;
+                font-size: 0.65rem;
+                text-align: center;
+                flex: 1;
+            }
+
+            .admin-toolbar a svg {
+                width: 18px;
+                height: 18px;
             }
 
             #upload-form {
@@ -920,30 +934,25 @@ if ($view === 'list') {
         <?php if ($isAdmin): ?>
             <div class="admin-toolbar">
                 <a href="?lang=<?= $currentLang === 'el' ? 'en' : 'el' ?>">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path
-                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                        </path>
-                    </svg>
-                    <?= $lang['lang_toggle'] ?>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    <span><?= $lang['lang_toggle'] ?></span>
                 </a>
-                <a href="#" onclick="toggleUpload(); return false;"><?= $lang['add_poem'] ?></a>
+                <a href="#" onclick="toggleUpload(); return false;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <span><?= $lang['add_poem'] ?></span>
+                </a>
                 <a href="index.php?view=list">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 6h18"></path>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                    <?= $lang['delete_poems'] ?>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span><?= $lang['delete_poems'] ?></span>
                 </a>
-                <?php
-                $logoutParams = $_GET;
-                $logoutParams['logout'] = '1';
+                <?php 
+                    $logoutParams = $_GET;
+                    $logoutParams['logout'] = '1';
                 ?>
-                <a href="?<?= http_build_query($logoutParams) ?>"><?= $lang['exit'] ?></a>
+                <a href="?<?= http_build_query($logoutParams) ?>">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span><?= $lang['exit'] ?></span>
+                </a>
             </div>
             <div id="upload-form">
                 <h3><?= $lang['upload_title'] ?></h3>
