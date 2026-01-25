@@ -678,6 +678,22 @@ if ($view === 'list') {
             .poem-title {
                 line-height: 1.2;
             }
+
+            .admin-toolbar {
+                left: 20px;
+                right: 20px;
+                bottom: 20px;
+                justify-content: center;
+                gap: 15px;
+                padding: 10px 20px;
+            }
+
+            #upload-form {
+                left: 20px;
+                right: 20px;
+                width: auto;
+                bottom: 80px;
+            }
         }
 
         #upload-form h3 {
@@ -864,12 +880,12 @@ if ($view === 'list') {
                     <?php if (empty($poems)): ?>
                         <li><span style="color: #999; font-style: italic;"><?= $lang['no_poems'] ?></span></li>
                     <?php else: ?>
-                                <?php foreach ($poems as $poem):
-                                    $title = getPoemTitle(POEMS_DIR . $poem);
-                                    $cleanDisplay = preg_replace('/_(en|el)$/', '', pathinfo($poem, PATHINFO_FILENAME));
-                                    $displayName = $title ?: str_replace(['_', '-'], [' ', ' '], $cleanDisplay);
-                                    ?>
-                                        <li class="reveal-on-scroll">
+                        <?php foreach ($poems as $poem):
+                            $title = getPoemTitle(POEMS_DIR . $poem);
+                            $cleanDisplay = preg_replace('/_(en|el)$/', '', pathinfo($poem, PATHINFO_FILENAME));
+                            $displayName = $title ?: str_replace(['_', '-'], [' ', ' '], $cleanDisplay);
+                            ?>
+                            <li class="reveal-on-scroll">
                                 <a href="?view=poem&poem=<?= urlencode($poem) ?>"><?= htmlspecialchars($displayName) ?></a>
                                 <?php if ($isAdmin): ?>
                                     <a href="?delete=<?= urlencode($poem) ?>"
