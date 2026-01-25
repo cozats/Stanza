@@ -150,15 +150,7 @@ if (isset($_GET['lang'])) {
 $currentLang = $_SESSION['lang'] ?? UI_LANGUAGE;
 $lang = $locales[$currentLang] ?? $locales['en'];
 
-// Handle Admin Mode
-if (isset($_GET['sort'])) {
-    $_SESSION['sort_order'] = $_GET['sort'] === 'latest' ? 'latest' : 'alpha';
-    $params = $_GET;
-    unset($params['sort']);
-    $queryString = http_build_query($params);
-    header('Location: ' . getCurrentBaseUrl() . ($queryString ? '?' . $queryString : ''));
-    exit;
-}
+// Handle Sort State (Client-side now handles the toggle, but we keep this for initial load if needed)
 $sortOrder = $_SESSION['sort_order'] ?? 'alpha';
 
 if (isset($_GET['logout'])) {
@@ -862,7 +854,51 @@ if ($view === 'list') {
             if (btn) btn.textContent = theme === 'dark' ? i18n.light : i18n.dark;
         }
 
+        function toggleSort(e) {
+            e.preventDefault();
+            const currentSort = localStorage.getItem('sort_order') === 'latest' ? 'alpha' : 'latest';
+            localStorage.setItem('sort_order', currentSort);
+            applySort(currentSort);
+            updateSortButton(currentSort);
+        }
+
+        function applySort(order) {
+            const list = document.querySelector('.poem-list');
+            if (!list) return;
+            const items = Array.from(list.querySelectorAll('.poem-item'));
+            if (items.length === 0) return;
+
+            items.sort((a, b) => {
+                if (order === 'latest') {
+                    return parseInt(b.dataset.time) - parseInt(a.dataset.time);
+                } else {
+                    return a.dataset.title.localeCompare(b.dataset.title, '<?= $currentLang ?>');
+                }
+            });
+
+            items.forEach(item => list.appendChild(item));
+        }
+
+        function updateSortButton(order) {
+            const btn = document.getElementById('sort-btn');
+            if (!btn) return;
+            const label = btn.querySelector('.sort-label');
+            const iconContainer = btn.querySelector('.icon-wrapper');
+            
+            if (order === 'latest') {
+                label.textContent = "<?= $lang['sort_alpha'] ?>";
+                iconContainer.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
+            } else {
+                label.textContent = "<?= $lang['sort_latest'] ?>";
+                iconContainer.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5h10"></path><path d="M11 9h7"></path><path d="M11 13h4"></path><path d="m3 17 3 3 3-3"></path><path d="M6 18V4"></path></svg>`;
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
+            const savedSort = localStorage.getItem('sort_order') || 'alpha';
+            applySort(savedSort);
+            updateSortButton(savedSort);
+
             updateThemeButton(document.documentElement.getAttribute('data-theme'));
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -918,8 +954,10 @@ if ($view === 'list') {
                             $title = getPoemTitle(POEMS_DIR . $poem);
                             $cleanDisplay = preg_replace('/_(en|el)$/', '', pathinfo($poem, PATHINFO_FILENAME));
                             $displayName = $title ?: str_replace(['_', '-'], [' ', ' '], $cleanDisplay);
+                            $mtime = filemtime(POEMS_DIR . $poem);
                             ?>
-                            <li class="reveal-on-scroll">
+                            <li class="reveal-on-scroll poem-item" data-title="<?= htmlspecialchars($displayName) ?>"
+                                data-time="<?= $mtime ?>">
                                 <a href="?view=poem&poem=<?= urlencode($poem) ?>"><?= htmlspecialchars($displayName) ?></a>
                                 <?php if ($isAdmin): ?>
                                     <a href="?delete=<?= urlencode($poem) ?>"
@@ -964,15 +1002,11 @@ if ($view === 'list') {
                     </svg>
                     <span><?= $lang['lang_toggle'] ?></span>
                 </a>
-                <a href="?sort=<?= $sortOrder === 'alpha' ? 'latest' : 'alpha' ?>">
-                        <?php if ($sortOrder === 'alpha'): ?>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5h10"></path><path d="M11 9h7"></path><path d="M11 13h4"></path><path d="m3 17 3 3 3-3"></path><path d="M6 18V4"></path></svg>
-                        <?php else: ?>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        <?php endif; ?>
-                        <span><?= $sortOrder === 'alpha' ? $lang['sort_latest'] : $lang['sort_alpha'] ?></span>
-                    </a>
-                    <a href="#" onclick="toggleUpload(); return false;">
+                <a href="#" id="sort-btn" onclick="toggleSort(event)">
+                    <span class="icon-wrapper"></span>
+                    <span class="sort-label"></span>
+                </a>
+                <a href="#" onclick="toggleUpload(); return false;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
