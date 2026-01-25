@@ -82,7 +82,9 @@ $locales = [
         'msg_move_err' => 'Αποτυχία αποθήκευσης αρχείου.',
         'msg_del_success' => 'Το ποίημα διαγράφηκε.',
         'msg_del_err' => 'Αποτυχία διαγραφής.',
-        'welcome_msg' => 'Καλωσήρθατε. Παρακαλώ ανεβάστε περιεχόμενο για την αρχική σελίδα.',
+        'welcome_msg' => 'Καλωσήρθατε. Παρακαλώ ανεβάστε περιεχομενo για την αρχική σελίδα.',
+        'sort_alpha' => 'Α-Ω',
+        'sort_latest' => 'Νεότερα',
     ],
     'en' => [
         'poet_name' => 'Poet Name',
@@ -117,6 +119,8 @@ $locales = [
         'msg_del_success' => 'Poem deleted.',
         'msg_del_err' => 'Failed to delete poem.',
         'welcome_msg' => 'Welcome. Please upload the landing page content.',
+        'sort_alpha' => 'A-Z',
+        'sort_latest' => 'Latest',
     ]
 ];
 
@@ -147,6 +151,16 @@ $currentLang = $_SESSION['lang'] ?? UI_LANGUAGE;
 $lang = $locales[$currentLang] ?? $locales['en'];
 
 // Handle Admin Mode
+if (isset($_GET['sort'])) {
+    $_SESSION['sort_order'] = $_GET['sort'] === 'latest' ? 'latest' : 'alpha';
+    $params = $_GET;
+    unset($params['sort']);
+    $queryString = http_build_query($params);
+    header('Location: ' . getCurrentBaseUrl() . ($queryString ? '?' . $queryString : ''));
+    exit;
+}
+$sortOrder = $_SESSION['sort_order'] ?? 'alpha';
+
 if (isset($_GET['logout'])) {
     unset($_SESSION['is_admin']);
     $params = $_GET;
@@ -344,15 +358,21 @@ if ($view === 'list') {
 
     $poems = array_column($groups, 'filename');
 
-    if (class_exists('Collator')) {
-        $collator = new Collator($currentLang === 'el' ? 'el_GR' : 'en_US');
-        usort($poems, function ($a, $b) use ($collator) {
-            $titleA = getPoemTitle(POEMS_DIR . $a) ?: $a;
-            $titleB = getPoemTitle(POEMS_DIR . $b) ?: $b;
-            return $collator->compare($titleA, $titleB);
+    if ($sortOrder === 'latest') {
+        usort($poems, function ($a, $b) {
+            return filemtime(POEMS_DIR . $b) <=> filemtime(POEMS_DIR . $a);
         });
     } else {
-        usort($poems, 'strcmp');
+        if (class_exists('Collator')) {
+            $collator = new Collator($currentLang === 'el' ? 'el_GR' : 'en_US');
+            usort($poems, function ($a, $b) use ($collator) {
+                $titleA = getPoemTitle(POEMS_DIR . $a) ?: $a;
+                $titleB = getPoemTitle(POEMS_DIR . $b) ?: $b;
+                return $collator->compare($titleA, $titleB);
+            });
+        } else {
+            usort($poems, 'strcmp');
+        }
     }
 }
 ?>
@@ -944,7 +964,15 @@ if ($view === 'list') {
                     </svg>
                     <span><?= $lang['lang_toggle'] ?></span>
                 </a>
-                <a href="#" onclick="toggleUpload(); return false;">
+                <a href="?sort=<?= $sortOrder === 'alpha' ? 'latest' : 'alpha' ?>">
+                        <?php if ($sortOrder === 'alpha'): ?>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5h10"></path><path d="M11 9h7"></path><path d="M11 13h4"></path><path d="m3 17 3 3 3-3"></path><path d="M6 18V4"></path></svg>
+                        <?php else: ?>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <?php endif; ?>
+                        <span><?= $sortOrder === 'alpha' ? $lang['sort_latest'] : $lang['sort_alpha'] ?></span>
+                    </a>
+                    <a href="#" onclick="toggleUpload(); return false;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
