@@ -1187,10 +1187,12 @@ if ($view === 'list') {
                     </svg>
                     <span><?= $lang['lang_toggle'] ?></span>
                 </a>
-                <a href="#" id="sort-btn" onclick="toggleSort(event)">
-                    <span class="icon-wrapper"></span>
-                    <span class="sort-label"></span>
-                </a>
+                <?php if ($view === 'list'): ?>
+                    <a href="#" id="sort-btn" onclick="toggleSort(event)">
+                        <span class="icon-wrapper"></span>
+                        <span class="sort-label"></span>
+                    </a>
+                <?php endif; ?>
                 <?php if ($view === 'list' || $view === 'poem'): ?>
                     <div class="dropdown" id="align-dropdown">
                         <a href="#" onclick="toggleDropdown(event)">
