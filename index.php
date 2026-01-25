@@ -784,21 +784,23 @@ if ($view === 'list') {
         }
 
         .upload-popup button[type="submit"] {
-            background: white !important;
-            color: var(--accent-color) !important;
-            border: none;
-            padding: 0.7rem 2rem;
+            background: var(--accent-color) !important;
+            color: white !important;
+            border: 1px solid white !important;
+            padding: 0.7rem 2.5rem;
             cursor: pointer;
             font-family: inherit;
             font-size: 1rem;
-            display: block;
+            display: inline-block;
             margin: 1.5rem auto 0;
-            transition: opacity 0.3s;
+            transition: all 0.3s;
             border-radius: 50px;
+            width: auto;
         }
 
         .upload-popup button[type="submit"]:hover {
-            opacity: 0.9;
+            background: white !important;
+            color: var(--accent-color) !important;
         }
 
         @media (max-width: 600px) {
@@ -1250,8 +1252,9 @@ if ($view === 'list') {
                                 </label>
                             </div>
                             <button type="submit"><?= $lang['btn_upload'] ?></button>
+                            <br>
                             <button type="button" onclick="toggleUpload(event)"
-                                style="background: none; color: rgba(255,255,255,0.6); border: none; margin-top: 15px; width: auto; cursor: pointer; font-size: 0.9rem; font-family: inherit; display: inline-block;"><?= $lang['btn_cancel'] ?></button>
+                                style="background: none; color: white; border: none; margin-top: 15px; width: auto; cursor: pointer; font-size: 0.9rem; font-family: inherit; display: inline-block; text-decoration: underline; opacity: 0.8;"><?= $lang['btn_cancel'] ?></button>
                         </form>
                     </div>
                 </div>
