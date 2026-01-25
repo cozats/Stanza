@@ -746,33 +746,59 @@ if ($view === 'list') {
 
         #upload-form {
             display: none;
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background: var(--bg-color);
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            z-index: 1001;
-            width: 300px;
         }
 
-        #upload-form.active {
+        .dropdown.active .dropdown-content {
             display: block;
-            animation: slideUp 0.3s ease-out;
         }
 
-        @keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
+        .upload-popup {
+            min-width: 320px;
+            padding: 1.8rem;
+            color: white;
+            background: var(--accent-color);
+        }
 
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .upload-popup h3 {
+            color: white;
+            font-weight: 400;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .upload-popup .file-label {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .upload-popup .file-label:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-style: solid;
+        }
+
+        .upload-popup .file-name-display {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .upload-popup button[type="submit"] {
+            background: white;
+            color: var(--accent-color);
+            border: none;
+            padding: 0.7rem 2rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            display: block;
+            margin: 0 auto;
+            transition: opacity 0.3s;
+            border-radius: 50px;
+        }
+
+        .upload-popup button[type="submit"]:hover {
+            opacity: 0.9;
         }
 
         @media (max-width: 600px) {
@@ -823,14 +849,7 @@ if ($view === 'list') {
             }
         }
 
-        #upload-form h3 {
-            font-weight: 400;
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-size: 1.2rem;
-            color: var(--accent-color);
-        }
+
 
         .file-upload-wrapper {
             position: relative;
@@ -937,9 +956,17 @@ if ($view === 'list') {
             light: "<?= $lang['theme_light'] ?>"
         };
 
-        function toggleUpload() {
-            const form = document.getElementById('upload-form');
-            form.classList.toggle('active');
+        function toggleUpload(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const dropdown = document.getElementById('upload-dropdown');
+            if (dropdown) dropdown.classList.toggle('active');
+
+            // Close other dropdowns
+            const alignDropdown = document.getElementById('align-dropdown');
+            if (alignDropdown) alignDropdown.classList.remove('active');
         }
 
         function updateFileName(input) {
@@ -986,6 +1013,10 @@ if ($view === 'list') {
             e.stopPropagation();
             const dropdown = document.getElementById('align-dropdown');
             if (dropdown) dropdown.classList.toggle('active');
+
+            // Close other dropdowns
+            const uploadDropdown = document.getElementById('upload-dropdown');
+            if (uploadDropdown) uploadDropdown.classList.remove('active');
         }
 
         function toggleSort(e) {
@@ -1038,12 +1069,13 @@ if ($view === 'list') {
 
             updateThemeButton(document.documentElement.getAttribute('data-theme'));
 
-            // Close dropdown when clicking outside
+            // Close dropdowns when clicking outside
             document.addEventListener('click', function (e) {
-                const dropdown = document.getElementById('align-dropdown');
-                if (dropdown && !dropdown.contains(e.target)) {
-                    dropdown.classList.remove('active');
-                }
+                document.querySelectorAll('.dropdown').forEach(dropdown => {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove('active');
+                    }
+                });
             });
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -1197,14 +1229,32 @@ if ($view === 'list') {
                         </div>
                     </div>
                 <?php endif; ?>
-                <a href="#" onclick="toggleUpload(); return false;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    <span><?= $lang['add_poem'] ?></span>
-                </a>
+                <div class="dropdown" id="upload-dropdown">
+                    <a href="#" onclick="toggleUpload(event)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span><?= $lang['add_poem'] ?></span>
+                    </a>
+                    <div id="upload-form" class="dropdown-content upload-popup">
+                        <h3><?= $lang['upload_title'] ?></h3>
+                        <form action="" method="post" enctype="multipart/form-data">
+                            <div class="file-upload-wrapper">
+                                <input type="file" name="poem" id="poem_file" class="file-input" required
+                                    onchange="updateFileName(this)">
+                                <label for="poem_file" class="file-label">
+                                    <span><?= $lang['file_label'] ?></span>
+                                    <span id="file-name-display" class="file-name-display"></span>
+                                </label>
+                            </div>
+                            <button type="submit"><?= $lang['btn_upload'] ?></button>
+                            <button type="button" onclick="toggleUpload(event)"
+                                style="background: none; color: rgba(255,255,255,0.6); border: none; margin-top: 10px; width: 100%; cursor: pointer; font-size: 0.9rem; font-family: inherit;"><?= $lang['btn_cancel'] ?></button>
+                        </form>
+                    </div>
+                </div>
                 <a href="index.php?view=list">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -1226,22 +1276,6 @@ if ($view === 'list') {
                     </svg>
                     <span><?= $lang['exit'] ?></span>
                 </a>
-            </div>
-            <div id="upload-form">
-                <h3><?= $lang['upload_title'] ?></h3>
-                <form action="" method="post" enctype="multipart/form-data">
-                    <div class="file-upload-wrapper">
-                        <input type="file" name="poem" id="poem_file" class="file-input" required
-                            onchange="updateFileName(this)">
-                        <label for="poem_file" class="file-label">
-                            <span><?= $lang['file_label'] ?></span>
-                            <span id="file-name-display" class="file-name-display"></span>
-                        </label>
-                    </div>
-                    <button type="submit"><?= $lang['btn_upload'] ?></button>
-                    <button type="button" onclick="toggleUpload()"
-                        style="background: none; color: #888; border: none; margin-top: 10px; width: 100%; cursor: pointer; font-size: 0.9rem;"><?= $lang['btn_cancel'] ?></button>
-                </form>
             </div>
         <?php endif; ?>
         <footer>
