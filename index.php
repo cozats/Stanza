@@ -851,8 +851,9 @@ if ($view === 'list') {
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 8px;
             min-height: 80px;
-            padding: 12px;
+            padding: 12px 24px;
             border: 1px dashed var(--border-color);
             background: rgba(140, 59, 59, 0.05);
             color: var(--text-color);
@@ -861,6 +862,7 @@ if ($view === 'list') {
             transition: all 0.3s;
             font-size: 0.9rem;
             border-radius: 50px;
+            line-height: 1;
         }
 
         .file-label:hover {
@@ -870,10 +872,13 @@ if ($view === 'list') {
 
         .file-name-display {
             display: block;
-            margin-top: 8px;
             font-size: 0.8rem;
             color: #888;
             font-style: italic;
+        }
+
+        .file-name-display:empty {
+            display: none;
         }
 
         #upload-form button[type="submit"] {
