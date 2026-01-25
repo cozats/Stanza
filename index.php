@@ -761,7 +761,7 @@ if ($view === 'list') {
 
         .upload-popup h3 {
             color: white;
-            font-weight: 400;
+            font-weight: 600;
             margin-top: 0;
             margin-bottom: 1.5rem;
             text-align: center;
