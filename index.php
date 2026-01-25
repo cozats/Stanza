@@ -958,11 +958,10 @@ if ($view === 'list') {
         }
 
         function setAlignment(align) {
-            const container = document.querySelector('.poem-content');
-            if (!container) return;
+            const body = document.body;
 
-            ['align-left', 'align-center', 'align-right'].forEach(cls => container.classList.remove(cls));
-            container.classList.add(`align-${align}`);
+            ['align-left', 'align-center', 'align-right'].forEach(cls => body.classList.remove(cls));
+            body.classList.add(`align-${align}`);
             localStorage.setItem('poem_alignment', align);
 
             // Update UI buttons
@@ -1108,7 +1107,7 @@ if ($view === 'list') {
                     <?php endif; ?>
                 </ul>
             <?php elseif ($view === 'poem' || $view === 'home'): ?>
-                <div class="poem-content align-center">
+                <div class="poem-content">
                     <?= $poemHtml ?>
                 </div>
                 <div style="text-align: center; margin-top: 3rem;">
