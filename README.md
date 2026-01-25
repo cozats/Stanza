@@ -125,6 +125,6 @@ To run this website, you only need a hosting provider that supports **PHP** (sta
 ## ✕ Έξοδος
 - Πατήστε το **"✕ Έξοδος"** στο toolbar για να απενεργοποιήσετε τη διαχείριση και να επιστρέψετε στην προβολή επισκέπτη.
 
-![alt text](https://github.com/cozats/Stanza/blob/main/screens/controls.png) ![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-gr-light.png)
+ ![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-gr-light.png)
 ---
 *This project was created with the aim of promoting poetry and simplicity on the web. You can use, share, and change it freely.* 
