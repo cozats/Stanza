@@ -763,7 +763,7 @@ if ($view === 'list') {
             color: white;
             font-weight: 400;
             font-variant: small-caps;
-            text-transform: uppercase;
+            text-transform: capitalize;
             margin-top: 0;
             margin-bottom: 1.5rem;
             text-align: center;
