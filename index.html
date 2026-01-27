@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stanza | Elegant & Minimalist Poetry Platform</title>
+    <title>Stanza | The Elegant Multi-Collection Poetry Platform</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,16 +83,19 @@
         h1 {
             font-weight: 400;
             font-style: italic;
-            font-size: 4rem;
+            font-size: 5rem;
             margin: 0;
             letter-spacing: -0.02em;
             color: var(--accent-color);
         }
 
         .subtitle {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             opacity: 0.8;
             margin-top: 1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .hero-visual {
@@ -135,7 +138,7 @@
 
         .features-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 60px 40px;
         }
 
@@ -143,6 +146,7 @@
             color: var(--accent-color);
             font-weight: 600;
             margin-bottom: 0.5rem;
+            font-size: 1.4rem;
         }
 
         .cta-container {
@@ -151,14 +155,15 @@
             padding: 4rem;
             border: 1px solid var(--border-color);
             background: rgba(140, 59, 59, 0.03);
+            border-radius: 12px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            padding: 0.8rem 2rem;
+            padding: 0.8rem 2.5rem;
             background-color: var(--accent-color);
-            color: white;
+            color: white !important;
             text-decoration: none;
             font-size: 1.1rem;
             transition: all 0.3s ease;
@@ -190,16 +195,17 @@
         }
 
         code {
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(140, 59, 59, 0.1);
             padding: 0.2rem 0.4rem;
             border-radius: 3px;
             font-family: monospace;
             font-size: 0.9em;
+            color: var(--accent-color);
         }
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 2.5rem;
+                font-size: 3rem;
             }
 
             .container {
@@ -210,12 +216,16 @@
                 position: relative;
                 top: 0;
                 justify-content: center;
-                margin-bottom: 2rem;
+                margin-bottom: 2.5rem;
             }
 
             .features-grid {
                 grid-template-columns: 1fr;
                 gap: 40px;
+            }
+
+            .hero-visual {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -229,7 +239,7 @@
                 <button class="control-btn" id="theme-toggle">Dark Mode</button>
             </div>
             <h1 class="reveal">Stanza</h1>
-            <p class="subtitle reveal" id="hero-subtitle">A simple, elegant, and lightning-fast home for your poetry.
+            <p class="subtitle reveal" id="hero-subtitle">The elegant, multi-collection portal for modern poets.
             </p>
             <div class="reveal">
                 <a href="https://costas.design/stanza" target="_blank" class="btn btn-margin" id="action-btn">
@@ -253,25 +263,25 @@
         </section>
 
         <section id="features" class="reveal">
-            <h2 id="features-title">Core Experience</h2>
+            <h2 id="features-title">The Platform</h2>
             <div class="features-grid" id="features-grid">
                 <!-- Features injected by JS -->
             </div>
         </section>
 
         <section id="instructions" class="reveal">
-            <h2 id="instructions-title">Quick Start</h2>
+            <h2 id="instructions-title">How it Works</h2>
             <ol id="instructions-list">
                 <!-- Instructions injected by JS -->
             </ol>
         </section>
 
         <div class="cta-container reveal">
-            <h2 id="cta-title">Ready to share your work?</h2>
-            <p id="cta-subtitle">Download the template and launch your own collection in minutes.</p>
+            <h2 id="cta-title">Ready to launch your platform?</h2>
+            <p id="cta-subtitle">Stanza is open-source and free to use forever.</p>
             <br>
             <a href="https://github.com/cozats/Stanza" class="btn">
-                <span id="cta-btn-text">View on GitHub</span>
+                <span id="cta-btn-text">Star on GitHub</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round">
                     <path
@@ -282,7 +292,7 @@
         </div>
 
         <footer>
-            <p id="footer-text">&copy; 2026 Stanza. Created for poets, by poets.</p>
+            <p id="footer-text">&copy; 2026 Stanza. Designed for poets, by poets.</p>
         </footer>
     </div>
 
@@ -292,49 +302,53 @@
                 langBtn: "Ελληνικά",
                 themeBtnDark: "Dark Mode",
                 themeBtnLight: "Light Mode",
-                subtitle: "A simple, elegant, and lightning-fast home for your words.",
-                featuresTitle: "Core Experience",
+                subtitle: "The elegant, multi-collection portal for modern poets. Host your entire body of work in a single, database-free platform.",
+                featuresTitle: "The Experience",
                 features: [
-                    { h: "Minimalist Design", p: "Zero distractions. Beautiful EB Garamond typography that puts your poetry center stage." },
-                    { h: "Dual Soul", p: "Automatic Light and Dark themes to provide the perfect atmosphere for reading at any hour." },
-                    { h: "Zero Database", p: "Powered by flat-file Markdown. No SQL setup, no complexity. Just upload and publish." },
-                    { h: "Bilingual", p: "Native support for English and Greek, both in the interface and the content logic." }
+                    { h: "Multi-Collection Hub", p: "Host multiple distinct collections of poetry. Perfect for organizing works by era, theme, or book." },
+                    { h: "Master Landing Page", p: "A unified portal with your author profile that dynamically lists all your available collections." },
+                    { h: "Polished UI/UX", p: "Custom modals, persistent theme toggles, and refined toast notifications for a premium feel." },
+                    { h: "Shared Session Management", p: "Log in once on your landing page and manage all your collections effortlessly from one place." },
+                    { h: "Database-Free (Flat File)", p: "Powered by PHP and Markdown. Lightweight, fast, and easy to move between hosting providers." },
+                    { h: "Bilingual Intelligence", p: "Full Greek and English support. Automatically serves translations of poems when available." }
                 ],
-                instructionsTitle: "Quick Start",
+                instructionsTitle: "How it Works",
                 instructions: [
-                    "<strong>Deploy:</strong> Upload the <code>index.php</code> and <code>poems/</code> folder to any PHP host.",
-                    "<strong>Configure:</strong> Edit the top section of <code>index.php</code> with your name and password.",
-                    "<strong>Write:</strong> Create <code>.md</code> files using simple Markdown syntax."
+                    "Package: Download <a href='https://github.com/cozats/Stanza/archive/refs/heads/main.zip' style='color: var(--accent-color); font-weight: 600;'>Stanza</a> and upload it to any PHP-enabled host.",
+                    "Identify: Log in via the 'Management' link in the footer using the default password (it is \"<span style='color: var(--accent-color); font-weight: 600;'>password</span>\").",
+                    "Cultivate: Create new collections directly from your dashboard and upload your poems as .md files."
                 ],
-                ctaTitle: "Ready to share your work?",
-                ctaSubtitle: "Download the template and launch your own collection in minutes.",
-                ctaBtn: "View on GitHub",
+                ctaTitle: "Ready to launch your platform?",
+                ctaSubtitle: "Stanza is open-source and free to use forever for every poet.",
+                ctaBtn: "Star on GitHub",
                 actionBtn: "See it in action",
-                footer: "&copy; 2026 Stanza. Created for poets, by poets."
+                footer: "&copy; 2026 Stanza. Designed for poets, by poets."
             },
             el: {
                 langBtn: "English",
                 themeBtnDark: "Σκοτεινό Θέμα",
                 themeBtnLight: "Φωτεινό Θέμα",
-                subtitle: "Ένα απλό, κομψό και ταχύτατο σπίτι για την ποίησή σας.",
-                featuresTitle: "Βασική Εμπειρία",
+                subtitle: "Η κομψή πύλη πολλαπλών συλλογών για σύγχρονους ποιητές. Φιλοξενήστε ολόκληρο το έργο σας σε μια πλατφόρμα χωρίς βάσεις δεδομένων.",
+                featuresTitle: "Η Εμπειρία",
                 features: [
-                    { h: "Μινιμαλιστική Σχεδίαση", p: "Μηδενικοί περισπασμοί. Όμορφη τυπογραφία EB Garamond που βάζει την ποίησή σας στο επίκεντρο." },
-                    { h: "Διπλή Υπόσταση", p: "Αυτόματα φωτεινά και σκοτεινά θέματα για την τέλεια ατμόσφαιρα ανάγνωσης κάθε ώρα." },
-                    { h: "Χωρίς Βάση Δεδομένων", p: "Βασισμένο σε αρχεία Markdown. Χωρίς ρυθμίσεις SQL, χωρίς πολυπλοκότητα. Απλά ανεβάστε και δημοσιεύστε." },
-                    { h: "Δίγλωσσο", p: "Εγγενής υποστήριξη για Αγγλικά και Ελληνικά, τόσο στο περιβάλλον όσο και στη λογική περιεχομένου." }
+                    { h: "Κέντρο Πολλαπλών Συλλογών", p: "Φιλοξενήστε διαφορετικές συλλογές ποίησης. Ιδανικό για οργάνωση έργων ανά εποχή, θέμα ή βιβλίο." },
+                    { h: "Κεντρική Πύλη Εισόδου", p: "Μια ενιαία σελίδα με το προφίλ σας που εμφανίζει δυναμικά όλες τις διαθέσιμες συλλογές σας." },
+                    { h: "Εκλεπτυσμένο UI/UX", p: "Προσαρμοσμένα modals, σταθεροί διακόπτες θέματος και εκλεπτυσμένες ειδοποιήσεις για premium αίσθηση." },
+                    { h: "Ενιαία Διαχείριση", p: "Συνδεθείτε μία φορά στην αρχική σας σελίδα και διαχειριστείτε όλες τις συλλογές σας από ένα σημείο." },
+                    { h: "Χωρίς Βάσεις Δεδομένων", p: "Βασισμένο σε PHP και Markdown. Ελαφρύ, γρήγορο και εύκολο στη μεταφορά σε οποιονδήποτε πάροχο." },
+                    { h: "Δίγλωσση Νοημοσύνη", p: "Πλήρης υποστήριξη Ελληνικών και Αγγλικών. Αυτόματη προβολή μεταφράσεων όταν είναι διαθέσιμες." }
                 ],
-                instructionsTitle: "Γρήγορη Εκκίνηση",
+                instructionsTitle: "Πώς Λειτουργεί",
                 instructions: [
-                    "<strong>Εγκατάσταση:</strong> Ανεβάστε το <code>index.php</code> και τον φάκελο <code>poems/</code> σε οποιονδήποτε PHP host.",
-                    "<strong>Ρύθμιση:</strong> Επεξεργαστείτε το πάνω μέρος του <code>index.php</code> με το όνομα και τον κωδικό σας.",
-                    "<strong>Συγγραφή:</strong> Δημιουργήστε αρχεία <code>.md</code> χρησιμοποιώντας απλή σύνταξη Markdown."
+                    "Εγκατάσταση: Κατεβάστε το <a href='https://github.com/cozats/Stanza/archive/refs/heads/main.zip' style='color: var(--accent-color); font-weight: 600;'>Stanza</a> και ανεβάστε το σε οποιονδήποτε PHP host.",
+                    "Ταυτοποίηση: Συνδεθείτε μέσω του συνδέσμου 'Διαχείριση' χρησιμοποιώντας τον προεπιλεγμένο κωδικό (είναι <span style='color: var(--accent-color); font-weight: 600;'>password</span>).",
+                    "Δημιουργία: Φτιάξτε νέες συλλογές από το dashboard σας και ανεβάστε τα ποιήματά σας ως αρχεία .md."
                 ],
-                ctaTitle: "Έτοιμοι να μοιραστείτε το έργο σας;",
-                ctaSubtitle: "Κατεβάστε το template και ξεκινήστε τη δική σας συλλογή σε λίγα λεπτά.",
-                ctaBtn: "Δείτε το στο GitHub",
+                ctaTitle: "Έτοιμοι να ξεκινήσετε την πλατφόρμα σας;",
+                ctaSubtitle: "Το Stanza είναι ανοιχτού κώδικα και δωρεάν για πάντα για κάθε ποιητή.",
+                ctaBtn: "Star στο GitHub",
                 actionBtn: "Δείτε το στην πράξη",
-                footer: "&copy; 2026 Stanza. Δημιουργήθηκε για ποιητές, από ποιητές."
+                footer: "&copy; 2026 Stanza. Σχεδιασμένο για ποιητές, από ποιητές."
             }
         };
 
@@ -393,7 +407,7 @@
             });
         }, { threshold: 0.1 });
 
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        document.querySelectorAll('section, header, .cta-container').forEach(el => observer.observe(el));
     </script>
 </body>
 
