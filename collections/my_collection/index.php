@@ -28,7 +28,7 @@ define('POET_NAME', 'Poet Name');
 define('SITE_TITLE', 'My Collection');
 
 // Default UI Language (Options: 'el', 'en') / Προεπιλεγμένη γλώσσα (Επιλογές: 'el', 'en')
-define('UI_LANGUAGE', 'el');
+define('UI_LANGUAGE', 'en');
 
 // Load admin password from main config.json (shared with landing page)
 $configPath = dirname(__DIR__, 2) . '/config.json';

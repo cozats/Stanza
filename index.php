@@ -62,7 +62,7 @@ $config = loadConfig();
 define('ADMIN_PASSWORD_HASH', $config['admin_password_hash']);
 
 // Default UI Language
-define('UI_LANGUAGE', 'el');
+define('UI_LANGUAGE', 'en');
 
 $locales = [
     'el' => [
