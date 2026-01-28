@@ -1,10 +1,17 @@
 <?php
 declare(strict_types=1);
 
-// Increase upload limits to 10MB
-ini_set('upload_max_filesize', '10M');
-ini_set('post_max_size', '12M');
-ini_set('memory_limit', '64M');
+// Increase upload limits to 64MB
+ini_set('upload_max_filesize', '64M');
+ini_set('post_max_size', '64M');
+ini_set('memory_limit', '128M');
+
+// Set custom session path for environments with restrictive default paths
+$sessionPath = __DIR__ . '/sessions';
+if (!is_dir($sessionPath)) {
+    mkdir($sessionPath, 0755, true);
+}
+session_save_path($sessionPath);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -29,7 +36,8 @@ if (!is_dir(UPLOADS_DIR)) {
 $defaultConfig = [
     'author_name' => 'Poet Name',
     'author_bio' => 'This will be your about paragraph. You can edit this in the management section.',
-    'author_photo' => ''
+    'author_photo' => '',
+    'admin_password_hash' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
 ];
 
 // Load or create config
@@ -50,8 +58,8 @@ function saveConfig(array $config): bool
 
 $config = loadConfig();
 
-// Admin Password (Hash). Same as player.
-define('ADMIN_PASSWORD_HASH', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+// Admin Password (Hash).
+define('ADMIN_PASSWORD_HASH', $config['admin_password_hash']);
 
 // Default UI Language
 define('UI_LANGUAGE', 'el');
@@ -88,6 +96,9 @@ $locales = [
         'confirm_delete' => 'Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή τη συλλογή;',
         'choose_file' => 'Επιλογή αρχείου',
         'select_collection' => 'Επιλέξτε συλλογή',
+        'new_password_label' => 'Νέος Κωδικός',
+        'confirm_password_label' => 'Επαλήθευση Κωδικού',
+        'msg_pwd_mismatch' => 'Οι κωδικοί δεν ταιριάζουν.',
     ],
     'en' => [
         'lang_toggle' => 'Ελληνικά',
@@ -120,6 +131,9 @@ $locales = [
         'confirm_delete' => 'Are you sure you want to delete this collection?',
         'choose_file' => 'Choose file',
         'select_collection' => 'Select collection',
+        'new_password_label' => 'New Password',
+        'confirm_password_label' => 'Confirm Password',
+        'msg_pwd_mismatch' => 'Passwords do not match.',
     ]
 ];
 
@@ -217,6 +231,20 @@ if (isset($_POST['update_profile']) && $isAdmin) {
             ];
             $errMsg = $errorMessages[$_FILES['author_photo']['error']] ?? 'Unknown error';
             $_SESSION['message'] = 'Upload failed: ' . $errMsg;
+            $_SESSION['msg_type'] = 'error';
+            header('Location: ' . getCurrentBaseUrl());
+            exit;
+        }
+    }
+    // Handle password update
+    $newPwd = $_POST['new_password'] ?? '';
+    $confirmPwd = $_POST['confirm_password'] ?? '';
+
+    if (!empty($newPwd)) {
+        if ($newPwd === $confirmPwd) {
+            $config['admin_password_hash'] = password_hash($newPwd, PASSWORD_DEFAULT);
+        } else {
+            $_SESSION['message'] = $lang['msg_pwd_mismatch'];
             $_SESSION['msg_type'] = 'error';
             header('Location: ' . getCurrentBaseUrl());
             exit;
@@ -817,6 +845,10 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
             cursor: pointer;
             border-radius: 4px;
             margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .dropdown-content button[type="submit"]:hover {
@@ -1173,6 +1205,10 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
                             <input type="file" name="author_photo" accept="image/*"
                                 onchange="document.getElementById('photo-label').textContent = this.files[0]?.name || '<?= $lang['choose_file'] ?>'">
                         </div>
+                        <label><?= $lang['new_password_label'] ?></label>
+                        <input type="password" name="new_password">
+                        <label><?= $lang['confirm_password_label'] ?></label>
+                        <input type="password" name="confirm_password">
                         <button type="submit"><?= $lang['btn_save'] ?></button>
                     </form>
                 </div>

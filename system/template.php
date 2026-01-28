@@ -1,6 +1,14 @@
 <?php
 declare(strict_types=1);
 
+// Set custom session path for environments with restrictive default paths
+// Note: We use the root sessions directory
+$sessionPath = dirname(__DIR__, 2) . '/sessions';
+if (!is_dir($sessionPath)) {
+    mkdir($sessionPath, 0755, true);
+}
+session_save_path($sessionPath);
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -22,12 +30,20 @@ define('SITE_TITLE', 'Collection Title');
 // Default UI Language (Options: 'el', 'en') / Προεπιλεγμένη γλώσσα (Επιλογές: 'el', 'en')
 define('UI_LANGUAGE', 'el');
 
-// Upload password (Hash). Default: 'password' / Ο κωδικός για μεταφορτώσεις
-define('UPLOAD_PASSWORD_HASH', '$2y$12$t0T0C6Cyn/B2.bl7amhi5.D3lx4Dkg/3lQGE80UMq.sLLuQjwQQRW');
-// Handle Admin Login Submission
+// Load admin password from main config.json (shared with landing page)
+$configPath = dirname(__DIR__, 2) . '/config.json';
+$adminPasswordHash = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'; // default
+if (file_exists($configPath)) {
+    $config = json_decode(file_get_contents($configPath), true);
+    if (!empty($config['admin_password_hash'])) {
+        $adminPasswordHash = $config['admin_password_hash'];
+    }
+}
+
+// Handle Admin Login Submission (uses shared password from config.json)
 if (isset($_POST['admin_login'])) {
     $password = $_POST['password'] ?? '';
-    if (password_verify($password, UPLOAD_PASSWORD_HASH)) {
+    if (password_verify($password, $adminPasswordHash)) {
         $_SESSION['is_admin'] = true;
         header('Location: ' . $_SERVER['REQUEST_URI']);
         exit;
@@ -1101,7 +1117,7 @@ if ($view === 'list') {
             padding: 2rem;
             border-radius: 12px;
             width: 90%;
-            max-width: 400px;
+            max-width: 300px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             text-align: center;
             color: white;
@@ -1399,16 +1415,16 @@ if ($view === 'list') {
 
         <main>
             <?php if ($view === 'admin_login'): ?>
-                <div class="poem-content">
-                    <h1 class="poem-title"><?= $lang['management'] ?></h1>
-                    <form action="" method="post" style="max-width: 300px; margin: 0 auto; text-align: center;">
-                        <input type="password" name="password" placeholder="<?= $lang['pwd_ph'] ?>" required autofocus
-                            style="width: 100%; padding: 12px 24px; margin-bottom: 20px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-family: inherit; border-radius: 50px;">
-                        <button type="submit" name="admin_login"
-                            style="width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; cursor: pointer; font-family: inherit; font-size: 1.1rem; border-radius: 50px;">
-                            <?= $lang['btn_login'] ?>
-                        </button>
-                    </form>
+                <div class="login-overlay" onclick="if(event.target === this) window.location='<?= getCurrentBaseUrl() ?>'">
+                    <div class="login-box">
+                        <h3><?= $lang['management'] ?></h3>
+                        <form method="POST">
+                            <input type="hidden" name="admin_login" value="1">
+                            <input type="password" name="password" placeholder="<?= $lang['pwd_label'] ?>" required
+                                autofocus>
+                            <button type="submit"><?= $lang['btn_login'] ?></button>
+                        </form>
+                    </div>
                 </div>
             <?php elseif ($view === 'list'): ?>
                 <ul class="poem-list">

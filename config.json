@@ -1,5 +1,6 @@
 {
     "author_name": "Poet Name",
     "author_bio": "This will be your about paragraph. You can edit this in the management section.",
-    "author_photo": ""
+    "author_photo": "",
+    "admin_password_hash": "$2y$12$Epku146QUzmddNzdZ.40QuwlvcC63ZJcLLdWT120KUu8PtwjhL7DS"
 }
