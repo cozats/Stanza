@@ -33,6 +33,7 @@ define('UI_LANGUAGE', 'en');
 // Load admin password from main config.json (shared with landing page)
 $configPath = dirname(__DIR__, 2) . '/config.json';
 $adminPasswordHash = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'; // default
+$config = [];
 if (file_exists($configPath)) {
     $config = json_decode(file_get_contents($configPath), true);
     if (!empty($config['admin_password_hash'])) {
@@ -83,6 +84,8 @@ $locales = [
         'delete_collection' => 'Διαγραφή',
         'exit' => 'Έξοδος',
         'home' => 'Αρχική',
+        'profile' => 'Προφίλ',
+        'contents' => 'Περιεχόμενα',
         'upload_title' => 'Ανεβάστε νέο ποίημα',
         'file_label' => 'Επιλογή αρχείου (.md/.txt)',
         'pwd_label' => 'Κωδικός',
@@ -108,6 +111,15 @@ $locales = [
         'align_left' => 'Αριστερά',
         'align_center' => 'Κέντρο',
         'align_right' => 'Δεξιά',
+        'edit_profile' => 'Επεξεργασία Προφίλ',
+        'bio_label' => 'Βιογραφικό',
+        'photo_label' => 'Φωτογραφία',
+        'choose_file' => 'Επιλογή αρχείου',
+        'new_password_label' => 'Νέος Κωδικός',
+        'confirm_password_label' => 'Επαλήθευση Κωδικού',
+        'btn_save' => 'Αποθήκευση',
+        'msg_saved' => 'Οι αλλαγές αποθηκεύτηκαν.',
+        'msg_pwd_mismatch' => 'Οι κωδικοί δεν ταιριάζουν.',
     ],
     'en' => [
         'poet_name' => 'Poet Name',
@@ -126,6 +138,8 @@ $locales = [
         'delete_collection' => 'Delete',
         'exit' => 'Exit',
         'home' => 'Home',
+        'profile' => 'Profile',
+        'contents' => 'Index',
         'upload_title' => 'Upload new poem',
         'file_label' => 'Choose file (.md/.txt)',
         'pwd_label' => 'Password',
@@ -151,6 +165,15 @@ $locales = [
         'align_left' => 'Left',
         'align_center' => 'Center',
         'align_right' => 'Right',
+        'edit_profile' => 'Edit Profile',
+        'bio_label' => 'Bio',
+        'photo_label' => 'Photo',
+        'choose_file' => 'Choose file',
+        'new_password_label' => 'New Password',
+        'confirm_password_label' => 'Confirm Password',
+        'btn_save' => 'Save',
+        'msg_saved' => 'Changes saved.',
+        'msg_pwd_mismatch' => 'Passwords do not match.',
     ]
 ];
 
@@ -232,34 +255,147 @@ function getPoemTitle(string $filepath): string
 
 function parsePoetryMarkdown(string $text): string
 {
+    // First, convert any <br> tags in markdown to actual newlines (before escaping)
+    $text = preg_replace('/<br\s*\/?>/i', "\n", $text);
+    // Handle markdown hard breaks (trailing backslash before newline)
+    $text = preg_replace('/\\\\\n/', "\n", $text);
+    // Remove escaped characters (common from editor)
+    $text = preg_replace('/\\\\([~=\[\]$])/', '$1', $text);
+
+    // Extract and protect code blocks BEFORE any other processing
+    $codeBlocks = [];
+    $text = preg_replace_callback('/```(\w*)\n(.*?)```/s', function ($matches) use (&$codeBlocks) {
+        $id = '{{CODE_BLOCK_' . count($codeBlocks) . '}}';
+        $lang = $matches[1] ?: 'text';
+        $code = htmlspecialchars($matches[2], ENT_QUOTES, 'UTF-8');
+        $codeBlocks[$id] = '<pre class="code-block reveal-on-scroll"><code class="language-' . $lang . '">' . $code . '</code></pre>';
+        return $id;
+    }, $text);
+
+    // Extract and protect inline code
+    $inlineCode = [];
+    $text = preg_replace_callback('/`([^`]+)`/', function ($matches) use (&$inlineCode) {
+        $id = '{{INLINE_CODE_' . count($inlineCode) . '}}';
+        $inlineCode[$id] = '<code class="inline-code">' . htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8') . '</code>';
+        return $id;
+    }, $text);
+
+    // Convert horizontal rules BEFORE escaping (---, ***, ___ with optional spaces)
+    $text = preg_replace('/^[-*_]{3,}\s*$/m', '{{HR}}', $text);
+
+    // Escape HTML
     $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
-    $patterns = [
-        '/^#\s+(.+)$/m' => '<h1 class="poem-title reveal-on-scroll">$1</h1>',
-        '/^##\s+(.+)$/m' => '<h2 class="reveal-on-scroll">$1</h2>',
-        '/^###\s+(.+)$/m' => '<h3 class="reveal-on-scroll">$1</h3>',
-        '/(\*\*|__)(.*?)\1/' => '<strong>$2</strong>',
-        '/(\*|_)(.*?)\1/' => '<em>$2</em>',
-    ];
-    $text = preg_replace(array_keys($patterns), array_values($patterns), $text);
-    $parts = preg_split('/(<h1.*?>.*?<\/h1>)/s', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+    // Restore placeholders
+    $text = str_replace('{{HR}}', '<hr class="poem-divider reveal-on-scroll">', $text);
+    foreach ($codeBlocks as $id => $html) {
+        $text = str_replace(htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8'), $html, $text);
+    }
+    foreach ($inlineCode as $id => $html) {
+        $text = str_replace(htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8'), $html, $text);
+    }
+
+    // Handle headings (H1-H6) - order matters, most specific first
+    $text = preg_replace('/^######\s+(.+)$/m', '<h6 class="reveal-on-scroll">$1</h6>', $text);
+    $text = preg_replace('/^#####\s+(.+)$/m', '<h5 class="reveal-on-scroll">$1</h5>', $text);
+    $text = preg_replace('/^####\s+(.+)$/m', '<h4 class="reveal-on-scroll">$1</h4>', $text);
+    $text = preg_replace('/^###\s+(.+)$/m', '<h3 class="reveal-on-scroll">$1</h3>', $text);
+    $text = preg_replace('/^##\s+(.+)$/m', '<h2 class="reveal-on-scroll">$1</h2>', $text);
+    $text = preg_replace('/^#\s+(.+)$/m', '<h1 class="poem-title reveal-on-scroll">$1</h1>', $text);
+
+    // Handle blockquotes
+    $text = preg_replace_callback('/^(&gt;.+(?:\n&gt;.*)*)$/m', function ($matches) {
+        $quote = preg_replace('/^&gt;\s?/m', '', $matches[1]);
+        return '<blockquote class="reveal-on-scroll">' . $quote . '</blockquote>';
+    }, $text);
+
+    // Handle links [text](url)
+    $text = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2" target="_blank" rel="noopener">$1</a>', $text);
+
+    // Handle bold and italic (order matters: bold+italic first, then bold, then italic)
+    $text = preg_replace('/\*\*\*(.+?)\*\*\*/', '<strong><em>$1</em></strong>', $text);
+    $text = preg_replace('/\*\*(.+?)\*\*/', '<strong>$1</strong>', $text);
+    $text = preg_replace('/__(.+?)__/', '<strong>$1</strong>', $text);
+    $text = preg_replace('/\*([^*\n]+?)\*/', '<em>$1</em>', $text);
+    $text = preg_replace('/_([^_\n]+?)_/', '<em>$1</em>', $text);
+
+    // Handle strikethrough ~~text~~
+    $text = preg_replace('/~~(.+?)~~/', '<del>$1</del>', $text);
+
+    // Handle Tables (GFM style)
+    $text = preg_replace_callback('/((?:\|.+?\|\n)+)/s', function ($matches) {
+        $rows = array_filter(explode("\n", trim($matches[1])));
+        if (count($rows) < 2)
+            return $matches[1];
+
+        $html = '<div class="poem-table-wrapper"><table class="reveal-on-scroll">';
+        foreach ($rows as $index => $row) {
+            if (preg_match('/^\|[\s:-]+\|[\s:-]+/', trim($row)))
+                continue;
+            $cols = explode('|', trim($row, '|'));
+            $html .= '<tr>';
+            foreach ($cols as $col) {
+                $tag = ($index === 0) ? 'th' : 'td';
+                $html .= "<$tag>" . trim($col) . "</$tag>";
+            }
+            $html .= '</tr>';
+        }
+        $html .= '</table></div>';
+        return $html;
+    }, $text);
+
+    // Handle unordered lists (improved nesting)
+    $text = preg_replace_callback('/^([\*\-]\s+.*(?:\n(?:[\s\*\-]|\s{2,}).*)*)$/m', function ($matches) {
+        $lines = explode("\n", $matches[1]);
+        $html = '<ul class="poem-list reveal-on-scroll">';
+        $currentLevel = 0;
+        foreach ($lines as $line) {
+            if (!preg_match('/^(\s*)([\*\-])\s+(.*)$/', $line, $m))
+                continue;
+            $indent = strlen($m[1]);
+            $level = (int) floor($indent / 2);
+            if ($level > $currentLevel) {
+                $html .= '<ul>';
+                $currentLevel = $level;
+            } elseif ($level < $currentLevel) {
+                $html .= str_repeat('</ul>', (int) ($currentLevel - $level));
+                $currentLevel = $level;
+            }
+            $html .= '<li>' . trim($m[3]) . '</li>';
+        }
+        $html .= str_repeat('</ul>', (int) $currentLevel) . '</ul>';
+        return $html;
+    }, $text);
+
+    // Handle ordered lists
+    $text = preg_replace_callback('/^(\d+\.\s+.*(?:\n(?:\s*\d+\.|\s{2,}).*)*)$/m', function ($matches) {
+        $lines = explode("\n", $matches[1]);
+        $html = '<ol class="poem-list reveal-on-scroll">';
+        foreach ($lines as $line) {
+            $content = preg_replace('/^\s*\d+\.\s+/', '', trim($line));
+            if (!empty($content))
+                $html .= '<li>' . $content . '</li>';
+        }
+        $html .= '</ol>';
+        return $html;
+    }, $text);
+
+    // Split into parts
+    $parts = preg_split('/(<h[1-6][^>]*>.*?<\/h[1-6]>|<hr[^>]*>|<ul[^>]*>.*?<\/ul>|<ol[^>]*>.*?<\/ol>|<blockquote[^>]*>.*?<\/blockquote>|<pre[^>]*>.*?<\/pre>|<div class="poem-table-wrapper">.*?<\/div>)/s', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
     $html = '';
     foreach ($parts as $part) {
-        if (strpos($part, '<h1') === 0) {
-            $html .= $part;
+        $part = trim($part);
+        if (empty($part))
+            continue;
+        if (preg_match('/^<(h[1-6]|hr|ul|ol|blockquote|pre|div)/', $part)) {
+            $html .= $part . "\n"; // Preserve block
         } else {
-            $body = trim($part);
-            if (!empty($body)) {
-                $stanzas = preg_split('/\n\s*\n/', $body);
-                foreach ($stanzas as $stanza) {
-                    $html .= '<div class="stanza reveal-on-scroll">' . nl2br(trim($stanza)) . '</div>';
-                }
+            $stanzas = preg_split('/\n\s*\n/', $part);
+            foreach ($stanzas as $stanza) {
+                $stanza = trim($stanza);
+                if (!empty($stanza))
+                    $html .= '<div class="stanza reveal-on-scroll">' . nl2br($stanza) . '</div>';
             }
-        }
-    }
-    if (empty($html) && !empty($text)) {
-        $stanzas = preg_split('/\n\s*\n/', $text);
-        foreach ($stanzas as $stanza) {
-            $html .= '<div class="stanza reveal-on-scroll">' . nl2br(trim($stanza)) . '</div>';
         }
     }
     return $html;
@@ -351,9 +487,14 @@ if (isset($_GET['poem'])) {
     }
 } elseif ($view === 'home') {
     // Generate landing page dynamically using localized placeholders
-    $poemHtml = '<h1 class="poem-title reveal-on-scroll">' . htmlspecialchars($displayPoetName) . '</h1>';
+    $poemHtml = '<h1 class="poet-name-header reveal-on-scroll">' . htmlspecialchars($displayPoetName) . '</h1>';
     $poemHtml .= '<div class="stanza reveal-on-scroll"><h2 class="reveal-on-scroll"><em>' . htmlspecialchars($displaySiteTitle) . '</em></h2></div>';
     $poemHtml .= '<div class="stanza reveal-on-scroll"><h3 class="reveal-on-scroll">' . htmlspecialchars($lang['poems_label']) . '</h3></div>';
+}
+
+$breadcrumbPoemTitle = '';
+if ($view === 'poem' && isset($file)) {
+    $breadcrumbPoemTitle = getPoemTitle(POEMS_DIR . $file);
 }
 
 // List fetching logic
@@ -449,6 +590,7 @@ if ($view === 'list') {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         header {
@@ -475,15 +617,6 @@ if ($view === 'list') {
             color: var(--accent-color);
         }
 
-        nav {
-            margin-top: 1.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-        }
-
-        nav a,
         .theme-toggle,
         .std-link {
             color: #666;
@@ -497,13 +630,11 @@ if ($view === 'list') {
             font-family: inherit;
         }
 
-        [data-theme="dark"] nav a,
         [data-theme="dark"] .theme-toggle,
         [data-theme="dark"] .std-link {
             color: #aaa;
         }
 
-        nav a:hover,
         .theme-toggle:hover,
         .std-link:hover {
             color: var(--accent-color);
@@ -582,15 +713,15 @@ if ($view === 'list') {
             max-width: 744px;
         }
 
-        :is(.view-poem, .view-list).align-left :is(.stanza, .poem-title, .poem-content h2, .poem-content h3, .poem-list) {
+        :is(.view-poem, .view-list, .view-home).align-left :is(.stanza, .poem-title, .poet-name-header, .poem-content h2, .poem-content h3, .poem-list) {
             text-align: left;
         }
 
-        :is(.view-poem, .view-list).align-center :is(.stanza, .poem-title, .poem-content h2, .poem-content h3, .poem-list) {
+        :is(.view-poem, .view-list, .view-home).align-center :is(.stanza, .poem-title, .poet-name-header, .poem-content h2, .poem-content h3, .poem-list) {
             text-align: center;
         }
 
-        :is(.view-poem, .view-list).align-right :is(.stanza, .poem-title, .poem-content h2, .poem-content h3, .poem-list) {
+        :is(.view-poem, .view-list, .view-home).align-right :is(.stanza, .poem-title, .poet-name-header, .poem-content h2, .poem-content h3, .poem-list) {
             text-align: right;
         }
 
@@ -599,6 +730,15 @@ if ($view === 'list') {
             font-weight: 400;
             margin-bottom: 3.5rem;
             font-size: 2.5rem;
+            color: var(--accent-color);
+        }
+
+        .poet-name-header {
+            text-align: center;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            color: var(--text-color);
         }
 
         .poem-content h2 {
@@ -624,6 +764,11 @@ if ($view === 'list') {
             line-height: 1.2;
         }
 
+        .stanza a, .poem-content a {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
         footer {
             text-align: center;
             margin-top: auto;
@@ -633,15 +778,11 @@ if ($view === 'list') {
         }
 
         .admin-link {
-            color: #888;
+            color: var(--accent-color);
             text-decoration: underline;
-            font-size: 0.7rem;
+            font-size: 0.9rem;
             margin-top: 5px;
             display: inline-block;
-        }
-
-        .admin-link:hover {
-            color: var(--accent-color);
         }
 
         .action-button {
@@ -695,8 +836,8 @@ if ($view === 'list') {
             justify-content: center;
         }
 
-        .view-home header {
-            margin-bottom: 2rem;
+        main {
+            margin-top: 8rem;
         }
 
         .view-home .poem-content {
@@ -760,13 +901,45 @@ if ($view === 'list') {
             left: 50%;
             transform: translateX(-50%);
             background: var(--accent-color);
-            min-width: 140px;
+            min-width: 320px;
             box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.2);
             border-radius: 12px;
             z-index: 1002;
             margin-bottom: 28px;
-            padding: 8px;
+            padding: 1.8rem;
             animation: slideUpFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Language dropdown - match player style */
+        #lang-dropdown .dropdown-content {
+            min-width: 140px;
+            padding: 8px;
+        }
+
+        #lang-dropdown .dropdown-content button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-family: inherit;
+            font-size: 0.9rem;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        #lang-dropdown .dropdown-content button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #lang-dropdown .dropdown-content button.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
         }
 
         .dropdown.active .dropdown-content {
@@ -821,69 +994,190 @@ if ($view === 'list') {
             font-weight: 600;
         }
 
-        #upload-form {
-            /* Handled by .dropdown-content */
-        }
-
-        .dropdown.active .dropdown-content {
-            display: block;
-        }
-
-        .upload-popup {
-            min-width: 320px;
-            padding: 1.8rem;
-            color: white;
-            background: var(--accent-color);
-        }
-
-        .upload-popup h3 {
+        .dropdown-content h3 {
             color: white;
             font-weight: 400;
             font-variant: small-caps;
-            text-transform: capitalize;
             margin-top: 0;
             margin-bottom: 1.5rem;
             text-align: center;
             font-size: 1.2rem;
-            letter-spacing: 0.1em;
         }
 
-        .upload-popup .file-label {
-            border-color: rgba(255, 255, 255, 0.4);
+        .dropdown-content label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            text-align: left;
+        }
+
+        .dropdown-content input[type="text"],
+        .dropdown-content input[type="password"],
+        .dropdown-content textarea,
+        .dropdown-content select {
+            width: 100%;
+            padding: 0.7rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             background: rgba(255, 255, 255, 0.1);
             color: white;
-        }
-
-        .upload-popup .file-label:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-style: solid;
-        }
-
-        .upload-popup .file-name-display {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .upload-popup button[type="submit"] {
-            background: var(--accent-color) !important;
-            color: white !important;
-            border: 1px solid white !important;
-            padding: 0.7rem 2.5rem;
-            cursor: pointer;
             font-family: inherit;
             font-size: 1rem;
-            display: block;
-            margin: 1.5rem auto 0;
-            transition: all 0.3s;
-            border-radius: 50px;
-            width: auto;
+            border-radius: 4px;
         }
 
-        .upload-popup button[type="submit"]:hover {
-            background: white !important;
-            color: var(--accent-color) !important;
+        .dropdown-content select option {
+            color: #333;
+        }
+
+        .dropdown-content textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .dropdown-content input::placeholder,
+        .dropdown-content textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .dropdown-content button[type="submit"] {
+            width: 100%;
+            padding: 0.7rem;
+            background: white;
+            color: var(--accent-color);
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: opacity 0.2s;
+            font-weight: 600;
+        }
+
+        .dropdown-content button[type="submit"]:hover {
+            opacity: 0.9;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 0.7rem;
+            border: 1px dashed rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        #upload-form {
+            /* Handled by .dropdown-content */
+        }
+
+        .breadcrumbs {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            width: max-content;
+            max-width: 90%;
+            justify-content: center;
+            white-space: nowrap;
+            height: 36px;
+        }
+
+        .breadcrumbs a {
+            text-decoration: none;
+            color: var(--text-color);
+            opacity: 0.6;
+            transition: all 0.3s;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-shrink: 0;
+        }
+
+        .breadcrumbs a:hover {
+            opacity: 1;
+            color: var(--accent-color);
+        }
+
+        .breadcrumb-separator {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-family: serif;
+            flex-shrink: 0;
+        }
+
+        .breadcrumb-current {
+            color: var(--accent-color);
+            font-weight: 600;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-shrink: 0;
+        }
+
+        .breadcrumbs svg {
+            width: 14px;
+            height: 14px;
+            stroke-width: 2px;
+            margin-right: 4px;
+            vertical-align: -2px;
+            flex-shrink: 0;
         }
 
         @media (max-width: 600px) {
+            .breadcrumbs {
+                top: 15px;
+                left: 0;
+                width: 100%;
+                max-width: 100%;
+                transform: none;
+                padding: 0 7rem 0 1rem; /* Extra right padding to clear theme toggle */
+                overflow-x: auto;
+                justify-content: flex-start;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+                /* Mask effect to fade text before toggle */
+                mask-image: linear-gradient(to right, black calc(100% - 9rem), transparent calc(100% - 4rem));
+                -webkit-mask-image: linear-gradient(to right, black calc(100% - 9rem), transparent calc(100% - 4rem));
+                height: 36px;
+            }
+
+            .theme-toggle-fixed {
+                top: 15px;
+            }
+
+            .breadcrumbs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .breadcrumbs a,
+            .breadcrumb-current {
+                max-width: none;
+            }
+
             .container {
                 padding: 1rem;
             }
@@ -1356,12 +1650,17 @@ if ($view === 'list') {
 
             // Close dropdowns when clicking outside
             document.addEventListener('click', function (e) {
-                document.querySelectorAll('.dropdown').forEach(dropdown => {
-                    if (!dropdown.contains(e.target) && !e.target.closest('.dropdown')) {
-                        dropdown.classList.remove('active');
-                    }
-                });
+                if (!e.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('active'));
+                }
             });
+
+            // Scroll breadcrumbs to end on mobile to show current page
+            const breadcrumbs = document.querySelector('.breadcrumbs');
+            if (breadcrumbs && window.innerWidth <= 600) {
+                breadcrumbs.scrollLeft = breadcrumbs.scrollWidth;
+            }
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -1373,6 +1672,9 @@ if ($view === 'list') {
             document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
         });
     </script>
+    <?php if ($isAdmin): ?>
+    <script src="../../system/editor.js?v=<?= time() ?>" defer></script>
+    <?php endif; ?>
 </head>
 
 <body class="view-<?= $view ?><?= $isAdmin ? ' admin-mode' : '' ?>">
@@ -1396,15 +1698,32 @@ if ($view === 'list') {
         </svg>
     </button>
     <div class="container">
-        <header class="<?= $view === 'home' ? 'no-border' : '' ?>">
-            <h1 class="site-title"><a href="index.php"><?= $displaySiteTitle ?></a></h1>
-            <nav>
-                <a href="../../index.php"><?= $lang['home'] ?></a>
-                <?php if ($view !== 'home'): ?>
-                    <a href="index.php"><?= $lang['archive'] ?></a>
-                <?php endif; ?>
-            </nav>
-        </header>
+        <div class="breadcrumbs">
+            <a href="../../index.php">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h3.5z"></path>
+                    <line x1="16" y1="8" x2="2" y2="22"></line>
+                    <path d="M11 11l2.5 2.5"></path>
+                    <path d="M13 9l2.5 2.5"></path>
+                    <path d="M15 7l2.5 2.5"></path>
+                </svg>
+                <?= $lang['profile'] ?>
+            </a>
+            <span class="breadcrumb-separator">›</span>
+            <?php if ($view === 'home'): ?>
+                <span class="breadcrumb-current"><?= $displaySiteTitle ?></span>
+            <?php elseif ($view === 'list'): ?>
+                <a href="index.php"><?= $displaySiteTitle ?></a>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-current"><?= $lang['contents'] ?></span>
+            <?php else: ?>
+                <a href="index.php"><?= $displaySiteTitle ?></a>
+                <span class="breadcrumb-separator">›</span>
+                <a href="index.php?view=list"><?= $lang['contents'] ?></a>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-current"><?= $breadcrumbPoemTitle ?: str_replace(['_', '-'], [' ', ' '], preg_replace('/_(en|el)$/', '', pathinfo($file, PATHINFO_FILENAME))) ?></span>
+            <?php endif; ?>
+        </div>
 
         <?php if (isset($_SESSION['message'])): ?>
             <div class="message <?= htmlspecialchars($_SESSION['msg_type']) ?>">
@@ -1427,6 +1746,7 @@ if ($view === 'list') {
                     </div>
                 </div>
             <?php elseif ($view === 'list'): ?>
+                <h1 class="poem-title reveal-on-scroll"><?= $displaySiteTitle ?></h1>
                 <ul class="poem-list">
                     <?php if (empty($poems)): ?>
                         <li><span style="color: #999; font-style: italic;"><?= $lang['no_poems'] ?></span></li>
@@ -1489,6 +1809,40 @@ if ($view === 'list') {
                             class="<?= $currentLang === 'el' ? 'active' : '' ?>">Ελληνικά</button>
                         <button onclick="window.location.href='?lang=en'"
                             class="<?= $currentLang === 'en' ? 'active' : '' ?>">English</button>
+                    </div>
+                </div>
+
+                <div class="dropdown" id="profile-dropdown">
+                    <button type="button" onclick="toggleDropdown(event, 'profile-dropdown')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M20 21a8 8 0 1 0-16 0"></path>
+                        </svg>
+                        <span><?= $lang['edit_profile'] ?></span>
+                    </button>
+                    <div class="dropdown-content">
+                        <h3><?= $lang['edit_profile'] ?></h3>
+                        <form action="../../index.php" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="update_profile" value="1">
+                            <input type="hidden" name="redirect" value="../../index.php">
+                            <label><?= $lang['poet_name'] ?></label>
+                            <input type="text" name="author_name" value="<?= htmlspecialchars($config['author_name'] ?? '') ?>"
+                                required>
+                            <label><?= $lang['bio_label'] ?></label>
+                            <textarea name="author_bio"><?= htmlspecialchars($config['author_bio'] ?? '') ?></textarea>
+                            <label><?= $lang['photo_label'] ?></label>
+                            <div class="file-input-wrapper">
+                                <div class="file-input-label" id="photo-label"><?= $lang['choose_file'] ?></div>
+                                <input type="file" name="author_photo" accept="image/*"
+                                    onchange="document.getElementById('photo-label').textContent = this.files[0]?.name || '<?= $lang['choose_file'] ?>'">
+                            </div>
+                            <label><?= $lang['new_password_label'] ?></label>
+                            <input type="password" name="new_password">
+                            <label><?= $lang['confirm_password_label'] ?></label>
+                            <input type="password" name="confirm_password">
+                            <button type="submit"><?= $lang['btn_save'] ?></button>
+                        </form>
                     </div>
                 </div>
 
@@ -1596,6 +1950,25 @@ if ($view === 'list') {
                         </form>
                     </div>
                 </div>
+
+                <a href="#" onclick="openEditor()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    <span>Write</span>
+                </a>
+
+                <?php if ($view === 'poem' && isset($_GET['poem'])): ?>
+                <a href="#" onclick="openEditor('<?= urlencode($_GET['poem']) ?>')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    <span>Edit</span>
+                </a>
+                <?php endif; ?>
+
                 <a href="index.php?view=list">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">

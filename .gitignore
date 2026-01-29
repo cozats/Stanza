@@ -1,8 +1,32 @@
+# OS files
 .DS_Store
-poetry-costas-design/
-classic_poems/
-context.md
+Thumbs.db
+
+# Project files
 Stanza.code-workspace
-sessions/
-uploads/
+
+# User data (kept via .gitkeep)
+sessions/*
+!sessions/.gitkeep
+uploads/*
+!uploads/.gitkeep
+collections/*
+!collections/.gitkeep
+
+# Sensitive config
+# We provide config.json as a template, but usually it should be ignored if it contains the password hash.
+# However, for a template repo, having it with default password is fine.
+# But it's better to exclude it and provide a config.sample.json.
+config.json
+
+# Backup
 backup/
+
+# AI / Development meta files
+context.md
+handover.md
+editor-implementation.md
+editor.png
+editor3.png
+editor_inspection.png
+milkdown.png

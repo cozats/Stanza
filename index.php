@@ -83,11 +83,13 @@ $locales = [
         'theme_light' => 'Φως',
         'msg_created' => 'Η συλλογή δημιουργήθηκε.',
         'msg_error' => 'Σφάλμα.',
-        'msg_saved' => 'Οι αλλαγές αποθηκεύτηκαν.',
+        'msg_saved' => 'Όλες οι αλλαγές αποθηκεύτηκαν.',
         'msg_deleted' => 'Η συλλογή διαγράφηκε.',
         'msg_del_error' => 'Σφάλμα κατά τη διαγραφή.',
         'about_link' => 'Σχετικά με το Stanza',
         'home' => 'Αρχική',
+        'profile' => 'Προφίλ',
+        'contents' => 'Περιεχόμενα',
         'edit_profile' => 'Επεξεργασία Προφίλ',
         'edit_collection' => 'Επεξεργασία Συλλογής',
         'bio_label' => 'Βιογραφικό',
@@ -118,11 +120,13 @@ $locales = [
         'theme_light' => 'Light',
         'msg_created' => 'Collection created.',
         'msg_error' => 'Error.',
-        'msg_saved' => 'Changes saved.',
+        'msg_saved' => 'All changes were saved.',
         'msg_deleted' => 'Collection deleted.',
         'msg_del_error' => 'Error deleting collection.',
         'about_link' => 'About Stanza',
         'home' => 'Home',
+        'profile' => 'Profile',
+        'contents' => 'Index',
         'edit_profile' => 'Edit Profile',
         'edit_collection' => 'Edit Collection',
         'bio_label' => 'Bio',
@@ -192,6 +196,7 @@ $showAdminLogin = isset($_GET['admin']) && !$isAdmin;
 
 // Handle Profile Update (with photo upload)
 if (isset($_POST['update_profile']) && $isAdmin) {
+    $redirect = $_POST['redirect'] ?? getCurrentBaseUrl();
     $config['author_name'] = trim($_POST['author_name'] ?? $config['author_name']);
     $config['author_bio'] = trim($_POST['author_bio'] ?? $config['author_bio']);
 
@@ -211,13 +216,13 @@ if (isset($_POST['update_profile']) && $isAdmin) {
                 } else {
                     $_SESSION['message'] = 'Upload failed: Could not move file';
                     $_SESSION['msg_type'] = 'error';
-                    header('Location: ' . getCurrentBaseUrl());
+                    header('Location: ' . $redirect);
                     exit;
                 }
             } else {
                 $_SESSION['message'] = 'Upload failed: Invalid file type (' . $ext . ')';
                 $_SESSION['msg_type'] = 'error';
-                header('Location: ' . getCurrentBaseUrl());
+                header('Location: ' . $redirect);
                 exit;
             }
         } else {
@@ -232,7 +237,7 @@ if (isset($_POST['update_profile']) && $isAdmin) {
             $errMsg = $errorMessages[$_FILES['author_photo']['error']] ?? 'Unknown error';
             $_SESSION['message'] = 'Upload failed: ' . $errMsg;
             $_SESSION['msg_type'] = 'error';
-            header('Location: ' . getCurrentBaseUrl());
+            header('Location: ' . $redirect);
             exit;
         }
     }
@@ -246,7 +251,7 @@ if (isset($_POST['update_profile']) && $isAdmin) {
         } else {
             $_SESSION['message'] = $lang['msg_pwd_mismatch'];
             $_SESSION['msg_type'] = 'error';
-            header('Location: ' . getCurrentBaseUrl());
+            header('Location: ' . $redirect);
             exit;
         }
     }
@@ -258,19 +263,19 @@ if (isset($_POST['update_profile']) && $isAdmin) {
         $_SESSION['message'] = $lang['msg_error'];
         $_SESSION['msg_type'] = 'error';
     }
-    header('Location: ' . getCurrentBaseUrl());
+    header('Location: ' . $redirect);
     exit;
 }
 
 // Handle Collection Update
 if (isset($_POST['update_collection']) && $isAdmin) {
     $slug = basename($_POST['collection_slug'] ?? '');
-    $newAuthorName = trim($_POST['collection_author'] ?? '');
+    $newAuthorName = trim($config['author_name']);
     $newTitle = trim($_POST['collection_title'] ?? '');
 
     $collectionFile = COLLECTIONS_DIR . $slug . '/index.php';
 
-    if (file_exists($collectionFile) && !empty($newAuthorName) && !empty($newTitle)) {
+    if (file_exists($collectionFile) && !empty($newTitle)) {
         $content = file_get_contents($collectionFile);
 
         $content = preg_replace(
@@ -319,10 +324,10 @@ if (isset($_GET['delete_collection']) && $isAdmin) {
 
 // Handle Collection Creation
 if (isset($_POST['create_collection']) && $isAdmin) {
-    $authorName = trim($_POST['author_name'] ?? '');
+    $authorName = trim($config['author_name']);
     $collectionTitle = trim($_POST['collection_title'] ?? '');
 
-    if (!empty($authorName) && !empty($collectionTitle)) {
+    if (!empty($collectionTitle)) {
         $slug = preg_replace('/[^a-z0-9\-_]/i', '_', strtolower($collectionTitle));
         $slug = preg_replace('/_+/', '_', $slug);
         $slug = trim($slug, '_');
@@ -355,8 +360,10 @@ if (isset($_POST['create_collection']) && $isAdmin) {
             }
         } else {
             $_SESSION['message'] = $lang['msg_error'] . ' (Directory exists)';
-            $_SESSION['msg_type'] = 'error';
         }
+    } else {
+        $_SESSION['message'] = $lang['msg_error'] . ' (Title empty)';
+        $_SESSION['msg_type'] = 'error';
     }
     header('Location: ' . getCurrentBaseUrl());
     exit;
@@ -534,6 +541,11 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
             margin: 0;
         }
 
+        .author-bio a {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
         .collections-title {
             font-weight: 400;
             font-size: 1.5rem;
@@ -671,9 +683,9 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
         }
 
         .admin-link {
-            color: #888;
+            color: var(--accent-color);
             text-decoration: underline;
-            font-size: 0.7rem;
+            font-size: 0.9rem;
         }
 
         .admin-toolbar {
@@ -1074,6 +1086,10 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
         }
 
         @media (max-width: 600px) {
+            .theme-toggle-fixed {
+                top: 15px;
+            }
+
             .admin-toolbar {
                 left: 10px;
                 right: 10px;
@@ -1194,6 +1210,7 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
                     <h3><?= $lang['edit_profile'] ?></h3>
                     <form method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="update_profile" value="1">
+                        <input type="hidden" name="redirect" value="index.php">
                         <label><?= $lang['author_name_label'] ?></label>
                         <input type="text" name="author_name" value="<?= htmlspecialchars($config['author_name']) ?>"
                             required>
@@ -1229,14 +1246,11 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
                         <select name="collection_slug" id="collection-select" onchange="updateCollectionFields()">
                             <?php foreach ($collections as $col): ?>
                                 <option value="<?= htmlspecialchars($col['slug']) ?>"
-                                    data-author="<?= htmlspecialchars($col['author']) ?>"
                                     data-title="<?= htmlspecialchars($col['title']) ?>">
                                     <?= htmlspecialchars($col['title'] ?: $col['slug']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <label><?= $lang['author_name_label'] ?></label>
-                        <input type="text" name="collection_author" id="collection-author" required>
                         <label><?= $lang['collection_title_label'] ?></label>
                         <input type="text" name="collection_title" id="collection-title" required>
                         <button type="submit"><?= $lang['btn_save'] ?></button>
@@ -1249,8 +1263,6 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
                     <h3><?= $lang['add_collection'] ?></h3>
                     <form method="POST">
                         <input type="hidden" name="create_collection" value="1">
-                        <label><?= $lang['author_name_label'] ?></label>
-                        <input type="text" name="author_name" required placeholder="<?= $lang['author_name_label'] ?>">
                         <label><?= $lang['collection_title_label'] ?></label>
                         <input type="text" name="collection_title" required
                             placeholder="<?= $lang['collection_title_label'] ?>">
@@ -1329,7 +1341,6 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
         function updateCollectionFields() {
             const select = document.getElementById('collection-select');
             const option = select.options[select.selectedIndex];
-            document.getElementById('collection-author').value = option.dataset.author || '';
             document.getElementById('collection-title').value = option.dataset.title || '';
         }
         // Initialize on load
