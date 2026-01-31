@@ -8,14 +8,19 @@ ini_set('memory_limit', '128M');
 
 // Set custom session path for environments with restrictive default paths
 $sessionPath = __DIR__ . '/sessions';
-if (!is_dir($sessionPath)) {
-    mkdir($sessionPath, 0755, true);
+if (is_dir($sessionPath) && is_writable($sessionPath)) {
+    session_save_path($sessionPath);
+} elseif (!is_dir($sessionPath) && @mkdir($sessionPath, 0755, true)) {
+    session_save_path($sessionPath);
 }
-session_save_path($sessionPath);
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    @session_start();
 }
+
+// Session health check
+$_SESSION['test_session'] = (int) ($_SESSION['test_session'] ?? 0) + 1;
+define('SESSION_WORKING', isset($_SESSION['test_session']));
 
 /*
  |--------------------------------------------------------------------------
@@ -44,9 +49,14 @@ $defaultConfig = [
 function loadConfig(): array
 {
     global $defaultConfig;
-    if (file_exists(CONFIG_FILE)) {
-        $config = json_decode(file_get_contents(CONFIG_FILE), true);
-        return array_merge($defaultConfig, $config ?? []);
+    if (file_exists(CONFIG_FILE) && is_readable(CONFIG_FILE)) {
+        $content = @file_get_contents(CONFIG_FILE);
+        if ($content !== false) {
+            $config = json_decode($content, true);
+            if (is_array($config)) {
+                return array_merge($defaultConfig, $config);
+            }
+        }
     }
     return $defaultConfig;
 }
@@ -60,6 +70,38 @@ $config = loadConfig();
 
 // Admin Password (Hash).
 define('ADMIN_PASSWORD_HASH', $config['admin_password_hash']);
+
+// Cookie Fallback Secret (based on hash to be unique per installation)
+define('COOKIE_SECRET', md5(ADMIN_PASSWORD_HASH));
+
+function check_admin_auth()
+{
+    if (!empty($_SESSION['is_admin']))
+        return true;
+    if (!empty($_COOKIE['stanza_admin_hash'])) {
+        if ($_COOKIE['stanza_admin_hash'] === hash_hmac('sha256', 'stanza_admin_v1', COOKIE_SECRET)) {
+            $_SESSION['is_admin'] = true;
+            return true;
+        }
+    }
+    return false;
+}
+
+function set_admin_auth($is_admin)
+{
+    if ($is_admin) {
+        $_SESSION['is_admin'] = true;
+        setcookie('stanza_admin_hash', hash_hmac('sha256', 'stanza_admin_v1', COOKIE_SECRET), [
+            'expires' => time() + 86400 * 30,
+            'path' => '/',
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+    } else {
+        unset($_SESSION['is_admin']);
+        setcookie('stanza_admin_hash', '', time() - 3600, '/');
+    }
+}
 
 // Default UI Language
 define('UI_LANGUAGE', 'en');
@@ -175,23 +217,24 @@ $lang = $locales[$currentLang] ?? $locales['en'];
 if (isset($_POST['admin_login'])) {
     $password = $_POST['password'] ?? '';
     if (password_verify($password, ADMIN_PASSWORD_HASH)) {
-        $_SESSION['is_admin'] = true;
+        set_admin_auth(true);
+        header('Location: ' . getCurrentBaseUrl());
     } else {
         $_SESSION['message'] = 'Incorrect password.';
         $_SESSION['msg_type'] = 'error';
+        header('Location: ' . getCurrentBaseUrl() . '?admin');
     }
-    header('Location: ' . getCurrentBaseUrl());
     exit;
 }
 
 // Handle Logout
 if (isset($_GET['logout'])) {
-    unset($_SESSION['is_admin']);
+    set_admin_auth(false);
     header('Location: ' . getCurrentBaseUrl());
     exit;
 }
 
-$isAdmin = !empty($_SESSION['is_admin']);
+$isAdmin = check_admin_auth();
 $showAdminLogin = isset($_GET['admin']) && !$isAdmin;
 
 // Handle Profile Update (with photo upload)
@@ -1286,9 +1329,15 @@ unset($_SESSION['message'], $_SESSION['msg_type']);
         <div class="login-overlay" onclick="if(event.target === this) window.location='<?= getCurrentBaseUrl() ?>'">
             <div class="login-box">
                 <h3><?= $lang['management'] ?></h3>
+                <?php if (!SESSION_WORKING): ?>
+                    <div
+                        style="background: #ff0000; color: #fff; padding: 10px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 15px; line-height: 1.2;">
+                        Warning: Sessions are not working on this server. Login will not persist.
+                    </div>
+                <?php endif; ?>
                 <form method="POST">
                     <input type="hidden" name="admin_login" value="1">
-                    <input type="password" name="password" placeholder="<?= $lang['pwd_label'] ?>" required>
+                    <input type="password" name="password" placeholder="<?= $lang['pwd_label'] ?>" required autfocus>
                     <button type="submit"><?= $lang['btn_login'] ?></button>
                 </form>
             </div>

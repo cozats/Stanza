@@ -9,10 +9,6 @@ A simple, elegant, and lightning-fast multi-collection platform for poets. Stanz
 ## 🌟 Features
 - **Multi-Collection Architecture:** Host multiple distinct collections on a single site.
 - **Master Landing Page:** Elegant home page with author profile (photo, name, bio) and collection grid.
-- **Centric Navigation:**
-    - **Breadcrumb Hierarchy:** A persistent, scrollable breadcrumb trail (`Quill › Profile › Collection › Index › Poem`) for intuitive navigation.
-    - **Maroon Visual Language:** Consistent accenting for active states and interactive elements.
-- **Visual Markdown Editor:** A minimalist, floating-toolbar powered editor (Crepe) for live editing of your poems.
 - **Modern UI Refinements:**
     - **Fixed Theme Toggle:** Modern sun/moon toggle with persistence.
     - **Elegant Modals:** Custom-styled confirmation modals for all sensitive actions.
@@ -29,7 +25,7 @@ A simple, elegant, and lightning-fast multi-collection platform for poets. Stanz
 
 ## 🚀 Installation & Customization
 
-1. **Upload files:** Upload all files to your server.
+1. **Upload files:** Upload all files from the `Stanza_Repository` to your server.
 2. **Initial Setup:** Enter **Management** (footer link) and use the default password `password` to log in.
 3. **Profile & Branding:** Update your name, bio, and photo directly from the landing page dashboard.
 4. **Create Collections:** Start adding your poetry collections through the admin interface.
@@ -41,16 +37,17 @@ A simple, elegant, and lightning-fast multi-collection platform for poets. Stanz
 ### Author Profile
 Manage your public persona:
 - **Edit Profile:** Update your Poet Name, Bio, and Profile Photo.
-- **Global Sync:** Profile changes automatically reflect across all your collections.
+- **Dynamic Meta:** Profile changes reflect across all collections automatically.
 
-### Collections & Index
-- **Dynamic Content:** Every collection has its own landing page and indexed archive.
-- **Management Popups:** Edit titles or delete collections without leaving the page.
-- **Markdown Editor:** Toggle **Edit** on any poem to refine your work in real-time.
+### Collections
+Every collection is its own entity:
+- **Create Collection:** Give it a title and a poet name.
+- **Edit Metadata:** Change collection settings at any time.
+- **Manage Poems:** Upload/delete poems within each specific collection.
 
 ### Modern Controls
 - **Sun/Moon Toggle:** Fixed at the top-right for instant theme switching.
-- **Admin Toolbar:** Pilled action buttons for management and language switching.
+- **Admin Toolbar:** Centered language dropdown and SVG-powered action buttons.
 
 > [!TIP]
 > **Poem Formatting:** See [MARKDOWN_INSTRUCTIONS.md](MARKDOWN_INSTRUCTIONS.md) for detailed instructions on poetry formatting and bilingual support.
@@ -64,20 +61,35 @@ Manage your public persona:
 ## 🌟 Χαρακτηριστικά
 - **Αρχιτεκτονική Πολλαπλών Συλλογών:** Φιλοξενήστε πολλαπλές διακριτές συλλογές σε ένα μόνο site.
 - **Κεντρική Σελίδα Προσγείωσης:** Κομψή αρχική με προφίλ δημιουργού (φωτογραφία, όνομα, βιογραφικό) και πλέγμα συλλογών.
-- **Σύγχρονη Πλοήγηση:**
-    - **Breadcrumbs:** Μια μόνιμη διαδρομή πλοήγησης στο πάνω μέρος για εύκολη επιστροφή.
-    - **Maroon Στυλ:** Ενιαία αισθητική με το χαρακτηριστικό βυσσινί χρώμα για την ενεργή κατάσταση.
-- **Οπτικός Επεξεργαστής Markdown:** Ενσωματωμένο περιβάλλον συγγραφής για άμεση επεξεργασία των ποιημάτων σας.
+- **Σύγχρονες Βελτιώσεις UI:**
+    - **Σταθερή Εναλλαγή Θέματος:** Μοντέρνος διακόπτης ήλιου/φεγγαριού με αποθήκευση προτίμησης.
+    - **Κομψά Παράθυρα (Modals):** Ειδικά σχεδιασμένα παράθυρα επιβεβαίωσης για όλες τις ενέργειες.
+    - **Βελτιωμένες Ειδοποιήσεις:** Στερεά, desaturated πλαίσια ειδοποιήσεων με κίνηση.
+- **Ενιαία Διαχείριση:** Μία μόνο σύνδεση παρέχει πρόσβαση σε όλες τις συλλογές και τα προφίλ.
 - **Μινιμαλιστική Σχεδίαση:** Εστίαση στο κείμενο με όμορφη τυπογραφία (EB Garamond).
-- **Υψηλή Ταχύτητα:** Κατασκευασμένο με καθαρό PHP, χωρίς ανάγκη για βάσεις δεδομένων.
+- **Υψηλή Ταχύτητα:** Κατασκευασμένο με καθαρό PHP, χωρίς ανάγκη για βαριά frameworks ή βάσεις δεδομένων.
 - **Δίγλωσση Υποστήριξη:** Πλήρης υποστήριξη σε Ελληνικά και Αγγλικά.
 
 ## 🚀 Εγκατάσταση & Προσαρμογή
 
-1. **Ανέβασμα αρχείων:** Ανεβάστε όλα τα αρχεία στον διακομιστή σας.
+1. **Ανέβασμα αρχείων:** Ανεβάστε όλα τα αρχεία του `Stanza_Repository` στον διακομιστή σας.
 2. **Αρχική Ρύθμιση:** Μπείτε στη **Διαχείριση** (στο footer) και χρησιμοποιήστε τον κωδικό `password`.
-3. **Προφίλ & Branding:** Ενημερώστε το όνομα, το βιογραφικό και τη φωτογραφία σας.
-4. **Δημιουργία Συλλογών:** Ξεκινήστε να προσθέτετε τις συλλογές σας.
+3. **Προφίλ & Branding:** Ενημερώστε το όνομα, το βιογραφικό και τη φωτογραφία σας από το μενού διαχείρισης.
+4. **Δημιουργία Συλλογών:** Ξεκινήστε να προσθέτετε τις συλλογές σας μέσω του περιβάλλοντος διαχείρισης.
+
+---
+
+## ✍️ Διαχείριση & Επεξεργασία
+
+### Προφίλ Ποιητή
+Διαχειριστείτε τη δημόσια εικόνα σας:
+- **Επεξεργασία Προφίλ:** Ενημερώστε το Όνομα, το Βιογραφικό και τη Φωτογραφία σας.
+- **Δυναμικά Δεδομένα:** Οι αλλαγές εμφανίζονται αυτόματα σε όλες τις συλλογές.
+
+### Συλλογές
+- **Νέα Συλλογή:** Δώστε τίτλο και όνομα ποιητή για κάθε νέα οντότητα.
+- **Επεξεργασία Μεταδεδομένων:** Αλλάξτε τις ρυθμίσεις της συλλογής ανά πάσα στιγμή.
+- **Διαχείριση Ποιημάτων:** Ανεβάστε/διαγράψτε ποιήματα μέσα σε κάθε συλλογή.
 
 ---
 *This project was created with the aim of promoting poetry and simplicity on the web. You can use, share, and change it freely.* 
