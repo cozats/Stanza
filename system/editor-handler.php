@@ -34,17 +34,15 @@ if (empty($collection)) {
     exit;
 }
 
-$poemsDir = dirname(__DIR__) . '/collections/' . basename($collection) . '/poems/';
+$poemsDir = dirname(__DIR__) . '/collections/' . preg_replace('#[/\\\\]#', '', $collection) . '/poems/';
 
 if (!is_dir($poemsDir)) {
-    http_response_code(404);
-    echo json_encode(['error' => 'Collection poems directory not found']);
-    exit;
+    mkdir($poemsDir, 0755, true);
 }
 
 // GET Mode: Fetch raw content
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $file = basename($_GET['file'] ?? '');
+    $file = preg_replace('#[/\\\\]#', '', (string)($_GET['file'] ?? ''));
     if (empty($file)) {
         echo json_encode(['error' => 'File not specified']);
         exit;
@@ -65,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // $data is already decoded above
     $content = $data['content'] ?? '';
-    $filename = basename($data['filename'] ?? '');
+    $filename = preg_replace('#[/\\\\]#', '', (string)($data['filename'] ?? ''));
     $title = $data['title'] ?? '';
 
     if (empty($content)) {
@@ -77,9 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // If no filename, generate from title or timestamp
     if (empty($filename)) {
         if (!empty($title)) {
-            $slug = preg_replace('/[^a-z0-9\-_]/i', '_', strtolower($title));
+            $slug = preg_replace('/[^\p{L}\p{N}\-_]/u', '_', mb_strtolower($title));
             $slug = preg_replace('/_+/', '_', $slug);
             $filename = trim($slug, '_') . '.md';
+            if ($filename === '.md') $filename = 'poem_' . time() . '.md';
         } else {
             $filename = 'poem_' . time() . '.md';
         }

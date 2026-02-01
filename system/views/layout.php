@@ -179,11 +179,16 @@
             display: inline-flex !important;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            color: #2c2c2c;
             transition: color 0.2s;
         }
 
-        .poem-list.show-delete .delete-link:hover {
+        [data-theme="dark"] .poem-list.show-delete .delete-link {
+            color: #fff;
+        }
+
+        .poem-list.show-delete .delete-link:hover,
+        [data-theme="dark"] .poem-list.show-delete .delete-link:hover {
             color: var(--accent-color);
         }
 
@@ -508,13 +513,24 @@
             right: 20px;
             background: var(--accent-color);
             color: #fff;
-            padding: 12px 24px;
+            height: 60px;
+            padding: 0 15px;
             border-radius: 50px;
             display: flex;
-            gap: 25px;
+            align-items: center;
+            gap: 5px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             z-index: 1000;
             backdrop-filter: blur(5px);
+            box-sizing: border-box;
+        }
+
+        .admin-toolbar > *:not(script) {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .admin-toolbar a,
@@ -524,12 +540,29 @@
             font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            gap: 8px;
             transition: opacity 0.3s;
             background: none;
             border: none;
             cursor: pointer;
             font-family: inherit;
+            height: 100%;
+            padding: 0 10px;
+        }
+
+        .admin-toolbar svg {
+            width: 20px !important;
+            height: 20px !important;
+            flex-shrink: 0;
+        }
+
+        .icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
         }
 
         .admin-toolbar a:hover,
@@ -717,9 +750,29 @@
 
         @media (max-width: 600px) {
             .theme-toggle-fixed { top: 15px; }
-            .admin-toolbar { left: 10px; right: 10px; bottom: 10px; border-radius: 30px; gap: 0; }
-            .admin-toolbar a span { display: none; }
-            .admin-toolbar a { justify-content: center; }
+            .admin-toolbar { 
+                left: 10px; 
+                right: 10px; 
+                bottom: 10px; 
+                height: 60px;
+                border-radius: 30px; 
+                gap: 0; 
+                padding: 0 10px;
+                justify-content: space-evenly;
+            }
+            .admin-toolbar a span:not(.icon-wrapper),
+            .admin-toolbar button span:not(.icon-wrapper) { 
+                display: none !important; 
+            }
+            .admin-toolbar > *:not(script) { 
+                flex: 1;
+                justify-content: center; 
+            }
+            .admin-toolbar a,
+            .admin-toolbar button {
+                padding: 0;
+                width: 100%;
+            }
         }
 
         /* View-specific overrides */
@@ -752,11 +805,11 @@
         @media (max-width: 600px) {
             .breadcrumbs {
                 top: 15px; left: 0; width: 100%; max-width: 100%; transform: none;
-                padding: 0 7rem 0 1rem; overflow-x: auto; justify-content: flex-start;
+                padding: 0 6rem 0 1rem; overflow-x: auto; justify-content: flex-start;
                 scrollbar-width: none; -webkit-overflow-scrolling: touch;
-                mask-image: linear-gradient(to right, black calc(100% - 9rem), transparent calc(100% - 4rem));
-                -webkit-mask-image: linear-gradient(to right, black calc(100% - 9rem), transparent calc(100% - 4rem));
                 height: 36px;
+                mask-image: linear-gradient(to right, black calc(100% - 6rem), transparent calc(100% - 3.5rem));
+                -webkit-mask-image: linear-gradient(to right, black calc(100% - 6rem), transparent calc(100% - 3.5rem));
             }
             .breadcrumbs::-webkit-scrollbar { display: none; }
             .breadcrumbs a, .breadcrumb-current { max-width: none; }
@@ -1107,7 +1160,9 @@
             // Scroll breadcrumbs to end on mobile to show current page
             const breadcrumbs = document.querySelector('.breadcrumbs');
             if (breadcrumbs && window.innerWidth <= 600) {
-                breadcrumbs.scrollLeft = breadcrumbs.scrollWidth;
+                setTimeout(() => {
+                    breadcrumbs.scrollLeft = breadcrumbs.scrollWidth;
+                }, 100);
             }
         });
 

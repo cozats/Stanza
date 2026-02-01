@@ -27,6 +27,9 @@ define('ROOT_DIR', dirname(__DIR__));
 define('CONFIG_FILE', ROOT_DIR . '/config.json');
 define('UPLOADS_DIR', ROOT_DIR . '/uploads/');
 define('COLLECTIONS_DIR', ROOT_DIR . '/collections/');
+if (!is_dir(COLLECTIONS_DIR)) {
+    mkdir(COLLECTIONS_DIR, 0755, true);
+}
 define('SYSTEM_DIR', ROOT_DIR . '/system/');
 define('UI_LANGUAGE', 'en');
 
@@ -49,6 +52,17 @@ function loadConfig(): array {
 
 function saveConfig(array $config): bool {
     return file_put_contents(CONFIG_FILE, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) !== false;
+}
+
+function slugify(string $text): string {
+    // Replace non-letter or digits by _
+    $text = preg_replace('~[^\p{L}\p{N}]+~u', '_', $text);
+    // Transliterate (if needed, but simple regex is safer for all languages)
+    $text = trim($text, '_');
+    // lowercase
+    $text = mb_strtolower($text);
+    if (empty($text)) return 'collection_' . time();
+    return $text;
 }
 
 $config = loadConfig();

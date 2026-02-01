@@ -10,6 +10,8 @@ $c = $_GET['c'] ?? null; // collection slug
 $v = $_GET['v'] ?? 'home'; // view (home, list, poem)
 $p = $_GET['p'] ?? null; // poem filename
 
+$collections = getCollections();
+
 // Resolve View and Data
 if ($c) {
     $collectionDir = COLLECTIONS_DIR . basename($c) . '/';
@@ -73,7 +75,6 @@ if ($c) {
     }
 } else {
     $view = 'landing';
-    $collections = getCollections();
 }
 
 // Ensure $c is null if not set to avoid issues in toolbar/layout
@@ -83,6 +84,9 @@ if (!isset($c)) $c = null;
 if (isset($_GET['admin']) && !$isAdmin) $view = 'admin_login';
 if (isset($_GET['logout'])) {
     unset($_SESSION['is_admin']);
-    header('Location: index.php');
+    $params = $_GET;
+    unset($params['logout']);
+    $queryString = http_build_query($params);
+    header('Location: ' . getCurrentBaseUrl() . ($queryString ? '?' . $queryString : ''));
     exit;
 }

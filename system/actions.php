@@ -14,7 +14,10 @@ if (isset($_POST['admin_login'])) {
         $_SESSION['message'] = 'Incorrect password.';
         $_SESSION['msg_type'] = 'error';
     }
-    header('Location: ' . getCurrentBaseUrl() . (isset($_GET['c']) ? '?c=' . urlencode($_GET['c']) : ''));
+    $params = $_GET;
+    unset($params['admin']);
+    $queryString = http_build_query($params);
+    header('Location: ' . getCurrentBaseUrl() . ($queryString ? '?' . $queryString : ''));
     exit;
 }
 
@@ -51,20 +54,26 @@ if (isset($_POST['update_profile']) && $isAdmin) {
 // Handle Collection Creation
 if (isset($_POST['create_collection']) && $isAdmin) {
     $title = trim($_POST['collection_title'] ?? '');
+    $author = trim($_POST['collection_author'] ?? $config['author_name']);
     if ($title) {
-        $slug = preg_replace('/[^a-z0-9]/', '_', strtolower($title));
-        $slug = preg_replace('/_+/', '_', $slug);
-        $slug = trim($slug, '_');
+        $slug = slugify($title);
         $dir = COLLECTIONS_DIR . $slug . '/';
         if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-            mkdir($dir . 'poems/', 0755, true);
-            file_put_contents($dir . 'collection.json', json_encode([
-                'title' => $title,
-                'author' => $config['author_name']
-            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-            $_SESSION['message'] = $lang['msg_created'];
-            $_SESSION['msg_type'] = 'success';
+            if (mkdir($dir, 0755, true)) {
+                mkdir($dir . 'poems/', 0755, true);
+                file_put_contents($dir . 'collection.json', json_encode([
+                    'title' => $title,
+                    'author' => $author
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+                $_SESSION['message'] = $lang['msg_created'];
+                $_SESSION['msg_type'] = 'success';
+            } else {
+                $_SESSION['message'] = $lang['msg_error'] . ' (Failed to create directory)';
+                $_SESSION['msg_type'] = 'error';
+            }
+        } else {
+            $_SESSION['message'] = $lang['msg_error'] . ' (Collection already exists)';
+            $_SESSION['msg_type'] = 'error';
         }
     }
     header('Location: index.php');
@@ -116,5 +125,41 @@ if (isset($_GET['delete_poem']) && $isAdmin && isset($_GET['c'])) {
     header('Location: ?c=' . urlencode($slug) . '&v=list');
     exit;
 }
+
+// Handle Poem Upload
+if (isset($_POST['add_poem']) && $isAdmin && isset($_GET['c'])) {
+    $slug = basename($_GET['c']);
+    $dir = COLLECTIONS_DIR . $slug . '/poems/';
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+
+    $file = $_FILES['poem'] ?? null;
+    if ($file && $file['error'] === UPLOAD_ERR_OK) {
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (in_array($ext, ['md', 'txt'])) {
+            // Sanitize filename but keep Unicode characters
+            $filename = preg_replace('/[^\p{L}\p{N}\.\-_]/u', '_', $file['name']);
+            $filename = preg_replace('/_+/', '_', $filename);
+            
+            if (move_uploaded_file($file['tmp_name'], $dir . $filename)) {
+                $_SESSION['message'] = $lang['msg_success'] ?? 'Poem uploaded successfully.';
+                $_SESSION['msg_type'] = 'success';
+            } else {
+                $_SESSION['message'] = $lang['msg_upload_err'] ?? 'Failed to move uploaded file.';
+                $_SESSION['msg_type'] = 'error';
+            }
+        } else {
+            $_SESSION['message'] = $lang['msg_ext_err'] ?? 'Invalid file extension.';
+            $_SESSION['msg_type'] = 'error';
+        }
+    } else {
+        $_SESSION['message'] = $lang['msg_upload_err'] ?? 'Upload error.';
+        $_SESSION['msg_type'] = 'error';
+    }
+    header('Location: ?c=' . urlencode($slug) . '&v=list');
+    exit;
+}
+
 
 

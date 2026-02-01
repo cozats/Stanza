@@ -19,7 +19,7 @@
             <circle cx="12" cy="8" r="4"></circle>
             <path d="M20 21a8 8 0 1 0-16 0"></path>
         </svg>
-        <?php if ($view === 'landing' || $view === 'admin_login'): ?> Edit Profile<?php else: ?><span>Edit Profile</span><?php endif; ?>
+        <span>Edit Profile</span>
     </button>
     <div class="dropdown-content">
         <h3>Edit Profile</h3>
@@ -51,7 +51,7 @@
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
-            Edit Collection</button>
+            <span>Edit Collection</span></button>
         <div class="dropdown-content">
             <h3>Edit Collection</h3>
             <form method="POST" id="edit-collection-form">
@@ -72,13 +72,15 @@
     </div>
 
     <div class="dropdown" id="add-dropdown">
-        <button type="button" onclick="toggleDropdown('add-dropdown')">+ New Collection</button>
+        <button type="button" onclick="toggleDropdown('add-dropdown')">+ <span>New Collection</span></button>
         <div class="dropdown-content">
             <h3>New Collection</h3>
             <form method="POST">
                 <input type="hidden" name="create_collection" value="1">
-                <label>Collection Title</label>
-                <input type="text" name="collection_title" required placeholder="Collection Title">
+                <label><?= ($currentLang === 'el') ? 'Τίτλος Συλλογής' : 'Collection Title' ?></label>
+                <input type="text" name="collection_title" value="<?= ($currentLang === 'el') ? 'Νέα Συλλογή' : 'New Collection' ?>" required placeholder="Collection Title">
+                <label><?= ($currentLang === 'el') ? 'Όνομα Ποιητή' : 'Collection Author' ?></label>
+                <input type="text" name="collection_author" value="<?= htmlspecialchars($config['author_name']) ?>" required>
                 <button type="submit">Create</button>
             </form>
         </div>
@@ -194,7 +196,7 @@
         </a>
     <?php endif; ?>
 
-    <a href="<?= ($view === 'list') ? '#' : 'index.php?view=list' ?>" <?= ($view === 'list') ? 'onclick="toggleDeleteMode(event)"' : '' ?>>
+    <a href="<?= ($view === 'list') ? '#' : '?c='.urlencode($c).'&v=list' ?>" <?= ($view === 'list') ? 'onclick="toggleDeleteMode(event)"' : '' ?>>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 6h18"></path>
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
