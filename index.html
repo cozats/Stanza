@@ -1,414 +1,1183 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stanza | The Elegant Multi-Collection Poetry Platform</title>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <title>Stanza — The Digital Sanctuary for Your Verses</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #e4e2d7;
+            --bg-paper: #f0eee3;
             --text-color: #2c2c2c;
+            --text-muted: #5c5c5c;
             --accent-color: #8c3b3b;
-            --border-color: rgba(140, 59, 59, 0.3);
-            --font-main: 'EB Garamond', serif;
+            --border-color: rgba(140, 59, 59, 0.25);
+            --border-light: rgba(44, 44, 44, 0.15);
+            --font-main: 'EB Garamond', Georgia, serif;
+            --transition-smooth: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="dark"] {
-            --bg-color: #1a1a1a;
-            --text-color: #e0e0e0;
-            --border-color: rgba(224, 224, 224, 0.2);
+            --bg-color: #1a1a18;
+            --bg-paper: #252522;
+            --text-color: #d8d6c8;
+            --text-muted: #999688;
+            --border-color: rgba(216, 214, 200, 0.2);
+            --border-light: rgba(216, 214, 200, 0.1);
         }
 
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
+            font-family: var(--font-main);
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: var(--font-main);
-            margin: 0;
-            line-height: 1.7;
             font-size: 20px;
+            line-height: 1.75;
             -webkit-font-smoothing: antialiased;
-            transition: background-color 0.5s ease, color 0.5s ease;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.8s ease, color 0.8s ease;
         }
 
-        .container {
-            max-width: 1200px;
+        /* Book Page Container */
+        .page {
+            max-width: 900px;
             margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-
-        header {
-            max-width: 1000px;
-            margin: 0 auto 6rem;
-            text-align: center;
+            padding: 4rem 2rem 6rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             position: relative;
         }
 
-        .controls {
-            position: absolute;
-            top: -2rem;
-            right: 0;
-            display: flex;
-            gap: 15px;
+        @media (min-width: 1200px) {
+            .page {
+                max-width: 1000px;
+                padding: 5rem 3rem 8rem;
+            }
         }
 
-        .control-btn {
-            background: none;
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 0.5rem 1rem;
-            font-family: inherit;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
+        @media (max-width: 600px) {
+            .page {
+                padding: 3rem 1.5rem 4rem;
+            }
+            body {
+                font-size: 18px;
+            }
+        }
+
+        /* Header Navigation */
+        .masthead {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            margin-bottom: 6rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-light);
         }
 
-        .control-btn:hover {
-            border-color: var(--accent-color);
+        .masthead-logo {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
             color: var(--accent-color);
         }
 
-        h1 {
+        .masthead-nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            border: none;
+            background: none;
+            font-family: inherit;
+            padding: 0;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        .nav-divider {
+            color: var(--border-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 5rem;
+            padding-bottom: 4rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-title {
+            font-size: 4rem;
             font-weight: 400;
             font-style: italic;
-            font-size: 5rem;
-            margin: 0;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
             letter-spacing: -0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-cta {
+            margin-bottom: 2rem;
+        }
+
+        .hero-cta .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2.5rem;
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border: 1.5px solid var(--accent-color);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .hero-cta .btn:hover {
+            background: rgba(140, 59, 59, 0.1);
+            color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(140, 59, 59, 0.25);
+        }
+
+        .hero-cta .btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+        }
+
+        .hero-divider {
+            width: 60px;
+            height: 1px;
+            background: var(--accent-color);
+            margin: 0 auto;
+        }
+
+        @media (max-width: 600px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            .hero {
+                margin-bottom: 3rem;
+                padding-bottom: 3rem;
+            }
+        }
+
+        /* Chapter / Section Headers */
+        .chapter {
+            margin-bottom: 5rem;
+            padding-bottom: 2rem;
+        }
+
+        .chapter:last-of-type {
+            border-bottom: none;
+        }
+
+        .chapter-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .chapter-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .chapter-title {
+            font-size: 2.2rem;
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.3;
+            color: var(--text-color);
+        }
+
+        .chapter-divider {
+            width: 40px;
+            height: 1px;
+            background: var(--border-color);
+            margin: 2rem auto 0;
+        }
+
+        /* Prose Styling */
+        .prose {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .prose p {
+            margin-bottom: 1.5rem;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .prose p:last-child {
+            margin-bottom: 0;
+        }
+
+        .prose strong {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .prose em {
+            font-style: italic;
+        }
+
+        /* Feature Cards - Book Style */
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            margin-bottom: 3rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .feature-item::before {
+            content: "◆";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-size: 0.6rem;
+            top: 0.6rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Comparison Table - Elegant Style */
+        .comparison {
+            margin: 3rem 0;
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .comparison-table th {
+            text-align: left;
+            padding: 1rem 1rem 1rem 0;
+            font-weight: 600;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .comparison-table td {
+            padding: 1rem 1rem 1rem 0;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: top;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .comparison-table .highlight {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        /* Workflow Steps */
+        .workflow {
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+        }
+
+        .workflow-item {
+            position: relative;
+            padding: 2rem 0 2rem 4rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .workflow-item:last-child {
+            border-bottom: none;
+        }
+
+        .workflow-item::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 2rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 1px solid var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            font-family: var(--font-main);
+        }
+
+        .workflow-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Technical Specs */
+        .specs-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem 3rem;
+            list-style: none;
+            padding: 0;
+            margin-top: 2rem;
+        }
+
+        .spec-item {
+            position: relative;
+            padding-left: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .spec-item::before {
+            content: "—";
+            position: absolute;
+            left: 0;
             color: var(--accent-color);
         }
 
-        .subtitle {
-            font-size: 1.6rem;
-            opacity: 0.8;
-            margin-top: 1rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+        @media (max-width: 600px) {
+            .specs-list {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .hero-visual {
+        /* Gallery - Plate Section */
+        .gallery {
             margin: 4rem 0;
+        }
+
+        .gallery-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
         }
 
-        .hero-visual img {
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: var(--bg-paper);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            transition: transform 0.4s ease;
+        }
+
+        [data-theme="dark"] .gallery-item {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .gallery-item img {
             width: 100%;
-            border-radius: 4px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.5s ease;
+            height: auto;
+            display: block;
+            transition: transform 0.6s ease;
         }
 
-        .hero-visual img:hover {
-            transform: translateY(-5px);
+        .gallery-item:hover img {
+            transform: scale(1.02);
         }
 
-        section {
-            margin-bottom: 5rem;
+        .gallery-caption {
+            padding: 1rem 1.25rem;
+            font-size: 0.9rem;
+            font-style: italic;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-color);
+        }
+
+        .gallery-plate-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            margin-bottom: 0.25rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--bg-paper);
+            border: 1px solid var(--border-color);
+            padding: 4rem 3rem;
+            text-align: center;
+            margin: 6rem 0;
+            position: relative;
+        }
+
+        .cta-section::before,
+        .cta-section::after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--accent-color);
+        }
+
+        .cta-section::before {
+            top: 15px;
+            left: 15px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .cta-section::after {
+            bottom: 15px;
+            right: 15px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .cta-text {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .cta-tagline {
+            font-size: 0.95rem;
+            font-style: italic;
+            color: var(--text-muted);
+            margin-top: 1.5rem;
+        }
+
+        /* Button */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2.5rem;
+            background: var(--accent-color);
+            color: var(--bg-color);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(140, 59, 59, 0.3);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+        }
+
+        /* Footer */
+        .colophon {
+            margin-top: auto;
+            padding-top: 4rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .colophon-divider {
+            width: 30px;
+            height: 1px;
+            background: var(--border-color);
+            margin: 0 auto 1.5rem;
+        }
+
+        /* Reveal Animation */
+        .reveal {
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s ease-out;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
 
-        section.is-visible {
+        .reveal.is-visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        h2 {
-            font-weight: 400;
-            font-size: 2.5rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
-            margin-bottom: 2rem;
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* Language Toggle */
+        .lang-section {
+            display: none;
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 60px 40px;
+        .lang-section.active {
+            display: block;
         }
 
-        .feature-item h3 {
-            color: var(--accent-color);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 1.4rem;
-        }
-
-        .cta-container {
-            text-align: center;
-            margin-top: 8rem;
-            padding: 4rem;
-            border: 1px solid var(--border-color);
-            background: rgba(140, 59, 59, 0.03);
-            border-radius: 12px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.8rem 2.5rem;
-            background-color: var(--accent-color);
-            color: white !important;
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            gap: 12px;
-            border-radius: 50px;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(140, 59, 59, 0.3);
-        }
-
-        .btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .btn-margin {
-            margin-top: 2rem;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 6rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
-            font-size: 0.9rem;
-            opacity: 0.6;
-        }
-
-        code {
-            background: rgba(140, 59, 59, 0.1);
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-family: monospace;
-            font-size: 0.9em;
-            color: var(--accent-color);
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 3rem;
+        /* Print Styles */
+        @media print {
+            .masthead-nav,
+            .btn {
+                display: none;
             }
-
-            .container {
-                padding: 2rem 1rem;
+            body {
+                background: white;
+                color: black;
             }
-
-            .controls {
-                position: relative;
-                top: 0;
-                justify-content: center;
-                margin-bottom: 2.5rem;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-
-            .hero-visual {
-                grid-template-columns: 1fr;
+            .page {
+                max-width: 100%;
+                padding: 1rem;
             }
         }
     </style>
 </head>
-
-<body>
-    <div class="container">
-        <header>
-            <div class="controls">
-                <button class="control-btn" id="lang-toggle">Ελληνικά</button>
-                <button class="control-btn" id="theme-toggle">Dark Mode</button>
-            </div>
-            <h1 class="reveal">Stanza</h1>
-            <p class="subtitle reveal" id="hero-subtitle">The elegant, multi-collection portal for modern poets.
-            </p>
-            <div class="reveal">
-                <a href="https://costas.design/stanza" target="_blank" class="btn btn-margin" id="action-btn">
-                    <span id="action-btn-text">See it in action</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                </a>
-            </div>
+<body data-theme="light">
+    <div class="page">
+        <header class="masthead reveal">
+            <div class="masthead-logo">Stanza</div>
+            <nav class="masthead-nav">
+                <button class="nav-link" id="lang-toggle">Ελληνικά</button>
+                <span class="nav-divider">|</span>
+                <button class="nav-link" id="theme-toggle">Dark</button>
+            </nav>
         </header>
 
-        <section id="preview" class="reveal">
-            <div class="hero-visual">
-                <img src="https://github.com/cozats/Stanza/blob/main/screens/home-en-dark.png?raw=true"
-                    alt="Dark Mode Home Preview">
-                <img src="https://github.com/cozats/Stanza/blob/main/screens/poem-en-dark.png?raw=true"
-                    alt="Dark Mode Poem Preview">
-            </div>
-        </section>
+        <!-- English Content -->
+        <div id="content-en" class="lang-section active">
+            <section class="hero reveal">
+                <h1 class="hero-title">Stanza</h1>
+                <p class="hero-subtitle">Your words don't need a "feed." They need a home. Stanza is the minimalist, lightning-fast sanctuary where your poetry finds its final, elegant form.</p>
+                <div class="hero-cta">
+                    <a href="https://costas.design/stanza" class="btn" target="_blank" rel="noopener noreferrer">
+                        <span>See it in action</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                </div>
+                <div class="hero-divider"></div>
+            </section>
 
-        <section id="features" class="reveal">
-            <h2 id="features-title">The Platform</h2>
-            <div class="features-grid" id="features-grid">
-                <!-- Features injected by JS -->
-            </div>
-        </section>
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Chapter I</span>
+                    <h2 class="chapter-title">The Anti-Social Manifesto</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <div class="prose">
+                    <p>In an era of fleeting notifications and algorithmic noise, poetry is an act of resistance. It requires space, silence, and focus. We built <strong>Stanza</strong> for the poet who is tired of fighting for attention on platforms designed for distraction.</p>
+                    <p>Stanza isn't a social network; it's a digital gallery. It's an elegant, high-performance stage where the only thing that matters is the rhythm of your lines and the breath between your words.</p>
+                </div>
+            </article>
 
-        <section id="instructions" class="reveal">
-            <h2 id="instructions-title">How it Works</h2>
-            <ol id="instructions-list">
-                <!-- Instructions injected by JS -->
-            </ol>
-        </section>
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Chapter II</span>
+                    <h2 class="chapter-title">The Stanza Experience</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <ul class="features-list prose">
+                    <li class="feature-item">
+                        <h3 class="feature-title">Typography as Soul</h3>
+                        <p class="feature-desc">We believe that the visual weight of a word changes its meaning. Stanza is draped in <strong>EB Garamond</strong>, the timeless humanist typeface. Every serif and stroke is rendered with crisp, classical precision, turning your digital screen into a premium paper anthology.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Curated Identity</h3>
+                        <p class="feature-desc">Your author profile is the heart of your sanctuary. Upload a profile photo, craft a compelling bio, and let your readers know the person behind the verses. Stanza presents your identity with the same elegance as your work, ensuring a professional and intimate connection with your audience.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">The Typewriter Reimagined</h3>
+                        <p class="feature-desc">Forget complex dashboards. Stanza features the built-in <strong>Crepe Editor</strong>, a distraction-free WYSIWYG Markdown interface. With its floating pill-style toolbar and invisible UI, the technology vanishes, leaving you alone with your thoughts. Format stanzas, add links, and craft your work in real-time.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">The Freedom of Files (No Database)</h3>
+                        <p class="feature-desc">Stanza is built on a "Flat-File" architecture. There are no heavy databases to set up, no SQL to manage, and no "cloud" to lose your data in. Your poems are stored as simple Markdown files on <em>your</em> server. It's faster, more secure, and entirely yours.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Markdown: The Digital Parchment</h3>
+                        <p class="feature-desc">Why simple text? Because text lasts forever. Unlike proprietary formats, Markdown is universal. If the technologies of tomorrow change, your work remains readable. Stanza takes these "parchment" files and renders them into a modern masterpiece, ensuring your legacy is both future-proof and beautiful.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Atmosphere on Demand</h3>
+                        <p class="feature-desc">Poetry is moody. With a fixed <strong>Sun/Moon toggle</strong>, readers can instantly switch between a crisp Light Mode and a deep, intimate Dark Mode. Beyond lighting, Stanza offers <strong>precision alignment</strong> (Left, Center, Right) and <strong>smart sorting</strong>, allowing you to curate the exact visual rhythm of your collection.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">A Universal Voice (Native Bilingual)</h3>
+                        <p class="feature-desc">Language should never be a barrier to emotion. Stanza features deep, native support for <strong>English and Greek</strong>. Upload a translation (e.g., <code>poem_el.md</code>), and Stanza automatically pairs it with the original, allowing readers to toggle between languages without losing their place.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">The Anthology Grid</h3>
+                        <p class="feature-desc">Host your entire literary world under one roof. Stanza's <strong>Multi-Collection Architecture</strong> allows you to create distinct anthologies for different eras, styles, or languages—all accessible from a single, beautiful master landing page.</p>
+                    </li>
+                </ul>
+            </article>
 
-        <div class="cta-container reveal">
-            <h2 id="cta-title">Ready to launch your platform?</h2>
-            <p id="cta-subtitle">Stanza is open-source and free to use forever.</p>
-            <br>
-            <a href="https://github.com/cozats/Stanza" class="btn">
-                <span id="cta-btn-text">Star on GitHub</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path
-                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
-                    </path>
-                </svg>
-            </a>
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Chapter III</span>
+                    <h2 class="chapter-title">Why Stanza is Different</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <div class="comparison">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Stanza</th>
+                                <th>Mainstream CMS</th>
+                                <th>Social Media</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Setup</td>
+                                <td class="highlight">1 Minute</td>
+                                <td>1 Hour+</td>
+                                <td>Instant</td>
+                            </tr>
+                            <tr>
+                                <td>Data Ownership</td>
+                                <td class="highlight">100% Yours</td>
+                                <td>Complex Export</td>
+                                <td>They Own It</td>
+                            </tr>
+                            <tr>
+                                <td>Speed</td>
+                                <td class="highlight">Lightning (No DB)</td>
+                                <td>Average (DB heavy)</td>
+                                <td>Variable</td>
+                            </tr>
+                            <tr>
+                                <td>Atmosphere</td>
+                                <td class="highlight">Focused / Pure</td>
+                                <td>Cluttered</td>
+                                <td>Ad-driven</td>
+                            </tr>
+                            <tr>
+                                <td>Maintenance</td>
+                                <td class="highlight">Zero</td>
+                                <td>High (Updates/Security)</td>
+                                <td>N/A</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Chapter IV</span>
+                    <h2 class="chapter-title">The Creator's Workflow</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <ol class="workflow prose">
+                    <li class="workflow-item">
+                        <div class="workflow-title">The One-Minute Install</div>
+                        <p>Drop the Stanza files onto any PHP server. No "Installation Wizard," no database passwords.</p>
+                    </li>
+                    <li class="workflow-item">
+                        <div class="workflow-title">Write or Upload</div>
+                        <p>Use the elegant Crepe Editor to write directly in your browser, or simply upload your existing <code>.md</code> or <code>.txt</code> files.</p>
+                    </li>
+                    <li class="workflow-item">
+                        <div class="workflow-title">Automatic Elegance</div>
+                        <p>Stanza automatically handles stanza spacing and adds graceful <strong>reveal-on-scroll</strong> animations to your text.</p>
+                    </li>
+                    <li class="workflow-item">
+                        <div class="workflow-title">Own Your Legacy</div>
+                        <p>Since everything is a file, you can back up your entire site just by downloading a folder. Your data is never trapped.</p>
+                    </li>
+                </ol>
+            </article>
+
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Chapter V</span>
+                    <h2 class="chapter-title">Technical Purity</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <div class="prose">
+                    <ul class="specs-list">
+                        <li class="spec-item"><strong>Blazing Speed:</strong> Instant TTFB. No database queries means zero lag.</li>
+                        <li class="spec-item"><strong>Eco-Friendly:</strong> No database server means a lower carbon footprint for your digital hosting.</li>
+                        <li class="spec-item"><strong>Privacy-First:</strong> No tracking cookies, no external scripts, no analytics bloat.</li>
+                        <li class="spec-item"><strong>Fully Responsive:</strong> Looks like a masterpiece on everything from a phone to a wide-screen monitor.</li>
+                    </ul>
+                </div>
+            </article>
+
+            <article class="chapter reveal gallery">
+                <header class="chapter-header">
+                    <span class="chapter-number">Plates</span>
+                    <h2 class="chapter-title">The Platform in Images</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <div class="gallery-grid">
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/home.png" alt="Home Page" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Plate I</div>
+                            The Home Sanctuary
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/collection.png" alt="Collection Page" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Plate II</div>
+                            The Anthology Grid
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/poem.png" alt="Poem Display" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Plate III</div>
+                            Poetry Reading View
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/colelction%20edit.png" alt="Collection Editor" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Plate IV</div>
+                            Collection Management
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/poem%20edit.png" alt="Poem Editor" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Plate V</div>
+                            The Crepe Editor
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/profile%20edit.png" alt="Profile Editor" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Plate VI</div>
+                            Author Identity
+                        </figcaption>
+                    </figure>
+                </div>
+            </article>
+
+            <section class="cta-section reveal">
+                <h2 class="cta-title">Your Words Deserve a Stanza.</h2>
+                <p class="cta-text">Stop posting into the void. Give your poetry the dedicated, elegant home it deserves.</p>
+                <a href="https://github.com/cozats/Stanza" class="btn">
+                    <span>Explore on GitHub</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                    </svg>
+                </a>
+                <p class="cta-tagline">Stanza. <em>Digital slow living for the modern poet.</em></p>
+            </section>
         </div>
 
-        <footer>
-            <p id="footer-text">&copy; 2026 Stanza. Designed for poets, by poets.</p>
+        <!-- Greek Content -->
+        <div id="content-el" class="lang-section">
+            <section class="hero reveal">
+                <h1 class="hero-title">Stanza</h1>
+                <p class="hero-subtitle">Τα λόγια σας δεν χρειάζονται ένα "feed". Χρειάζονται ένα σπίτι. Το Stanza είναι το μινιμαλιστικό, ταχύτατο καταφύγιο όπου η ποίησή σας βρίσκει την τελική της, κομψή μορφή.</p>
+                <div class="hero-cta">
+                    <a href="https://costas.design/stanza" class="btn" target="_blank" rel="noopener noreferrer">
+                        <span>Δείτε το σε δράση</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                </div>
+                <div class="hero-divider"></div>
+            </section>
+
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Κεφάλαιο I</span>
+                    <h2 class="chapter-title">Το Μανιφέστο κατά του Θορύβου</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <div class="prose">
+                    <p>Σε μια εποχή εφήμερων ειδοποιήσεων και αλγοριθμικού θορύβου, η ποίηση είναι μια πράξη αντίστασης. Απαιτεί χώρο, σιωπή και συγκέντρωση. Δημιουργήσαμε το <strong>Stanza</strong> για τον ποιητή που κουράστηκε να παλεύει για προσοχή σε πλατφόρμες σχεδιασμένες για απόσπαση.</p>
+                    <p>Το Stanza δεν είναι κοινωνικό δίκτυο· είναι μια ψηφιακή γκαλερί. Είναι μια κομψή σκηνή υψηλών επιδόσεων όπου το μόνο που έχει σημασία είναι ο ρυθμός των στίχων σας και η ανάσα ανάμεσα στις λέξεις σας.</p>
+                </div>
+            </article>
+
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Κεφάλαιο II</span>
+                    <h2 class="chapter-title">Η Εμπειρία Stanza</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <ul class="features-list prose">
+                    <li class="feature-item">
+                        <h3 class="feature-title">Τυπογραφία με Ψυχή</h3>
+                        <p class="feature-desc">Πιστεύουμε ότι το οπτικό βάρος μιας λέξης αλλάζει το νόημά της. Το Stanza "ντύνεται" με την <strong>EB Garamond</strong>, τη διαχρονική ουμανιστική γραμματοσειρά. Κάθε λεπτομέρεια αποδίδεται με κλασική ακρίβεια, μετατρέποντας την ψηφιακή σας οθόνη σε μια premium έντυπη ανθολογία.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Επιμελημένη Ταυτότητα</h3>
+                        <p class="feature-desc">Το προφίλ σας είναι η καρδιά του καταφυγίου σας. Ανεβάστε μια φωτογραφία, γράψτε ένα βιογραφικό και συστηθείτε στο κοινό σας. Το Stanza παρουσιάζει την ταυτότητά σας με την ίδια κομψότητα όπως και το έργο σας.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Η Γραφομηχανή του Σήμερα</h3>
+                        <p class="feature-desc">Ξεχάστε τα περίπλοκα διαχειριστικά. Το Stanza διαθέτει τον ενσωματωμένο <strong>Crepe Editor</strong>, ένα περιβάλλον Markdown (WYSIWYG) χωρίς περισπασμούς. Με την αιωρούμενη εργαλειοθήκη και το αόρατο UI, η τεχνολογία υποχωρεί, αφήνοντάς σας μόνο με τις σκέψεις σας.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Η Ελευθερία των Αρχείων σας (Χωρίς Βάση Δεδομένων)</h3>
+                        <p class="feature-desc">Το Stanza βασίζεται σε μια αρχιτεκτονική "Flat-File". Δεν υπάρχουν βαριές βάσεις δεδομένων, ούτε SQL για διαχείριση. Τα ποιήματά σας αποθηκεύονται ως απλά αρχεία Markdown στον <em>δικό σας</em> διακομιστή. Είναι πιο γρήγορο, πιο ασφαλές και εξ ολοκλήρου δικό σας.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Markdown: Η Ψηφιακή Περγαμηνή</h3>
+                        <p class="feature-desc">Γιατί απλό κείμενο; Γιατί το κείμενο ζει για πάντα. Σε αντίθεση με τα κλειστά format, το Markdown είναι παγκόσμιο. Αν οι τεχνολογίες του αύριο αλλάξουν, το έργο σας παραμένει αναγνώσιμο. Το Stanza μετατρέπει αυτές τις "περγαμηνές" σε ένα σύγχρονο αριστούργημα.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Ατμόσφαιρα κατά Παραγγελία</h3>
+                        <p class="feature-desc">Η ποίηση έχει διαθέσεις. Με τον σταθερό διακόπτη <strong>Ήλιου/Φεγγαριού</strong>, οι αναγνώστες μπορούν να επιλέξουν ανάμεσα στο καθαρό Light Mode και το οικείο, βαθύ Dark Mode. Επιπλέον, το Stanza προσφέρει <strong>ευελιξία στοίχισης</strong> και <strong>έξυπνη ταξινόμηση</strong>, επιτρέποντάς σας να ορίσετε τον ακριβή οπτικό ρυθμό της συλλογής σας.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Παγκόσμια Φωνή (Εγγενώς Δίγλωσσο)</h3>
+                        <p class="feature-desc">Η γλώσσα δεν πρέπει να είναι εμπόδιο στο συναίσθημα. Το Stanza διαθέτει πλήρη υποστήριξη για <strong>Αγγλικά και Ελληνικά</strong>. Ανεβάστε μια μετάφραση και το Stanza θα τη συγχρονίσει αυτόματα με το πρωτότυπο.</p>
+                    </li>
+                    <li class="feature-item">
+                        <h3 class="feature-title">Το Πλέγμα της Ανθολογίας</h3>
+                        <p class="feature-desc">Φιλοξενήστε ολόκληρο τον λογοτεχνικό σας κόσμο κάτω από την ίδια στέγη. Η <strong>Αρχιτεκτονική Πολλαπλών Συλλογών</strong> του Stanza σας επιτρέπει να δημιουργείτε διαφορετικές ανθολογίες για διαφορετικές εποχές, στυλ ή γλώσσες.</p>
+                    </li>
+                </ul>
+            </article>
+
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Κεφάλαιο III</span>
+                    <h2 class="chapter-title">Γιατί το Stanza Διαφέρει</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <div class="comparison">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Χαρακτηριστικό</th>
+                                <th>Stanza</th>
+                                <th>Κοινά CMS</th>
+                                <th>Social Media</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Εγκατάσταση</td>
+                                <td class="highlight">1 Λεπτό</td>
+                                <td>1 Ώρα+</td>
+                                <td>Άμεσα</td>
+                            </tr>
+                            <tr>
+                                <td>Ιδιοκτησία Δεδομένων</td>
+                                <td class="highlight">100% Δικά σας</td>
+                                <td>Δύσκολη Εξαγωγή</td>
+                                <td>Τους Ανήκουν</td>
+                            </tr>
+                            <tr>
+                                <td>Ταχύτητα</td>
+                                <td class="highlight">Αστραπιαία</td>
+                                <td>Μέτρια</td>
+                                <td>Μεταβλητή</td>
+                            </tr>
+                            <tr>
+                                <td>Ατμόσφαιρα</td>
+                                <td class="highlight">Καθαρή / Εστιασμένη</td>
+                                <td>Φορτωμένη</td>
+                                <td>Γεμάτη Διαφημίσεις</td>
+                            </tr>
+                            <tr>
+                                <td>Συντήρηση</td>
+                                <td class="highlight">Μηδενική</td>
+                                <td>Υψηλή</td>
+                                <td>N/A</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Κεφάλαιο IV</span>
+                    <h2 class="chapter-title">Πώς να Δημοσιεύσετε το Έργο σας</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <ol class="workflow prose">
+                    <li class="workflow-item">
+                        <div class="workflow-title">Εγκατάσταση σε ένα Λεπτό</div>
+                        <p>Μεταφέρετε τα αρχεία του Stanza σε οποιονδήποτε διακομιστή με PHP. Χωρίς "Οδηγούς Εγκατάστασης" και κωδικούς βάσεων δεδομένων.</p>
+                    </li>
+                    <li class="workflow-item">
+                        <div class="workflow-title">Γράψτε ή Ανεβάστε</div>
+                        <p>Χρησιμοποιήστε τον Crepe Editor ή απλώς ανεβάστε τα υπάρχοντα αρχεία σας <code>.md</code> ή <code>.txt</code>.</p>
+                    </li>
+                    <li class="workflow-item">
+                        <div class="workflow-title">Αυτόματη Κομψότητα</div>
+                        <p>Το Stanza αναλαμβάνει τα διαστήματα και προσθέτει διακριτικά εφέ εμφάνισης (<strong>reveal-on-scroll</strong>) στο κείμενό σας.</p>
+                    </li>
+                    <li class="workflow-item">
+                        <div class="workflow-title">Η Κληρονομιά σας Ανήκει</div>
+                        <p>Εφόσον όλα είναι αρχεία, μπορείτε να κρατήσετε αντίγραφο ολόκληρου του site σας απλώς κατεβάζοντας έναν φάκελο.</p>
+                    </li>
+                </ol>
+            </article>
+
+            <article class="chapter reveal">
+                <header class="chapter-header">
+                    <span class="chapter-number">Κεφάλαιο V</span>
+                    <h2 class="chapter-title">Τεχνική Καθαρότητα</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <div class="prose">
+                    <ul class="specs-list">
+                        <li class="spec-item"><strong>Αστραπιαία Ταχύτητα:</strong> Άμεσο TTFB. Χωρίς ερωτήματα βάσης δεδομένων, μηδενική καθυστέρηση.</li>
+                        <li class="spec-item"><strong>Οικολογικό:</strong> Χωρίς διακομιστή βάσης δεδομένων σημαίνει μικρότερο αποτύπωμα άνθρακα.</li>
+                        <li class="spec-item"><strong>Προστασία Προσωπικών Δεδομένων:</strong> Χωρίς tracking cookies, εξωτερικά scripts, ή analytics bloat.</li>
+                        <li class="spec-item"><strong>Πλήρως Responsive:</strong> Φαίνεται σαν αριστούργημα σε όλες τις συσκευές.</li>
+                    </ul>
+                </div>
+            </article>
+
+            <article class="chapter reveal gallery">
+                <header class="chapter-header">
+                    <span class="chapter-number">Πινάκες</span>
+                    <h2 class="chapter-title">Η Πλατφόρμα σε Εικόνες</h2>
+                    <div class="chapter-divider"></div>
+                </header>
+                <div class="gallery-grid">
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/home.png" alt="Αρχική Σελίδα" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Πίνακας I</div>
+                            Το Καταφύγιο
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/collection.png" alt="Σελίδα Συλλογής" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Πίνακας II</div>
+                            Το Πλέγμα της Ανθολογίας
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/poem.png" alt="Προβολή Ποιήματος" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Πίνακας III</div>
+                            Προβολή Ανάγνωσης
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/colelction%20edit.png" alt="Επεξεργασία Συλλογής" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Πίνακας IV</div>
+                            Διαχείριση Συλλογών
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/poem%20edit.png" alt="Επεξεργασία Ποιήματος" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Πίνακας V</div>
+                            Ο Επεξεργαστής Crepe
+                        </figcaption>
+                    </figure>
+                    <figure class="gallery-item reveal">
+                        <img src="screenshots/profile%20edit.png" alt="Επεξεργασία Προφίλ" loading="lazy">
+                        <figcaption class="gallery-caption">
+                            <div class="gallery-plate-number">Πίνακας VI</div>
+                            Η Ταυτότητα του Δημιουργού
+                        </figcaption>
+                    </figure>
+                </div>
+            </article>
+
+            <section class="cta-section reveal">
+                <h2 class="cta-title">Οι Λέξεις σας Αξίζουν ένα Stanza.</h2>
+                <p class="cta-text">Σταματήστε να δημοσιεύετε στο κενό. Δώστε στην ποίησή σας το αφιερωμένο, κομψό σπίτι που της αξίζει.</p>
+                <a href="https://github.com/cozats/Stanza" class="btn">
+                    <span>Ανακαλύψτε στο GitHub</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                    </svg>
+                </a>
+                <p class="cta-tagline">Stanza. <em>Minimalism for the modern poet.</em></p>
+            </section>
+        </div>
+
+        <footer class="colophon reveal">
+            <div class="colophon-divider"></div>
+            <p>2026 Stanza. Designed for poets, by poets.</p>
         </footer>
     </div>
 
     <script>
-        const translations = {
-            en: {
-                langBtn: "Ελληνικά",
-                themeBtnDark: "Dark Mode",
-                themeBtnLight: "Light Mode",
-                subtitle: "The elegant, multi-collection portal for modern poets. Host your entire body of work in a single, database-free platform.",
-                featuresTitle: "The Experience",
-                features: [
-                    { h: "Multi-Collection Hub", p: "Host multiple distinct collections of poetry. Perfect for organizing works by era, theme, or book." },
-                    { h: "Master Landing Page", p: "A unified portal with your author profile that dynamically lists all your available collections." },
-                    { h: "Polished UI/UX", p: "Custom modals, persistent theme toggles, and refined toast notifications for a premium feel." },
-                    { h: "Shared Session Management", p: "Log in once on your landing page and manage all your collections effortlessly from one place." },
-                    { h: "Database-Free (Flat File)", p: "Powered by PHP and Markdown. Lightweight, fast, and easy to move between hosting providers." },
-                    { h: "Bilingual Intelligence", p: "Full Greek and English support. Automatically serves translations of poems when available." }
-                ],
-                instructionsTitle: "How it Works",
-                instructions: [
-                    "Package: Download <a href='https://github.com/cozats/Stanza/archive/refs/heads/main.zip' style='color: var(--accent-color); font-weight: 600;'>Stanza</a> and upload it to any PHP-enabled host.",
-                    "Identify: Log in via the 'Management' link in the footer using the default password (it is \"<span style='color: var(--accent-color); font-weight: 600;'>password</span>\").",
-                    "Cultivate: Create new collections directly from your dashboard and upload your poems as .md files."
-                ],
-                ctaTitle: "Ready to launch your platform?",
-                ctaSubtitle: "Stanza is open-source and free to use forever for every poet.",
-                ctaBtn: "Star on GitHub",
-                actionBtn: "See it in action",
-                footer: "&copy; 2026 Stanza. Designed for poets, by poets."
-            },
-            el: {
-                langBtn: "English",
-                themeBtnDark: "Σκοτεινό Θέμα",
-                themeBtnLight: "Φωτεινό Θέμα",
-                subtitle: "Η κομψή πύλη πολλαπλών συλλογών για σύγχρονους ποιητές. Φιλοξενήστε ολόκληρο το έργο σας σε μια πλατφόρμα χωρίς βάσεις δεδομένων.",
-                featuresTitle: "Η Εμπειρία",
-                features: [
-                    { h: "Κέντρο Πολλαπλών Συλλογών", p: "Φιλοξενήστε διαφορετικές συλλογές ποίησης. Ιδανικό για οργάνωση έργων ανά εποχή, θέμα ή βιβλίο." },
-                    { h: "Κεντρική Πύλη Εισόδου", p: "Μια ενιαία σελίδα με το προφίλ σας που εμφανίζει δυναμικά όλες τις διαθέσιμες συλλογές σας." },
-                    { h: "Εκλεπτυσμένο UI/UX", p: "Προσαρμοσμένα modals, σταθεροί διακόπτες θέματος και εκλεπτυσμένες ειδοποιήσεις για premium αίσθηση." },
-                    { h: "Ενιαία Διαχείριση", p: "Συνδεθείτε μία φορά στην αρχική σας σελίδα και διαχειριστείτε όλες τις συλλογές σας από ένα σημείο." },
-                    { h: "Χωρίς Βάσεις Δεδομένων", p: "Βασισμένο σε PHP και Markdown. Ελαφρύ, γρήγορο και εύκολο στη μεταφορά σε οποιονδήποτε πάροχο." },
-                    { h: "Δίγλωσση Νοημοσύνη", p: "Πλήρης υποστήριξη Ελληνικών και Αγγλικών. Αυτόματη προβολή μεταφράσεων όταν είναι διαθέσιμες." }
-                ],
-                instructionsTitle: "Πώς Λειτουργεί",
-                instructions: [
-                    "Εγκατάσταση: Κατεβάστε το <a href='https://github.com/cozats/Stanza/archive/refs/heads/main.zip' style='color: var(--accent-color); font-weight: 600;'>Stanza</a> και ανεβάστε το σε οποιονδήποτε PHP host.",
-                    "Ταυτοποίηση: Συνδεθείτε μέσω του συνδέσμου 'Διαχείριση' χρησιμοποιώντας τον προεπιλεγμένο κωδικό (είναι <span style='color: var(--accent-color); font-weight: 600;'>password</span>).",
-                    "Δημιουργία: Φτιάξτε νέες συλλογές από το dashboard σας και ανεβάστε τα ποιήματά σας ως αρχεία .md."
-                ],
-                ctaTitle: "Έτοιμοι να ξεκινήσετε την πλατφόρμα σας;",
-                ctaSubtitle: "Το Stanza είναι ανοιχτού κώδικα και δωρεάν για πάντα για κάθε ποιητή.",
-                ctaBtn: "Star στο GitHub",
-                actionBtn: "Δείτε το στην πράξη",
-                footer: "&copy; 2026 Stanza. Σχεδιασμένο για ποιητές, από ποιητές."
-            }
-        };
-
-        let currentLang = 'en';
-
-        function updateContent() {
-            const t = translations[currentLang];
-            document.getElementById('lang-toggle').textContent = t.langBtn;
-            document.getElementById('theme-toggle').textContent = document.body.getAttribute('data-theme') === 'dark' ? t.themeBtnLight : t.themeBtnDark;
-            document.getElementById('hero-subtitle').textContent = t.subtitle;
-            document.getElementById('features-title').textContent = t.featuresTitle;
-            document.getElementById('instructions-title').textContent = t.instructionsTitle;
-            document.getElementById('cta-title').textContent = t.ctaTitle;
-            document.getElementById('cta-subtitle').textContent = t.ctaSubtitle;
-            document.getElementById('cta-btn-text').textContent = t.ctaBtn;
-            document.getElementById('action-btn-text').textContent = t.actionBtn;
-            document.getElementById('footer-text').innerHTML = t.footer;
-
-            // Features
-            const grid = document.getElementById('features-grid');
-            grid.innerHTML = t.features.map(f => `
-                <div class="feature-item">
-                    <h3>${f.h}</h3>
-                    <p>${f.p}</p>
-                </div>
-            `).join('');
-
-            // Instructions
-            const list = document.getElementById('instructions-list');
-            list.innerHTML = t.instructions.map(i => `<li>${i}</li>`).join('');
-        }
-
-        // Initialize content
-        updateContent();
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            
+            const lang = document.getElementById('content-en').classList.contains('active') ? 'en' : 'el';
+            themeToggle.textContent = newTheme === 'dark' 
+                ? (lang === 'en' ? 'Light' : 'Φως')
+                : (lang === 'en' ? 'Dark' : 'Σκοτάδι');
+        });
 
         // Language Toggle
-        document.getElementById('lang-toggle').addEventListener('click', () => {
-            currentLang = currentLang === 'en' ? 'el' : 'en';
-            updateContent();
+        const langToggle = document.getElementById('lang-toggle');
+        const contentEn = document.getElementById('content-en');
+        const contentEl = document.getElementById('content-el');
+        
+        langToggle.addEventListener('click', () => {
+            const isEnglish = contentEn.classList.contains('active');
+            
+            if (isEnglish) {
+                contentEn.classList.remove('active');
+                contentEl.classList.add('active');
+                langToggle.textContent = 'English';
+                themeToggle.textContent = body.getAttribute('data-theme') === 'dark' ? 'Φως' : 'Σκοτάδι';
+            } else {
+                contentEl.classList.remove('active');
+                contentEn.classList.add('active');
+                langToggle.textContent = 'Ελληνικά';
+                themeToggle.textContent = body.getAttribute('data-theme') === 'dark' ? 'Light' : 'Dark';
+            }
+            
+            // Re-trigger animations for new content
+            document.querySelectorAll('.reveal').forEach(el => {
+                el.classList.remove('is-visible');
+            });
+            setTimeout(() => {
+                observeElements();
+            }, 100);
         });
 
-        // Theme Toggle Logic
-        const themeToggle = document.getElementById('theme-toggle');
-        themeToggle.addEventListener('click', () => {
-            const isDark = document.body.getAttribute('data-theme') === 'dark';
-            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            themeToggle.textContent = isDark ? translations[currentLang].themeBtnDark : translations[currentLang].themeBtnLight;
-        });
+        // Reveal on Scroll Animation
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
 
-        // Reveal on Scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, observerOptions);
 
-        document.querySelectorAll('section, header, .cta-container').forEach(el => observer.observe(el));
+        function observeElements() {
+            document.querySelectorAll('.reveal').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            observeElements();
+        });
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('stanza-theme');
+        if (savedTheme) {
+            body.setAttribute('data-theme', savedTheme);
+        }
+
+        // Save theme preference
+        themeToggle.addEventListener('click', () => {
+            localStorage.setItem('stanza-theme', body.getAttribute('data-theme'));
+        });
     </script>
 </body>
-
 </html>
