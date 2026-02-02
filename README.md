@@ -4,7 +4,7 @@ A simple, elegant, and lightning-fast multi-collection platform for poets. Stanz
 
 ## [👉 Download Latest Version](https://github.com/cozats/Stanza/archive/refs/heads/main.zip)
 
-![alt text](https://github.com/cozats/Stanza/blob/main/screens/home-en-light.png)  
+![alt text](https://github.com/cozats/Stanza/blob/main/screenshots/home.png)  
 
 ## 🌟 Features
 - **Multi-Collection Architecture:** Host multiple distinct collections on a single site.
