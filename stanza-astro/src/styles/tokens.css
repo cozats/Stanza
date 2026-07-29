@@ -1,0 +1,44 @@
+/* =========================================================
+   Design tokens — lifted verbatim from system/views/layout.php
+   Untokenised colours promoted to variables.
+   ========================================================= */
+
+:root {
+  /* Core palette */
+  --bg-color: #e4e2d7;
+  --text-color: #2c2c2c;
+  --accent-color: #8c3b3b;
+  --border-color: #8c3b3b;
+  --font-main: 'EB Garamond', serif;
+
+  /* Promoted: accent shades */
+  --accent-hover: #6a2a2a;
+  --accent-deep: #5a2a2a;
+
+  /* Promoted: muted text */
+  --muted: #666;
+  --muted-footer: #aaa;
+  --muted-footer-link: #888;
+
+  /* Promoted: feedback toasts */
+  --toast-success: rgb(120, 160, 120);
+  --toast-error: rgb(180, 100, 100);
+
+  /* Promoted: code blocks */
+  --code-bg: #f4f4f4;
+  --code-border: rgba(0, 0, 0, 0.1);
+  --inline-code-bg: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] {
+  --bg-color: #1a1a1a;
+  --text-color: #e0e0e0;
+
+  /* Dark overrides for promoted tokens */
+  --muted: #aaa;
+  --muted-footer: #888;
+  --muted-footer-link: #999;
+  --code-bg: #2a2a2a;
+  --code-border: rgba(255, 255, 255, 0.1);
+  --inline-code-bg: rgba(255, 255, 255, 0.1);
+}
