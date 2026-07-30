@@ -8,7 +8,7 @@
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "cms": "npx decap-server"
+    "cms": "cd .. && npx decap-server"
   },
   "dependencies": {
     "astro": "^5.0.0"
