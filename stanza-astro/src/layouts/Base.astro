@@ -32,9 +32,8 @@ const tr = t(lang);
 const siteBase = Astro.site?.href ?? 'https://stanza.pages.dev/';
 const altLang: Lang = lang === 'en' ? 'el' : 'en';
 const canonicalUrl = langPath !== undefined ? new URL(`${lang}/${langPath}`, siteBase).href : null;
-const altUrl = langPath !== undefined
-  ? new URL(`${altLang}/${langPath}`, siteBase).href
-  : `/${altLang}/`;
+// altUrl must be a relative path — using siteBase would send visitors to the production domain
+const altUrl = langPath !== undefined ? `/${altLang}/${langPath}` : `/${altLang}/`;
 ---
 
 <!doctype html>
