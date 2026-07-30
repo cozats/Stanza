@@ -1,14 +1,20 @@
 ---
 import '../styles/global.css';
 import { getLangFromUrl, t } from '../i18n/ui';
+import type { Lang } from '../i18n/ui';
+import ControlBar from '../components/ControlBar.astro';
+
+type ViewType = 'landing' | 'home' | 'list' | 'poem';
 
 interface Props {
   title?: string;
   description?: string;
   bodyClass?: string;
-  lang?: 'en' | 'el';
+  lang?: Lang;
   /** Path after /{lang}/ — used to build canonical and hreflang URLs. E.g. '' for landing, 'demo/' for collection home. */
   langPath?: string;
+  /** Current view — controls which ControlBar sections render. */
+  view?: ViewType;
 }
 
 const {
@@ -17,15 +23,18 @@ const {
   bodyClass = '',
   lang: langProp,
   langPath,
+  view = 'landing',
 } = Astro.props;
 
 const lang = langProp ?? getLangFromUrl(Astro.url);
 const tr = t(lang);
 
 const siteBase = Astro.site?.href ?? 'https://stanza.pages.dev/';
-const altLang = lang === 'en' ? 'el' : 'en';
+const altLang: Lang = lang === 'en' ? 'el' : 'en';
 const canonicalUrl = langPath !== undefined ? new URL(`${lang}/${langPath}`, siteBase).href : null;
-const altUrl = langPath !== undefined ? new URL(`${altLang}/${langPath}`, siteBase).href : null;
+const altUrl = langPath !== undefined
+  ? new URL(`${altLang}/${langPath}`, siteBase).href
+  : `/${altLang}/`;
 ---
 
 <!doctype html>
@@ -59,7 +68,7 @@ const altUrl = langPath !== undefined ? new URL(`${altLang}/${langPath}`, siteBa
     </script>
   </head>
 
-  <body class={bodyClass}>
+  <body class={bodyClass} data-lang={lang}>
     <!-- Fixed theme toggle — top right -->
     <button
       class="theme-toggle-fixed"
@@ -111,8 +120,8 @@ const altUrl = langPath !== undefined ? new URL(`${altLang}/${langPath}`, siteBa
         <slot />
       </main>
 
-      <!-- Control bar slot (ControlBar.astro injects here) -->
-      <slot name="toolbar" />
+      <!-- Public control bar -->
+      <ControlBar lang={lang} altHref={altUrl} view={view} />
 
       <footer>
         <slot name="footer" />

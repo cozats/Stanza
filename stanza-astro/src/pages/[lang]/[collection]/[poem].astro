@@ -53,6 +53,7 @@ const { Content } = await render(poem);
   title={`${poem.data.title} — Stanza`}
   lang={lang}
   bodyClass="view-poem"
+  view="poem"
   langPath={`${collectionSlug}/${poem.data.translationKey ?? poem.id}/`}
 >
   <Breadcrumbs
