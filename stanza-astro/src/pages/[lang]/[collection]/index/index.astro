@@ -39,6 +39,7 @@ const poems = resolvePoems(collectionPoems, lang);
   bodyClass="view-list"
   view="list"
   langPath={`${collectionSlug}/index/`}
+  collectionSlug={collectionSlug}
 >
   <Breadcrumbs
     slot="breadcrumbs"
@@ -66,6 +67,7 @@ const poems = resolvePoems(collectionPoems, lang);
               class="reveal-on-scroll poem-item"
               data-title={poem.data.title}
               data-time={mtime}
+              data-poem-id={poem.id}
             >
               <a href={`/${lang}/${collectionSlug}/${poemSlug}/`}>
                 {poem.data.title}

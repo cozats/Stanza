@@ -3,7 +3,7 @@
  * GET /api/callback?code=...
  *
  * Exchanges the authorization code for a token and posts it back to the
- * Decap CMS opener window via postMessage, then closes itself.
+ * opener window via postMessage, then closes itself.
  */
 
 interface Env {
@@ -44,23 +44,18 @@ export const onRequestGet: (ctx: { request: Request; env: Env }) => Promise<Resp
     return new Response(`OAuth failed: ${msg}`, { status: 400 });
   }
 
-  const payload = JSON.stringify({ token: data.access_token, provider: 'github' });
+  const token = data.access_token;
 
   const html = `<!DOCTYPE html>
 <html><body><script>
 (function () {
-  var payload = ${JSON.stringify(payload)};
-  function onMessage(e) {
-    if (e.data === 'authorizing:github') {
-      window.opener.postMessage('authorization:github:success:' + payload, e.origin);
-      window.removeEventListener('message', onMessage, false);
-      window.close();
-    }
-  }
-  window.addEventListener('message', onMessage, false);
-  if (window.opener) {
-    window.opener.postMessage('authorizing:github', '*');
-  }
+  try {
+    window.opener && window.opener.postMessage(
+      { type: 'stanza-auth', token: ${JSON.stringify(token)} },
+      window.location.origin
+    );
+  } catch (e) {}
+  window.close();
 })();
 <\/script></body></html>`;
 

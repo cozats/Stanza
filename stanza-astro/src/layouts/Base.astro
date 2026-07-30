@@ -15,6 +15,10 @@ interface Props {
   langPath?: string;
   /** Current view — controls which ControlBar sections render. */
   view?: ViewType;
+  /** Poem content ID (filename without .md) — used by on-page editor on poem view. */
+  poemId?: string;
+  /** Collection slug — used by on-page editor on home/list/poem views. */
+  collectionSlug?: string;
 }
 
 const {
@@ -24,6 +28,8 @@ const {
   lang: langProp,
   langPath,
   view = 'landing',
+  poemId,
+  collectionSlug,
 } = Astro.props;
 
 const lang = langProp ?? getLangFromUrl(Astro.url);
@@ -73,7 +79,7 @@ const altUrl = langPath !== undefined ? `/${altLang}/${langPath}` : `/${altLang}
     </script>
   </head>
 
-  <body class={bodyClass} data-lang={lang}>
+  <body class={bodyClass} data-lang={lang} data-poem-id={poemId} data-collection-slug={collectionSlug}>
     <!-- Fixed theme toggle — top right -->
     <button
       class="theme-toggle-fixed"
