@@ -2,11 +2,14 @@ backend:
   name: github
   repo: cozats/Stanza
   branch: main
-  base_url: https://stanza.pages.dev
+  # base_url: https://your-site.pages.dev   ← set this only for production deployment
   auth_endpoint: api/auth
 
-# Allows editing locally without GitHub OAuth — run `npm run cms` from repo root
-local_backend: true
+# Local editing — no GitHub OAuth needed. Run `npm run cms` from repo root first.
+local_backend:
+  url: http://localhost:8081/api/v1
+  allowed_hosts:
+    - localhost
 
 media_folder: stanza-astro/public/uploads
 public_folder: /uploads
