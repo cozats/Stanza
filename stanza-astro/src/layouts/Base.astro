@@ -44,6 +44,12 @@ const altUrl = langPath !== undefined
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content="website" />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <meta property="og:locale" content={lang === 'el' ? 'el_GR' : 'en_US'} />
     <link rel="icon" type="image/png" href="/favicon.png" />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     {canonicalUrl && altUrl && (

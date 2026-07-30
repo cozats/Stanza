@@ -1,0 +1,41 @@
+name: Astro CI
+
+on:
+  push:
+    branches:
+      - 'astro/**'
+      - 'claude/stanza-astro-migration-*'
+    paths:
+      - 'stanza-astro/**'
+      - '.github/workflows/astro-ci.yml'
+  pull_request:
+    branches:
+      - 'claude/stanza-astro-migration-*'
+    paths:
+      - 'stanza-astro/**'
+
+defaults:
+  run:
+    working-directory: stanza-astro
+
+jobs:
+  ci:
+    name: Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: stanza-astro/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build

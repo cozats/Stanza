@@ -21,7 +21,8 @@ const altLang = lang === 'en' ? 'el' : 'en';
 ---
 
 <Base
-  title="Stanza"
+  title={`Stanza — ${siteData.author_name}`}
+  description={siteData.author_bio || `Poetry by ${siteData.author_name}`}
   lang={lang}
   bodyClass="view-landing"
   view="landing"

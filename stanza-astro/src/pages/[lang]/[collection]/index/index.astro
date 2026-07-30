@@ -34,6 +34,7 @@ const poems = resolvePoems(collectionPoems, lang);
 
 <Base
   title={`${tr('contents')} — ${col.data.title}`}
+  description={`Poems in ${col.data.title} by ${col.data.author}`}
   lang={lang}
   bodyClass="view-list"
   view="list"
