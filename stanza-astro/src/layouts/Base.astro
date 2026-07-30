@@ -7,6 +7,8 @@ interface Props {
   description?: string;
   bodyClass?: string;
   lang?: 'en' | 'el';
+  /** Path after /{lang}/ — used to build canonical and hreflang URLs. E.g. '' for landing, 'demo/' for collection home. */
+  langPath?: string;
 }
 
 const {
@@ -14,10 +16,16 @@ const {
   description = '',
   bodyClass = '',
   lang: langProp,
+  langPath,
 } = Astro.props;
 
 const lang = langProp ?? getLangFromUrl(Astro.url);
 const tr = t(lang);
+
+const siteBase = Astro.site?.href ?? 'https://stanza.pages.dev/';
+const altLang = lang === 'en' ? 'el' : 'en';
+const canonicalUrl = langPath !== undefined ? new URL(`${lang}/${langPath}`, siteBase).href : null;
+const altUrl = langPath !== undefined ? new URL(`${altLang}/${langPath}`, siteBase).href : null;
 ---
 
 <!doctype html>
@@ -28,6 +36,14 @@ const tr = t(lang);
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <link rel="icon" type="image/png" href="/favicon.png" />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {canonicalUrl && altUrl && (
+      <>
+        <link rel="alternate" hreflang={lang} href={canonicalUrl} />
+        <link rel="alternate" hreflang={altLang} href={altUrl} />
+        <link rel="alternate" hreflang="x-default" href={lang === 'en' ? canonicalUrl : altUrl} />
+      </>
+    )}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+import { t } from '../i18n/ui';
+
+const lang = 'en';
+const tr = t(lang);
+---
+
+<Base title="404 — Stanza" lang={lang} bodyClass="view-landing">
+  <div style="text-align: center; padding: 4rem 0;">
+    <h1 style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">404</h1>
+    <p style="opacity: 0.6;">Page not found.</p>
+    <p style="margin-top: 2rem;">
+      <a href="/en/" class="std-link">← {tr('home')}</a>
+    </p>
+  </div>
+
+  <Fragment slot="footer">
+    © {new Date().getFullYear()} Stanza •
+    <a href="https://cozats.github.io/Stanza/" target="_blank"
+      >{tr('about_link')}</a
+    >
+  </Fragment>
+</Base>

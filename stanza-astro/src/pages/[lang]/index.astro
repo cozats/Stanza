@@ -1,0 +1,76 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { t } from '../../i18n/ui';
+import type { Lang } from '../../i18n/ui';
+import siteData from '../../content/site.json';
+
+export async function getStaticPaths() {
+  return [{ params: { lang: 'en' } }, { params: { lang: 'el' } }];
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const tr = t(lang);
+
+const allCollections = await getCollection('collections');
+const sortedCollections = allCollections.sort(
+  (a, b) => (a.data.order ?? 99) - (b.data.order ?? 99),
+);
+
+const altLang = lang === 'en' ? 'el' : 'en';
+---
+
+<Base
+  title="Stanza"
+  lang={lang}
+  bodyClass="view-landing"
+  langPath=""
+>
+  <section class="author-section">
+    {
+      siteData.author_photo ? (
+        <img
+          src={siteData.author_photo}
+          class="author-photo"
+          alt={siteData.author_name}
+        />
+      ) : (
+        <div class="author-photo-placeholder">
+          {siteData.author_name.slice(0, 1)}
+        </div>
+      )
+    }
+    <h1 class="author-name">{siteData.author_name}</h1>
+    <p class="author-bio">{siteData.author_bio}</p>
+  </section>
+
+  <h2 class="collections-title reveal-on-scroll">{tr('collections_title')}</h2>
+
+  <div
+    class={`collections-grid${sortedCollections.length === 1 ? ' single-collection' : ''}`}
+  >
+    {
+      sortedCollections.length === 0 ? (
+        <div class="no-collections-container reveal-on-scroll">
+          <p class="no-collections">{tr('no_collections')}</p>
+        </div>
+      ) : (
+        sortedCollections.map((col) => (
+          <a href={`/${lang}/${col.id}/`} class="collection-card reveal-on-scroll">
+            <span class="card-author">
+              {col.data.author || tr('author_name_label')}
+            </span>
+            <span class="card-title">{col.data.title || col.id}</span>
+          </a>
+        ))
+      )
+    }
+  </div>
+
+  <Fragment slot="footer">
+    © {new Date().getFullYear()} {siteData.author_name} •
+    <a href="https://cozats.github.io/Stanza/" target="_blank"
+      >{tr('about_link')}</a
+    >
+  </Fragment>
+</Base>

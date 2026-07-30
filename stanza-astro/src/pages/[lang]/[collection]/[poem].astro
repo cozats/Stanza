@@ -1,0 +1,85 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { t } from '../../../i18n/ui';
+import type { Lang } from '../../../i18n/ui';
+import { resolvePoems } from '../../../lib/translations';
+import siteData from '../../../content/site.json';
+
+export async function getStaticPaths() {
+  const allPoems = await getCollection('poems');
+  const langs: Lang[] = ['en', 'el'];
+  const paths = [];
+
+  for (const lang of langs) {
+    // Group by collection
+    const byCollection = new Map<string, typeof allPoems>();
+    for (const poem of allPoems) {
+      if (poem.data.draft) continue;
+      const cid = poem.data.collection;
+      if (!byCollection.has(cid)) byCollection.set(cid, []);
+      byCollection.get(cid)!.push(poem);
+    }
+
+    for (const [collId, poems] of byCollection) {
+      const resolved = resolvePoems(poems, lang);
+      for (const poem of resolved) {
+        const poemSlug = poem.data.translationKey ?? poem.id;
+        paths.push({
+          params: { lang, collection: collId, poem: poemSlug },
+          props: { poem, collId },
+        });
+      }
+    }
+  }
+
+  return paths;
+}
+
+const { lang, collection: collectionSlug } = Astro.params as {
+  lang: Lang;
+  collection: string;
+};
+const { poem, collId } = Astro.props;
+const tr = t(lang);
+
+const colEntry = await getEntry('collections', collectionSlug);
+const collectionTitle = colEntry?.data.title ?? collectionSlug;
+const { Content } = await render(poem);
+---
+
+<Base
+  title={`${poem.data.title} — Stanza`}
+  lang={lang}
+  bodyClass="view-poem"
+  langPath={`${collectionSlug}/${poem.data.translationKey ?? poem.id}/`}
+>
+  <Breadcrumbs
+    slot="breadcrumbs"
+    lang={lang}
+    view="poem"
+    collection={{ id: collectionSlug, title: collectionTitle }}
+    poemTitle={poem.data.title}
+  />
+
+  <div class="poem-content">
+    <Content />
+  </div>
+
+  <div style="text-align: center; margin-top: 3rem;">
+    <a href={`/${lang}/${collectionSlug}/index/`} class="std-link"
+      >{tr('back_to_archive')}</a
+    >
+  </div>
+
+  <Fragment slot="footer">
+    © {new Date().getFullYear()} {siteData.author_name}. All rights reserved. •
+    <a
+      href="https://github.com/cozats/Poetry-Site-Template"
+      target="_blank"
+      class="admin-link"
+      style="text-decoration: none;">GitHub</a
+    >
+  </Fragment>
+</Base>
