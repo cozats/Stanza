@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { t } from '../../../i18n/ui';
+import type { Lang } from '../../../i18n/ui';
+import siteData from '../../../content/site.json';
+
+export async function getStaticPaths() {
+  const cols = await getCollection('collections');
+  const langs: Lang[] = ['en', 'el'];
+  return langs.flatMap((lang) =>
+    cols.map((col) => ({
+      params: { lang, collection: col.id },
+      props: { col },
+    })),
+  );
+}
+
+const { lang, collection: collectionSlug } = Astro.params as {
+  lang: Lang;
+  collection: string;
+};
+const { col } = Astro.props;
+const tr = t(lang);
+---
+
+<Base
+  title={`${col.data.title} — Stanza`}
+  lang={lang}
+  bodyClass="view-home"
+  langPath={`${collectionSlug}/`}
+>
+  <Breadcrumbs
+    slot="breadcrumbs"
+    lang={lang}
+    view="home"
+    collection={{ id: collectionSlug, title: col.data.title }}
+  />
+
+  <div class="poem-content">
+    <h1 class="poet-name-header reveal-on-scroll">{col.data.author}</h1>
+    <div class="stanza reveal-on-scroll">
+      <h2 class="reveal-on-scroll"><em>{col.data.title}</em></h2>
+    </div>
+    <div class="stanza reveal-on-scroll">
+      <h3 class="reveal-on-scroll">{tr('poems_label')}</h3>
+    </div>
+  </div>
+
+  <div style="text-align: center; margin-top: 3rem;">
+    <a href={`/${lang}/${collectionSlug}/index/`} class="action-button">
+      {tr('view_poems')}
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </a>
+  </div>
+
+  <Fragment slot="footer">
+    © {new Date().getFullYear()} {siteData.author_name}. All rights reserved. •
+    <a
+      href="https://github.com/cozats/Poetry-Site-Template"
+      target="_blank"
+      class="admin-link"
+      style="text-decoration: none;">GitHub</a
+    >
+  </Fragment>
+</Base>

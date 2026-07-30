@@ -1,0 +1,93 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../../layouts/Base.astro';
+import Breadcrumbs from '../../../../components/Breadcrumbs.astro';
+import { t } from '../../../../i18n/ui';
+import type { Lang } from '../../../../i18n/ui';
+import { resolvePoems } from '../../../../lib/translations';
+import siteData from '../../../../content/site.json';
+
+export async function getStaticPaths() {
+  const cols = await getCollection('collections');
+  const langs: Lang[] = ['en', 'el'];
+  return langs.flatMap((lang) =>
+    cols.map((col) => ({
+      params: { lang, collection: col.id },
+      props: { col },
+    })),
+  );
+}
+
+const { lang, collection: collectionSlug } = Astro.params as {
+  lang: Lang;
+  collection: string;
+};
+const { col } = Astro.props;
+const tr = t(lang);
+
+const allPoems = await getCollection('poems');
+const collectionPoems = allPoems.filter(
+  (p) => p.data.collection === collectionSlug && !p.data.draft,
+);
+const poems = resolvePoems(collectionPoems, lang);
+---
+
+<Base
+  title={`${tr('contents')} — ${col.data.title}`}
+  lang={lang}
+  bodyClass="view-list"
+  langPath={`${collectionSlug}/index/`}
+>
+  <Breadcrumbs
+    slot="breadcrumbs"
+    lang={lang}
+    view="list"
+    collection={{ id: collectionSlug, title: col.data.title }}
+  />
+
+  <h1 class="poem-title reveal-on-scroll">{col.data.title}</h1>
+
+  <ul class="poem-list">
+    {
+      poems.length === 0 ? (
+        <li>
+          <span style="color: #999; font-style: italic;">{tr('no_poems')}</span>
+        </li>
+      ) : (
+        poems.map((poem) => {
+          const poemSlug = poem.data.translationKey ?? poem.id;
+          const mtime = poem.data.date
+            ? Math.floor(poem.data.date.getTime() / 1000)
+            : 0;
+          return (
+            <li
+              class="reveal-on-scroll poem-item"
+              data-title={poem.data.title}
+              data-time={mtime}
+            >
+              <a href={`/${lang}/${collectionSlug}/${poemSlug}/`}>
+                {poem.data.title}
+              </a>
+            </li>
+          );
+        })
+      )
+    }
+  </ul>
+
+  <div style="text-align: center; margin-top: 3rem;">
+    <a href={`/${lang}/${collectionSlug}/`} class="std-link"
+      >← {tr('home')}</a
+    >
+  </div>
+
+  <Fragment slot="footer">
+    © {new Date().getFullYear()} {siteData.author_name}. All rights reserved. •
+    <a
+      href="https://github.com/cozats/Poetry-Site-Template"
+      target="_blank"
+      class="admin-link"
+      style="text-decoration: none;">GitHub</a
+    >
+  </Fragment>
+</Base>
