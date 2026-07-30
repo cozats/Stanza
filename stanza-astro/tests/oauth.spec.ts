@@ -41,9 +41,9 @@ describe('callback handler', () => {
 
     expect(res.status).toBe(200);
     const body = await res.text();
-    expect(body).toContain('authorizing:github');
-    expect(body).toContain('authorization:github:success:');
+    expect(body).toContain('stanza-auth');
     expect(body).toContain('ghp_test_token_abc123');
+    expect(body).not.toContain('authorizing:github');
 
     vi.unstubAllGlobals();
   });

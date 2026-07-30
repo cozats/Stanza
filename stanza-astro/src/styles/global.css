@@ -1043,3 +1043,178 @@ main {
 
 .collection-card:hover .delete-btn { opacity: 1; }
 .delete-btn:hover { background: var(--accent-hover); }
+
+/* =========================================================
+   EDITOR (custom on-page editor)
+   ========================================================= */
+
+/* Lock button — always visible in the toolbar */
+.admin-lock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 100%;
+  background: none;
+  border: none;
+  border-left: 1px solid rgba(140, 59, 59, 0.2);
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  opacity: 0.55;
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.admin-lock-btn:hover { opacity: 1; }
+.admin-lock-btn.is-authed { opacity: 1; color: var(--accent-color); }
+
+.icon-lock-open { display: none; }
+
+/* Edit controls — hidden until body.stanza-authed */
+.edit-control {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 100%;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.stanza-authed .edit-control { display: flex; }
+.edit-control:hover { color: var(--accent-color); }
+.edit-control.danger:hover { color: #c0392b; }
+
+/* Per-poem edit/delete in list view */
+.poem-edit-actions {
+  display: none;
+  gap: 6px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.stanza-authed .poem-edit-actions { display: inline-flex; }
+
+.poem-edit-actions button {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  color: var(--text-color);
+  opacity: 0.4;
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.poem-edit-actions button:hover { opacity: 1; }
+.poem-edit-actions button.danger:hover { color: var(--accent-color); opacity: 1; }
+
+/* Editor modal overlay */
+.editor-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  padding: 1rem;
+}
+
+.editor-box {
+  background: var(--bg-color);
+  color: var(--text-color);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.editor-box h3 {
+  margin: 0 0 1.5rem;
+  font-weight: 400;
+  font-size: 1.4rem;
+}
+
+.editor-field { margin-bottom: 1.2rem; }
+
+.editor-field label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+  margin-bottom: 0.4rem;
+}
+
+.editor-field input,
+.editor-field textarea,
+.editor-field select {
+  width: 100%;
+  padding: 0.55rem 0.8rem;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 1rem;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+.editor-field textarea {
+  min-height: 220px;
+  resize: vertical;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.editor-field input:focus,
+.editor-field textarea:focus,
+.editor-field select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.editor-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.editor-actions button {
+  padding: 0.55rem 1.4rem;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+.editor-actions .btn-save {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.editor-actions button:hover { opacity: 0.8; }
+.editor-actions button:disabled { opacity: 0.5; cursor: default; }
+
+@media (max-width: 600px) {
+  .admin-lock-btn span { display: none !important; }
+  .edit-control span { display: none !important; }
+}
