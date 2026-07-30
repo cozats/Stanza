@@ -1,0 +1,82 @@
+backend:
+  name: github
+  repo: cozats/Stanza
+  branch: main
+  base_url: https://stanza.pages.dev
+  auth_endpoint: api/auth
+
+# Allows editing locally without GitHub OAuth — run `npm run cms` from repo root
+local_backend: true
+
+media_folder: stanza-astro/public/uploads
+public_folder: /uploads
+
+collections:
+  - name: site
+    label: Site Settings
+    files:
+      - label: Author Profile
+        name: profile
+        file: stanza-astro/src/content/site.json
+        format: json
+        fields:
+          - { label: Author Name, name: author_name, widget: string }
+          - { label: Bio, name: author_bio, widget: text }
+          - label: Photo
+            name: author_photo
+            widget: image
+            required: false
+            default: ''
+
+  - name: collections
+    label: Collections
+    label_singular: Collection
+    folder: stanza-astro/src/content/collections
+    create: true
+    slug: '{{slug}}'
+    format: json
+    summary: '{{title}} — {{author}}'
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Author, name: author, widget: string }
+      - label: Order
+        name: order
+        widget: number
+        required: false
+        hint: 'Lower numbers appear first on the landing page.'
+
+  - name: poems
+    label: Poems
+    label_singular: Poem
+    folder: stanza-astro/src/content/poems
+    create: true
+    slug: '{{collection}}-{{slug}}'
+    format: frontmatter
+    summary: '{{title}} ({{lang}})'
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Collection, name: collection, widget: string, hint: 'Slug of the collection this poem belongs to.' }
+      - label: Language
+        name: lang
+        widget: select
+        options:
+          - { label: English, value: en }
+          - { label: Greek, value: el }
+      - label: Translation Key
+        name: translationKey
+        widget: string
+        required: false
+        hint: 'Shared key for bilingual pairs, e.g. "the-sea". Poems with the same key are treated as translations of each other.'
+      - label: Date
+        name: date
+        widget: datetime
+        format: 'YYYY-MM-DD'
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+        required: false
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+      - { label: Body, name: body, widget: markdown }
